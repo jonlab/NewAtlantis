@@ -21,6 +21,7 @@ public class GyzmoTransformScript : MonoBehaviour {
 	public GameObject yRotation;
 	public GameObject zRotation;
 
+	Quaternion initXrotation, initYrotation, initZrotation;
 
 	// Use this for initialization
 	void Start () {
@@ -29,6 +30,10 @@ public class GyzmoTransformScript : MonoBehaviour {
 
 		endGizmoAttachement ();
 
+		initXrotation = gyzmos [3].transform.rotation;
+		initYrotation = gyzmos [4].transform.rotation;
+		initZrotation = gyzmos [5].transform.rotation;
+
 	
 	}
 
@@ -36,7 +41,6 @@ public class GyzmoTransformScript : MonoBehaviour {
 
 		for (int i = 3; i < 6; i++) {
 			gyzmos [i].transform.parent = transform;
-
 		}
 
 
@@ -93,6 +97,15 @@ public class GyzmoTransformScript : MonoBehaviour {
 
 
 	public void startGizmoAttachment(GameObject o){
+ 
+
+		gyzmos [3].transform.rotation = initXrotation;
+		gyzmos [4].transform.rotation = initYrotation;
+		gyzmos [5].transform.rotation = initZrotation;
+
+		gyzmos [3].transform.parent = transform;
+		gyzmos [4].transform.parent = transform;
+		gyzmos [5].transform.parent = transform;
 
 		// la camera 
 		point = o;
@@ -115,6 +128,13 @@ public class GyzmoTransformScript : MonoBehaviour {
 		gyzmos [4].transform.parent = point.transform;
 		gyzmos [5].transform.parent = point.transform;
 
+		Quaternion qua = o.transform.rotation;
+		//gyzmos [3].transform.rotation *= Quaternion.Euler (qua.eulerAngles);
+		gyzmos [4].transform.rotation *= Quaternion.Euler (qua.eulerAngles);
+		gyzmos [5].transform.rotation = gyzmos [4].transform.rotation ;
+		gyzmos [3].transform.rotation = gyzmos [4].transform.rotation ;
+		gyzmos[5].transform.Rotate (new Vector3(90,0,0));
+		gyzmos[3].transform.Rotate (new Vector3(0,0,90));
 
 
 	}

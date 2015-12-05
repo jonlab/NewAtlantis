@@ -3226,6 +3226,10 @@ public class App : MonoBehaviour
 			{
 				if (GUILayout.Button (o.name, GUILayout.Width(200))) //50
 				{
+					//Alex Gizmo
+					GameObject goGizmo = GameObject.Find("TRS Gizmo");
+					TRS_Gizmo trs = goGizmo.GetComponent<TRS_Gizmo>();
+
 					if (currentSelection != null)
 						currentSelection.goGizmo.SetActive(false);
 					
@@ -3236,17 +3240,20 @@ public class App : MonoBehaviour
 					}
 					else
 					{
+					
 						currentSelection = o;
+
 						currentSelection.goGizmo.SetActive(true);
+						trs.startTRSGizmo(currentSelection.go);
+
+
 						PausePhysics();
 					}
 					
-					//Alex Gizmo
-					GameObject goGizmo = GameObject.Find("TRS Gizmo");
-					TRS_Gizmo trs = goGizmo.GetComponent<TRS_Gizmo>();
+				
 					if (currentSelection != null)
 					{
-						trs.startTRSGizmo(currentSelection.go);
+
 					}
 					else
 					{
