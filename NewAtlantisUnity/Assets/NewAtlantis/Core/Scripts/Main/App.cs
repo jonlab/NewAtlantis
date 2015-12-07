@@ -2077,46 +2077,14 @@ public class App : MonoBehaviour
 			}
 		}
 		
-		
 
-		
 		GUI.color = Color.white;
-
-
 		GUILayout.EndHorizontal();
-		/*
-
-		scrollPosSharedAssets = GUILayout.BeginScrollView( scrollPosSharedAssets, GUILayout.Height( 150 ) );
-		
-		foreach (string str in assets)
-		{
-			GUILayout.BeginHorizontal();
-			GUILayout.Label(str);
-			if (GUILayout.Button("add to current space"))
-			{
-
-			}
-			
-			if (GUILayout.Button("delete"))
-			{
-			}
-			if (GUILayout.Button("duplicate"))
-			{
-			}
-			GUILayout.EndHorizontal();
-		}
-		
-		
-		GUILayout.EndScrollView();
-*/
 
 		GUILayout.BeginHorizontal();
 		if (GUILayout.Button ("")){}
 		GUILayout.EndHorizontal();
-		/*GUILayout.BeginHorizontal();
-		GUILayout.Label ("My Spaces :");
-		GUILayout.EndHorizontal();
-		*/
+
 		GUILayout.BeginHorizontal();
 		GUILayout.Label ("Spaces");
 		if (GUILayout.Button ("Create a new space", GUILayout.Width(150 ))) 
@@ -2124,6 +2092,7 @@ public class App : MonoBehaviour
 			state = AppState.Space;
 		}
 		GUILayout.EndHorizontal();
+
 		GUILayout.BeginHorizontal();
 		foreach (TypeTab t in tabsSpaces)
 		{
@@ -2136,15 +2105,7 @@ public class App : MonoBehaviour
 				caption = "Shared with me";
 			if (GUILayout.Button (caption, GUILayout.Width(100)))
 			{
-				/*if (tab == t)
-				{
-                    tabAssets = TypeTab.None;
-                }
-                else
-                */
-				{
-					tabSpaces = t;
-                }
+				tabSpaces = t;
             }
         }
 		GUI.color = Color.white;
@@ -2152,10 +2113,10 @@ public class App : MonoBehaviour
 
         GUILayout.EndHorizontal();
         
-        
+		GUISpacesHeader();
         scrollPosMySpaces = GUILayout.BeginScrollView( scrollPosMySpaces, GUILayout.Height( 150 ) );
 
-		foreach (Space space in listSpaces)
+		/*foreach (Space space in listSpaces)
 		{
 			if (
 				(tabSpaces == TypeTab.Mine && space.creator == strLogin || tabSpaces == TypeTab.SharedWithMe && space.type == "public" && space.creator != strLogin)
@@ -2177,18 +2138,21 @@ public class App : MonoBehaviour
 					strSpace = space.name;
 					NA.CurrentSpace = space;
 					Debug.Log ("Current Space id = " + NA.CurrentSpace.id);
-					/*
+
 					if (Network.isServer)
 					{
-						ConnectToSpace(strSpace);
+//						ConnectToSpace(strSpace);
 					}
-					*/
+
 				}
 				GUILayout.Label(space.creator, GUILayout.Width(100));
 				GUILayout.EndHorizontal();
 			}
 		
 		}
+		*/
+
+		GUISpaces(true);
 
 		GUILayout.EndScrollView();
 
@@ -2229,6 +2193,65 @@ public class App : MonoBehaviour
 		GUI.color = Color.white;
 	}
 
+	void GUISpacesHeader()
+	{
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("name", GUILayout.Width(200));
+		GUILayout.Label("label", GUILayout.Width(100));
+		GUILayout.Label("ID", GUILayout.Width(50));
+		GUILayout.Label("creator", GUILayout.Width(100));
+		GUILayout.Label("creation date", GUILayout.Width(100));
+		GUILayout.Label("last change", GUILayout.Width(100));
+		GUILayout.Label("objects", GUILayout.Width(100));
+		
+		GUILayout.EndHorizontal();
+	}
+
+
+	void GUISpaces(bool userfilter)
+	{
+		foreach (Space space in listSpaces)
+		{
+			bool bShow = userfilter && (tabSpaces == TypeTab.Mine && space.creator == strLogin || tabSpaces == TypeTab.SharedWithMe && space.type == "public" && space.creator != strLogin && space.objectCount > 0);
+
+			if ((bShow || !userfilter && space.objectCount > 0) && (SpaceFilter == "" || space.name.Contains(SpaceFilter) || space.creator.Contains (SpaceFilter)))
+			{
+				GUILayout.BeginHorizontal();
+				if (space.name == strSpace)
+				{
+					GUI.color = Color.green;
+				}
+				else
+				{
+					GUI.color = Color.white;
+				}
+				if (GUILayout.Button(space.name, GUILayout.Width(200)))
+				{
+					
+					strSpace = space.name;
+					NA.CurrentSpace = space;
+					Debug.Log ("Current Space id = " + NA.CurrentSpace.id);
+					if (Network.isServer)
+					{
+						GoToSpace(space);
+						ConnectToSpace(strSpace);
+					}
+					
+					//Connect(space);
+					
+				}
+				GUILayout.Label(space.type, GUILayout.Width(100));
+				GUILayout.Label(""+space.id, GUILayout.Width(50));
+
+				GUILayout.Label(space.creator, GUILayout.Width(100));
+				GUILayout.Label("", GUILayout.Width(100)); //creation date?
+				GUILayout.Label("", GUILayout.Width(100)); //last change?
+				GUILayout.Label(""+space.objectCount, GUILayout.Width(100)); //share/invite?
+				
+				GUILayout.EndHorizontal();
+			}
+		}
+	}
 	void WindowFunctionLobby (int windowID)
 	{
 		GUI.color = Color.white;
@@ -2511,84 +2534,13 @@ public class App : MonoBehaviour
 		SpaceFilter = GUILayout.TextField (SpaceFilter, GUILayout.Width(200));
 		GUILayout.EndHorizontal();
 
+		GUISpacesHeader();
 		scrollPosLobbySpaces = GUILayout.BeginScrollView( scrollPosLobbySpaces, GUILayout.Height( 150f ) );
-
-
-		GUILayout.BeginHorizontal();
-		GUILayout.Label("name", GUILayout.Width(200));
-		GUILayout.Label("label", GUILayout.Width(100));
-		GUILayout.Label("creator", GUILayout.Width(100));
-		GUILayout.Label("creation date", GUILayout.Width(100));
-		GUILayout.Label("last change", GUILayout.Width(100));
-		GUILayout.Label("objects", GUILayout.Width(100));
-
-		GUILayout.EndHorizontal();
-		foreach (Space space in listSpaces)
-		{
-			if (SpaceFilter == "" || space.name.Contains(SpaceFilter) || space.creator.Contains (SpaceFilter))
-			{
-				GUILayout.BeginHorizontal();
-				if (space.name == strSpace)
-				{
-					GUI.color = Color.green;
-				}
-				else
-				{
-					GUI.color = Color.white;
-				}
-				if (GUILayout.Button(space.name, GUILayout.Width(200)))
-				{
-
-					strSpace = space.name;
-					NA.CurrentSpace = space;
-					Debug.Log ("Current Space id = " + NA.CurrentSpace.id);
-					if (Network.isServer)
-					{
-						GoToSpace(space);
-						ConnectToSpace(strSpace);
-					}
-
-					//Connect(space);
-					
-				}
-				GUILayout.Label(space.type, GUILayout.Width(100));
-				GUILayout.Label(space.creator, GUILayout.Width(100));
-				GUILayout.Label("", GUILayout.Width(100)); //creation date?
-				GUILayout.Label("", GUILayout.Width(100)); //last change?
-				GUILayout.Label(""+space.objectCount, GUILayout.Width(100)); //share/invite?
-
-				GUILayout.EndHorizontal();
-			}
-		}
-		
-		/*foreach (string space in spaces)
-		{
-			GUILayout.BeginHorizontal();
-			if (space == strSpace)
-			{
-				GUI.color = Color.green;
-			}
-			else
-			{
-				GUI.color = Color.white;
-			}
-			if (GUILayout.Button(space))
-			{
-				strSpace = space;
-				if (Network.isServer)
-				{
-					ConnectToSpace(strSpace);
-				}
-				//Connect(space);
-				
-			}
-			GUILayout.EndHorizontal();
-		}
-		*/
+		GUISpaces(false);
 		GUILayout.EndScrollView();
+
 		GUI.color = Color.white;
 		GUILayout.BeginHorizontal();
-
 		GUI.color = Color.gray;
 		//if (GUILayout.Button ("start server at " + Network.player.ipAddress)) 
 		if (GUILayout.Button ("run standalone", GUILayout.Width(120 ))) 
