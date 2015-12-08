@@ -193,6 +193,10 @@ public class App : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
+		//AssetBundlePreviewGenerator.Test("Bundles/grass_ground.unity3d");
+		//AssetBundlePreviewGenerator.Test("Bundles/CubeRouge.unity3d");
+		//AssetBundlePreviewGenerator.Test("Bundles/Lobby.unity3d");
+		//AssetBundlePreviewGenerator.Test("Bundles/sea.unity3d");
 		NA.app = this;
 		TransitionManager.Init();
 		TransitionManager.Start(TransitionManager.FadeIn,3f,Color.black, null);

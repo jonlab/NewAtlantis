@@ -10,7 +10,7 @@ public class NACameraThirdPerson : NACamera
 	public float 	smoothing = 0f;
 	public Camera 	camera;
 	public Vector3 	offset 	= new Vector3(0,0,-5);
-	public bool 	local 	= true; //local or world positionning
+	public bool 	local 	= true; 	//local or world positionning
 	Vector3 		pos;
 	Quaternion 		rot;
 
@@ -29,8 +29,6 @@ public class NACameraThirdPerson : NACamera
 			pos = camera.transform.position;
 			rot = camera.transform.rotation;
 		}
-		Camera cam = GetComponent<Camera>();
-		//cam.orthographic = true;
 	}
 
 	void LateUpdate()
