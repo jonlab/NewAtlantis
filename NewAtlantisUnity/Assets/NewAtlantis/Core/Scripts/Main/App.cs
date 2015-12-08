@@ -323,6 +323,7 @@ public class App : MonoBehaviour
 	void Update () 
 	{
 		ObjectUploader.Process ();
+		NADownloader.Process();
 		TransitionManager.Process();
 		timerGC+=Time.deltaTime;
 		/*timerRefresh+=Time.deltaTime;
@@ -1073,7 +1074,7 @@ public class App : MonoBehaviour
 		foreach (NAObject o in listObjects) 
 		{
 			progress_count += 1f;
-			if (o.www != null)
+			/*if (o.www != null)
 			{
 
 				progress_val += o.www.progress;
@@ -1082,6 +1083,7 @@ public class App : MonoBehaviour
 			{
 				progress_val += 1f;
 			}
+			*/
 		}
 		if (progress_count>0)
 		{
@@ -3235,17 +3237,19 @@ public class App : MonoBehaviour
 			string strLabel = "" + distance + /*o.file + */"m [" + o.go.transform.position.x + ";" +o.go.transform.position.y + ";" + o.go.transform.position.z + "]"; 
 			GUILayout.Label(strLabel);
             
-            if (o.www != null)
+            //if (o.www != null)
+			if (o.downloading)
 			{
 				//HERE
 				//GUILayout.Label ("downloading " + o.www.progress, GUILayout.Width(100));
-				GUILayout.HorizontalScrollbar(0, o.www.progress, 0, 1, GUILayout.Width(50));
+				GUILayout.HorizontalScrollbar(0, 0.5f/*o.www.progress*/, 0, 1, GUILayout.Width(50));
 			}
 			else
 				//GUILayout.Label (""+o.downloaded/1000 + " KB", GUILayout.Width(200));
 				GUILayout.Label ("OK", GUILayout.Width(50));
 			//GUI.Label(new Rect(400,y,100,30), o.GetStatus());
 
+			GUILayout.Label(o.file, GUILayout.Width(300));
 			GUILayout.EndHorizontal();
 
 		}

@@ -3,7 +3,7 @@ using System.Collections;
 
 public class AssetBundleTest : MonoBehaviour 
 {
-	private bool	bUseCache 	= false;
+	private bool	bUseCache 	= true;
 	private WWW 	www 		= null;
 	// Use this for initialization
 	void Start () 
