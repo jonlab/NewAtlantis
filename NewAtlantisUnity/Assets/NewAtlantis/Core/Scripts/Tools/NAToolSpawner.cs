@@ -99,6 +99,7 @@ public class NAToolSpawner : NAToolBase {
 			//clone.AddComponent<NAPlayOnCollide>();
 			clone.AddComponent<NAAudioRecorder>();
 			NA.DecorateAudioSource(src);
+			clone.AddComponent<NetworkSync>();
 		}
 		else
 		{

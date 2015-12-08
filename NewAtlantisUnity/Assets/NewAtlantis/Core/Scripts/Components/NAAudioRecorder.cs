@@ -6,8 +6,8 @@ using System.Collections;
 public class NAAudioRecorder : MonoBehaviour 
 {
 	AudioClip record 			= null;
-	public int SampleRate 		= 44100;
-	public int Duration 		= 3;
+	public int SampleRate 		= 22050;
+	public int Duration 		= 10;
 	private bool bShowGUI		= true;
 
 	// Use this for initialization
@@ -49,13 +49,15 @@ public class NAAudioRecorder : MonoBehaviour
 
 	void SendAudioDataToServer()
 	{
-		AudioSource audio = GetComponent<AudioSource>();
-
-		float[] data = new float[audio.clip.samples];
-		audio.clip.GetData(data, 0);
-
-		Debug.Log ("send " + data.Length + " samples of audio data");
-
+		//AudioSource audio = GetComponent<AudioSource>();
+		//float[] data = new float[audio.clip.samples];
+		//audio.clip.GetData(data, 0);
+		//Debug.Log ("send " + data.Length + " samples of audio data");
+		NetworkSync ns = GetComponent<NetworkSync>();
+		if (ns)
+		{
+			ns.ServerSyncAudio();
+		}
 	}
 	void Play()
 	{
@@ -82,7 +84,7 @@ public class NAAudioRecorder : MonoBehaviour
 				string strDisplay = name;
 				int x = (int)(pos2d.x*Screen.width);
 				int y = (int)(Screen.height-pos2d.y*Screen.height);
-				GUI.Box (new Rect(x,y,200,60), "AudioTrunk");
+				GUI.Box (new Rect(x,y,250,60), "AudioTrunk");
 				GUI.color = GetComponent<AudioSource>().isPlaying ? Color.green : Color.white;
 				if (GUI.Button (new Rect(x,y+30,50,30), "play"))
 				{
@@ -105,8 +107,18 @@ public class NAAudioRecorder : MonoBehaviour
 					GetComponent<AudioSource>().loop = !GetComponent<AudioSource>().loop;
 				}
 
+				if (GUI.Button (new Rect(x+200,y+30,50,30), "sync"))
+				{
+					SendAudioDataToServer();
+                }
+
 			}
 		}
 	}
+
+
+
+
+
 
 }

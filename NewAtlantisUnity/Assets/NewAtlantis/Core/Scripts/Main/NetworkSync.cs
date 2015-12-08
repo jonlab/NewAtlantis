@@ -18,8 +18,6 @@ public class NetworkSync : MonoBehaviour
 	NetworkView nv = null;
 	Dictionary<string,NetworkViewID>  networkViews = new Dictionary<string, NetworkViewID>();
 
-
-
 	//Audio Source state
 	AudioSource source;
 
@@ -28,13 +26,11 @@ public class NetworkSync : MonoBehaviour
 	float audio_panStereo 	= 0f;
 	float audio_pitch 		= 0f;
 	float audio_volume 		= 0f;
-
-
+	
 	// Use this for initialization
 	void Start () 
 	{
 		nv = GetComponent<NetworkView>();
-	
 	}
 	
 	// Update is called once per frame
@@ -54,7 +50,6 @@ public class NetworkSync : MonoBehaviour
 	void LateUpdate()
 	{
 		//let's do the sync
-
 		if (Network.isServer)
 		{
 			if (sources != null)
@@ -140,7 +135,6 @@ public class NetworkSync : MonoBehaviour
 				//LogManager.Log(log);
 			}
 		}
-
 	}
 
 	[RPC]
@@ -261,4 +255,81 @@ public class NetworkSync : MonoBehaviour
         }
         
     }
+
+
+
+	public void ServerSyncAudio()
+	{
+		//generate float data and send it with an RPC to the others
+		AudioSource audio = GetComponent<AudioSource>();
+		if (audio)
+		{
+			//float[] audioFloat = new float[audio.clip.samples * audio.clip.channels];
+			//audio.clip.GetData (audioFloat, 0);
+			//GetComponent<NetworkView>().RPC("SendAudioBuffer", RPCMode.Others, ToByteArray(audioFloat), audio.clip.channels);
+
+			//ADPCM
+			int samples = audio.clip.samples*audio.clip.channels;
+			LogManager.Log ("raw audio samples sent = " + samples);
+			byte[] data = CodecIMAADPCM.GetADPCMWAVData(audio.clip, samples);
+			GetComponent<NetworkView>().RPC("SendAudioBufferADPCM", RPCMode.Others, data);
+
+		}
+
+	}
+
+
+	[RPC]
+	void SendAudioBuffer(byte[] ba, int channels)
+	{
+		Debug.Log ("RPC SyncAudio");
+		AudioSource audio = GetComponent<AudioSource>();
+		if (audio)
+		{
+			float[] flar = ToFloatArray (ba);
+			audio.clip = AudioClip.Create ("sync", flar.Length, channels, 22050, true, false);
+			audio.clip.SetData (flar, 0);
+		}
+	}
+
+	[RPC]
+	void SendAudioBufferADPCM(byte[] adpcm)
+	{
+		AudioSource audio = GetComponent<AudioSource>();
+		if (audio)
+		{
+			audio.clip = CodecIMAADPCM.SetADPCMData(adpcm);
+			int samples = audio.clip.samples*audio.clip.channels;
+			LogManager.Log ("raw audio samples received = " + samples);
+		
+		}
+	}
+
+
+	
+	public byte[] ToByteArray(float[] floatArray) 
+	{
+		int len = floatArray.Length * 4;
+		byte[] byteArray = new byte[len];
+		int pos = 0;
+		foreach (float f in floatArray) 
+		{
+			byte[] data = System.BitConverter.GetBytes(f);
+			System.Array.Copy(data, 0, byteArray, pos, 4);
+			pos += 4;
+		}
+		return byteArray;
+	}
+
+
+	public float[] ToFloatArray(byte[] byteArray) 
+	{
+		int len = byteArray.Length / 4;
+		float[] floatArray = new float[len];
+		for (int i = 0; i < byteArray.Length; i+=4) 
+		{
+			floatArray[i/4] = System.BitConverter.ToSingle(byteArray, i);
+		}
+		return floatArray;
+	}
 }
