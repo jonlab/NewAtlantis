@@ -60,11 +60,11 @@ public class App : MonoBehaviour
 	public GameObject goPrefabAvatar; 
 
 	
-
+	/*
 	WWW www = null;
 	WWW wwwPost = null;
 	List<WWW> 			requests 	= new List<WWW>();
-
+	*/
 
 	XmlDocument 		xml 		= null;
 	XPathNavigator  	xpn			= null;
@@ -127,7 +127,7 @@ public class App : MonoBehaviour
 	GUIStyle style = new GUIStyle();
 	//CHAT
 	string strCurrentChatMessage = "";
-	string strName = "noname";
+	public string strName = "noname";
 	string strObjectName = "object_name";
 
 	static Vector2 WindowSize = new Vector2(790,530);
@@ -154,14 +154,18 @@ public class App : MonoBehaviour
 	private Vector2 scrollPosLobbySpaces 	= Vector2.zero;
 	private Vector2 scrollPosSpace 			= Vector2.zero;
 
-
+	/*
 	string 	strLogin 			= "";
 	string 	strPassword 		= "";
 	string 	strPasswordRetype 	= "";
 	string 	strEmail 			= "";
 	string 	strSpaceName 		= "";
+
+
 	bool	bSpacePublic 		= true;
 	bool	bAssetPublic 		= true;
+	*/
+
 
 	List<Space> 	listSpaces 	= new List<Space>();
 	List<Asset> 	listAssets 	= new List<Asset>(); //Asset bundles library 
@@ -182,8 +186,8 @@ public class App : MonoBehaviour
 		TransitionManager.Init();
 		TransitionManager.Start(TransitionManager.FadeIn,3f,Color.black, null);
 		Init();
-		strLogin 		= PlayerPrefs.GetString("login");
-		strPassword 	= PlayerPrefs.GetString("pwd");
+		NAServer.strLogin 		= PlayerPrefs.GetString("login");
+		NAServer.strPassword 	= PlayerPrefs.GetString("pwd");
 		colorAvatar 	= new Vector3(Random.value, Random.value, Random.value);
 		GameObject.DontDestroyOnLoad(gameObject);
 		refreshHostList();
@@ -240,7 +244,7 @@ public class App : MonoBehaviour
 		if (Network.isServer || Network.isClient)
 		{
 			//goAvatar = Network.Instantiate(goPrefabAvatar, Vector3.zero, Quaternion.identity, 0) as GameObject;
-			GetComponent<NetworkView>().RPC("SpawnAvatar", RPCMode.AllBuffered, Network.AllocateViewID(), colorAvatar, strLogin);
+			GetComponent<NetworkView>().RPC("SpawnAvatar", RPCMode.AllBuffered, Network.AllocateViewID(), colorAvatar, NAServer.strLogin);
 		}
 		else
 		{
@@ -334,7 +338,8 @@ public class App : MonoBehaviour
 		if (currentLocal != null)
 			currentLocal.Process();
 
-
+		NAServer.Process();
+		/*
 		if (www != null)
 		{
 			if (www.isDone)
@@ -369,7 +374,7 @@ public class App : MonoBehaviour
 				ParseXML(xml);
 			}
 		}
-
+		*/
 
 		//Mouse/Touch Raycasting
 		RaycastHit hit;
@@ -456,6 +461,7 @@ public class App : MonoBehaviour
 
 		UnactivateCameras (); //FIXME
 
+		/*
 		foreach (WWW w in requests) 
 		{
 			if (w.isDone)
@@ -465,6 +471,7 @@ public class App : MonoBehaviour
 				requests.Remove(w);
 			}
 		}
+		*/
 
 
 		//force add
@@ -573,7 +580,7 @@ public class App : MonoBehaviour
 	
 
 	//Parse incoming server XML
-	void ParseXML(string str)
+	public void ParseXML(string str)
 	{
 		Debug.Log("parsing XML...");
 		xml = new XmlDocument();
@@ -609,7 +616,7 @@ public class App : MonoBehaviour
 				else// if (state == AppState.Login || state == AppState.Space)
 				{
 					state = AppState.Spaces;
-					Get();
+					NAServer.Get();
 					//we tell the others that something changed
 					if (NA.isServer() || NA.isClient())
 					{
@@ -752,7 +759,7 @@ public class App : MonoBehaviour
 	[RPC]
 	void Refresh()
 	{
-		Get();
+		NAServer.Get();
 	}
 
 
@@ -778,7 +785,7 @@ public class App : MonoBehaviour
 	void Connect(string space)
 	{
 		Disconnect();
-		GetSpaceDescription(space);
+		NAServer.GetSpaceDescription(space);
 		bStartPopup = false;
 	}
 
@@ -804,7 +811,7 @@ public class App : MonoBehaviour
 		NA.PreviousSpace = NA.CurrentSpace;
 		NA.CurrentSpace = space;
 		DestroyAllSpaceObjects();
-		Get(); //get the space description
+		NAServer.Get(); //get the space description
 	}
 	
 
@@ -1025,7 +1032,7 @@ public class App : MonoBehaviour
 
 
 	//get the XML description of a given space name
-	void GetSpaceDescription(string space)
+	/*void GetSpaceDescription(string space)
 	{
 		string url = Settings.URLWebServer + "getspace.php?password=qkvnhr7d3Y";
 		url += "&space=" + space;
@@ -1038,6 +1045,7 @@ public class App : MonoBehaviour
 		url += "&space=" + space;
 		www = new WWW (url);
 	}
+	*/
 
 	//set an object position
 	/*
@@ -1057,7 +1065,7 @@ public class App : MonoBehaviour
 	*/
 
 	//move an object to a given space name
-	void SetObjectSpace(string id, string space)
+	/*void SetObjectSpace(string id, string space)
 	{
 		//string url = "http://www.tanant.info/newatlantis/set.php?password=qkvnhr7d3Y&action=setspace";
 		string url = Settings.URLWebServer + "set.php?password=qkvnhr7d3Y&action=setspace";
@@ -1067,6 +1075,7 @@ public class App : MonoBehaviour
 		WWW lwww = new WWW (url);
         requests.Add (lwww);
     }
+	*/
 
 
 
@@ -1359,7 +1368,7 @@ public class App : MonoBehaviour
 			renderer.material.color = new Color(color.x, color.y, color.z, 0.3f);
 		}
 
-		LogManager.Log ("New Avatar : " +  strLogin);
+		LogManager.Log ("New Avatar : " +  NAServer.strLogin);
 		NA.AddAvatar(clone);
     }
 
@@ -1428,11 +1437,11 @@ public class App : MonoBehaviour
 		GUI.color = Color.white;
 
 		GUILayout.BeginHorizontal();
-		GUILayout.Label ("Welcome, " + strLogin + " !");
+		GUILayout.Label ("Welcome, " + NAServer.strLogin + " !");
 		if (GUILayout.Button ("Logout", GUILayout.Width(100)))
 		{
-			strLogin = "";
-			strPassword = "";
+			NAServer.strLogin = "";
+			NAServer.strPassword = "";
 			state = AppState.Login;
 		}
 		GUILayout.EndHorizontal();
@@ -1495,7 +1504,7 @@ public class App : MonoBehaviour
 		foreach (Asset asset in listAssets)
 		{
 			if (
-				(tabAssets == TypeTab.Mine && asset.creator == strLogin || tabAssets == TypeTab.SharedWithMe && asset.type == "public" && asset.creator != strLogin)
+				(tabAssets == TypeTab.Mine && asset.creator == NAServer.strLogin || tabAssets == TypeTab.SharedWithMe && asset.type == "public" && asset.creator != NAServer.strLogin)
 				&&
 				(AssetFilter == "" || asset.name.Contains(AssetFilter) || asset.creator.Contains (AssetFilter))
 			 )
@@ -1545,13 +1554,13 @@ public class App : MonoBehaviour
 		GUILayout.BeginHorizontal();
 		if (CurrentAsset != null) //we act on selection
 		{
-			if (tabAssets == TypeTab.Mine && CurrentAsset.creator == strLogin)
+			if (tabAssets == TypeTab.Mine && CurrentAsset.creator == NAServer.strLogin)
 			{
 				if (GUILayout.Button("update", GUILayout.Width(100)))
 				{
 					//CurrentAsset = asset;
 					strObjectName 	= CurrentAsset.name;
-					bAssetPublic 	= CurrentAsset.type == "public" ? true : false;
+					NAServer.bAssetPublic 	= CurrentAsset.type == "public" ? true : false;
 					RefreshBundles();
 					state = AppState.Asset;
 				}
@@ -1562,7 +1571,7 @@ public class App : MonoBehaviour
 				//we add this asset to the current space
 				if (NA.CurrentSpace != null)
 				{
-					ObjectAdd(NA.CurrentSpace, CurrentAsset);
+					NAServer.ObjectAdd(NA.CurrentSpace, CurrentAsset);
 				}
 				else
 				{
@@ -1636,7 +1645,7 @@ public class App : MonoBehaviour
 	{
 		foreach (Space space in listSpaces)
 		{
-			bool bShow = userfilter && (tabSpaces == TypeTab.Mine && space.creator == strLogin || tabSpaces == TypeTab.SharedWithMe && space.type == "public" && space.creator != strLogin && space.objectCount > 0);
+			bool bShow = userfilter && (tabSpaces == TypeTab.Mine && space.creator == NAServer.strLogin || tabSpaces == TypeTab.SharedWithMe && space.type == "public" && space.creator != NAServer.strLogin && space.objectCount > 0);
 
 			if ((bShow || !userfilter && space.objectCount > 0) && (SpaceFilter == "" || space.name.Contains(SpaceFilter) || space.creator.Contains (SpaceFilter)))
 			{
@@ -1982,12 +1991,12 @@ public class App : MonoBehaviour
 			TransitionManager.Start(TransitionManager.FadeIn,3f,Color.white, null);
 			tab = AppTab.None; //hide windows
 			Network.InitializeServer(32, 7890, true);
-			string strGameName = strSpace + " [" + strLogin + "]";
+			string strGameName = strSpace + " [" + NAServer.strLogin + "]";
 			MasterServer.RegisterHost("NewAtlantis", strGameName, "created : " + System.DateTime.Now + " on " + SystemInfo.deviceModel + " running " + SystemInfo.operatingSystem);
 			CreateNetworkAvatar();
 			//if (strSpace != "")
 			//	ConnectToSpace(strSpace);
-			Get(); //le Get avec un selected space forcera la création des objets : à revoir...
+			NAServer.Get(); //le Get avec un selected space forcera la création des objets : à revoir...
 
 			refreshHostList();
 			//bNetwork = false;
@@ -2122,22 +2131,22 @@ public class App : MonoBehaviour
 		
 		GUILayout.BeginHorizontal();
 		GUILayout.Label("Login", GUILayout.Width(100));
-		strLogin = GUILayout.TextField (strLogin);
+		NAServer.strLogin = GUILayout.TextField (NAServer.strLogin);
 		GUILayout.EndHorizontal();
 		
 		GUILayout.BeginHorizontal();
 		GUILayout.Label("Password", GUILayout.Width(100));
-		strPassword = GUILayout.PasswordField (strPassword, "*"[0]);
+		NAServer.strPassword = GUILayout.PasswordField (NAServer.strPassword, "*"[0]);
 		GUILayout.EndHorizontal();
 
 		GUILayout.BeginHorizontal();
 		GUILayout.Label("Retype password", GUILayout.Width(100));
-		strPasswordRetype = GUILayout.PasswordField (strPasswordRetype, "*"[0]);
+		NAServer.strPasswordRetype = GUILayout.PasswordField (NAServer.strPasswordRetype, "*"[0]);
 		GUILayout.EndHorizontal();
 
 		GUILayout.BeginHorizontal();
 		GUILayout.Label("Email", GUILayout.Width(100));
-		strEmail = GUILayout.TextField (strEmail);
+		NAServer.strEmail = GUILayout.TextField (NAServer.strEmail);
 		GUILayout.EndHorizontal();
 
 		GUILayout.BeginHorizontal();
@@ -2148,21 +2157,21 @@ public class App : MonoBehaviour
 		}
 		if (GUILayout.Button ("Register"))
 		{
-			if (strPassword != strPasswordRetype)
+			if (NAServer.strPassword != NAServer.strPasswordRetype)
 			{
 				LogManager.LogError("ERROR, password must match!");
 			}
-			else if (!strEmail.Contains("@") || !strEmail.Contains("."))
+			else if (!NAServer.strEmail.Contains("@") || !NAServer.strEmail.Contains("."))
 			{
 				LogManager.LogError("ERROR, please enter a valid email!");
 			}
-			else if (strPassword.Length < 8)
+			else if (NAServer.strPassword.Length < 8)
 			{
 				LogManager.LogError("ERROR, your password must be at least 8 characters long");
 			}
 			else
 			{
-				UserRegister();
+				NAServer.UserRegister();
 				
 			}
 
@@ -2225,7 +2234,7 @@ public class App : MonoBehaviour
 		strObjectName = GUILayout.TextField (strObjectName, GUILayout.Width(100));
 
 		GUILayout.Label("Type", GUILayout.Width(100));
-		bAssetPublic = GUILayout.Toggle(bAssetPublic, "public");
+		NAServer.bAssetPublic = GUILayout.Toggle(NAServer.bAssetPublic, "public");
 		GUILayout.EndHorizontal();
 
 		GUILayout.BeginHorizontal();
@@ -2242,11 +2251,11 @@ public class App : MonoBehaviour
 			byte[] data = System.IO.File.ReadAllBytes("Bundles/"+strFile);
 			if (CurrentAsset != null)
 			{
-				this.AssetUpdate (CurrentAsset.id, data, strObjectName);
+				NAServer.AssetUpdate (CurrentAsset.id, data, strObjectName);
 			}
 			else
 			{
-				this.AssetAdd(data, strObjectName);
+				NAServer.AssetAdd(data, strObjectName);
 			}
         }
 #endif
@@ -2254,9 +2263,9 @@ public class App : MonoBehaviour
 
 		GUILayout.BeginHorizontal();
 
-		if (wwwPost != null)
+		if (NAServer.wwwPost != null)
 		{
-			float p = wwwPost.uploadProgress;
+			float p = NAServer.wwwPost.uploadProgress;
 			//GUILayout.Label("Upload=" + p, GUILayout.Width(100));
 			GUILayout.HorizontalScrollbar(0, p, 0, 1);
 		}
@@ -2317,7 +2326,7 @@ public class App : MonoBehaviour
 
 		GUILayout.BeginHorizontal();
 		GUILayout.Label("Name", GUILayout.Width(100));
-		strSpaceName = GUILayout.TextField (strSpaceName);
+		NAServer.strSpaceName = GUILayout.TextField (NAServer.strSpaceName);
 		GUILayout.EndHorizontal();
 		
 		/*GUILayout.BeginHorizontal();
@@ -2327,7 +2336,7 @@ public class App : MonoBehaviour
 
 		GUILayout.BeginHorizontal();
 		GUILayout.Label("Type", GUILayout.Width(100));
-		bSpacePublic = GUILayout.Toggle(bSpacePublic, "public");
+		NAServer.bSpacePublic = GUILayout.Toggle(NAServer.bSpacePublic, "public");
 		GUILayout.EndHorizontal();
 
 
@@ -2346,7 +2355,7 @@ public class App : MonoBehaviour
 		}
 		if (GUILayout.Button ("Create"))
 		{
-			SpaceCreate();
+			NAServer.SpaceCreate();
 			return;
 		}
 		GUILayout.EndHorizontal();
@@ -2364,12 +2373,12 @@ public class App : MonoBehaviour
 
 		GUILayout.BeginHorizontal();
 		GUILayout.Label("Login", GUILayout.Width(100));
-		strLogin = GUILayout.TextField (strLogin);
+		NAServer.strLogin = GUILayout.TextField (NAServer.strLogin);
 		GUILayout.EndHorizontal();
 
 		GUILayout.BeginHorizontal();
 		GUILayout.Label("Password", GUILayout.Width(100));
-		strPassword = GUILayout.PasswordField (strPassword, "*"[0]);
+		NAServer.strPassword = GUILayout.PasswordField (NAServer.strPassword, "*"[0]);
 		GUILayout.EndHorizontal();
 
 		GUILayout.BeginHorizontal();
@@ -2380,7 +2389,7 @@ public class App : MonoBehaviour
 		}
 		if (GUILayout.Button ("Connect"))
 		{
-			UserConnect();
+			NAServer.UserConnect();
 			return;
 		}
 		GUILayout.EndHorizontal();
@@ -2392,7 +2401,7 @@ public class App : MonoBehaviour
 
 
 
-
+	/*
 
 
 
@@ -2518,7 +2527,7 @@ public class App : MonoBehaviour
 		wwwPost = new WWW("http://tanant.info/newatlantis2/get.php", form);
 	}
 
-
+	*/
 
 
 
@@ -2629,14 +2638,14 @@ public class App : MonoBehaviour
 			{
 				currentSelection.position = currentSelection.go.transform.position;
 				currentSelection.angles = currentSelection.go.transform.eulerAngles;
-				ObjectUpdate(currentSelection.id, currentSelection.position, currentSelection.angles);
+				NAServer.ObjectUpdate(currentSelection.id, currentSelection.position, currentSelection.angles);
 			}
 
 			if (GUILayout.Button ("delete", GUILayout.Width(100)))
 			{
 				currentSelection.position = currentSelection.go.transform.position;
 				currentSelection.angles = currentSelection.go.transform.eulerAngles;
-				ObjectDelete(currentSelection.id);
+				NAServer.ObjectDelete(currentSelection.id);
 				//SetObjectSpace(o.id, "trash"); //move to trash
 				GameObject.Destroy(currentSelection.go);
 				currentSelection.go = null;
