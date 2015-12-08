@@ -21,6 +21,8 @@ public class AssetBundleTest : MonoBehaviour
 				AssetBundle bundle = www.assetBundle;
 				bundle.LoadAllAssets();
 				bundle.Unload(false);
+				//bundle.LoadAllAssets();
+				//bundle.Unload(false);
 				www.Dispose();
 				www = null;
 			}

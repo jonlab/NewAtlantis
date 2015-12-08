@@ -46,6 +46,9 @@ public class FlyCamera : MonoBehaviour {
 		float joy_speed = 4f;
 		if (NAInput.GetControl(NAControl.Jump))
 			joy_speed = 20f;
+
+		bool jump = NAInput.GetControlUp(NAControl.Jump);
+
 		float x = NAInput.GetAxis(NAControl.MoveHorizontal);
 		float y = NAInput.GetAxis(NAControl.MoveVertical);
 
@@ -56,6 +59,11 @@ public class FlyCamera : MonoBehaviour {
 			rb.AddForce(transform.forward * joy_speed * dt*y*100);
 			//transform.position += transform.right * joy_speed * dt*x;
 			//transform.position += transform.forward * joy_speed * dt*y;
+
+			if (jump)
+			{
+				rb.AddForce(transform.up * joy_speed *100);
+			}
 		}
 		else
 		{

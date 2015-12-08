@@ -2,13 +2,19 @@
 using System.Collections;
 using System.Collections.Generic;
 
+
+public class NADownloadInfo
+{
+	public string url = "";
+	public string id = "";
+}
 public class NADownloader 
 {
 	private static WWW 	www 		= null;
-	private static List<string> urls = new List<string>();
+	private static List<NADownloadInfo> downloads = new List<NADownloadInfo>();
 	private static Dictionary<string, AssetBundle> bundles = new Dictionary<string, AssetBundle>();
 	public static bool bUseCache = true;
-	public static string url = "";
+	public static NADownloadInfo current = null;
 
 	public static void Process()
 	{
@@ -23,13 +29,12 @@ public class NADownloader
 			{
 				//Debug.Log ("get asset bundle for url " + url);
 				AssetBundle bundle = www.assetBundle;
-
-				if (GetAssetBundle(url) == null && bundle != null)
+				if (GetAssetBundle(current.id) == null && bundle != null)
 				{
-					if (!bundles.ContainsKey(url))
+					if (!bundles.ContainsKey(current.id))
 					{
 						//Debug.LogWarning ("Add Bundle for key " + url + " val=" + bundle);
-						bundles.Add (url, bundle);
+						bundles.Add (current.id, bundle);
 					}
 				}
 				www.Dispose();
@@ -48,30 +53,35 @@ public class NADownloader
 		}
 	}
 
-	public static void Download(string url)
+	public static string Download(string url)
 	{
+		//JT : we have to download again even if already downloaded because the Unload() destroys the Asset Bundle
+		/*
 		if (urls.Contains(url))
 		{
 			//Debug.LogWarning ("already downloading : " + url);
 		    return; //already downloading
 		}
-		urls.Add (url);
+		*/
+		NADownloadInfo info = new NADownloadInfo();
+		info.url = url;
+		//info.id = ""+Time.time*1000; //"unique ID"
+		info.id = ""+Random.value*10000000f;
+		Debug.Log ("id = " + info.id);
+		downloads.Add (info);
+		return info.id;
+
 	}
 
-	public static AssetBundle GetAssetBundle(string url)
+	public static AssetBundle GetAssetBundle(string id)
 	{
 		try
 		{
-			//Debug.Log ("get asset bundle from Dictionary for url " + url);
-			//Debug.Log ("contains key " + url + " = " + bundles.ContainsKey(url));
-			//we try to get the Asset Bundle from our cache
-			AssetBundle b = bundles[url];
-			//Debug.Log ("found " + b);
+			AssetBundle b = bundles[id];
 			return b;
 		}
 		catch (System.Collections.Generic.KeyNotFoundException e)
 		{
-			//Debug.Log ("NOT FOUND");
 			return null;
 		}
 	}
@@ -79,18 +89,18 @@ public class NADownloader
 	private static void Next()
 	{
 		//Debug.Log ("Next");
-		if (urls.Count == 0)
+		if (downloads.Count == 0)
 			return;
-		url = urls[0];
-		Debug.Log ("trying to download " + url);
-		urls.RemoveAt(0);
+		current = downloads[0];
+		Debug.Log ("trying to download " + current.url);
+		downloads.RemoveAt(0);
 		if (bUseCache)
 		{
-			www = WWW.LoadFromCacheOrDownload(url, 1);
+			www = WWW.LoadFromCacheOrDownload(current.url, 1);
 		}
 		else
 		{
-			www = new WWW(url);
+			www = new WWW(current.url);
 		}
 
 	}
