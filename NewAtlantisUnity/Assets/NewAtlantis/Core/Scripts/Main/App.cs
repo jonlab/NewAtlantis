@@ -52,18 +52,20 @@ public class App : MonoBehaviour
 
 	List<NAObject> listObjects = new List<NAObject>();
 	string strSpace = "";
-	//string strFile = "file";
 	NAObject currentSelection = null;
 	NAObject currentLocal = null;
 	public GameObject goPrefabCube; 
 	//public GameObject goPrefabCubeSimple; 
 	public GameObject goPrefabSphere; 
 	public GameObject goPrefabAvatar; 
-	//public GameObject goPrefabAvatar; 
-	//string[] spaces = {"aix_workshop", "aix1", "aix2", "main-level", "space5", "jonathan", "test", "test1", "test2"};
-	string[] spaces = {"jonathan", "test", "mark1", "mark2", "jonathan", "test"};
+
+	
+
 	WWW www = null;
 	WWW wwwPost = null;
+	List<WWW> 			requests 	= new List<WWW>();
+
+
 	XmlDocument 		xml 		= null;
 	XPathNavigator  	xpn			= null;
 	XmlNamespaceManager xnm 		= null;
@@ -77,24 +79,12 @@ public class App : MonoBehaviour
 
 	GameObject			goRootSpace = null;
 	bool				loading		= false;
-	private Vector2 scrollPos = Vector2.zero;
-
-	private Vector2 scrollPosMySpaces 		= Vector2.zero;
-	private Vector2 scrollPosSharedSpaces 	= Vector2.zero;
-	private Vector2 scrollPosMyAssets 		= Vector2.zero;
-	private Vector2 scrollPosAssetFileDialog = Vector2.zero;
-	private Vector2 scrollPosSharedAssets 	= Vector2.zero;
-	private Vector2 scrollPosLobbySpaces 	= Vector2.zero;
-
-	private Vector2 scrollPosSpace 	= Vector2.zero;
-
-
 
 	private  FileInfo[] 	info = null;
 
 	List<GameObject> 	cameras 	= new List<GameObject>();
 	//List<GameObject>	player_objects = new List<GameObject>();
-	List<WWW> 			requests 	= new List<WWW>();
+
 
 	Vector3				colorAvatar = Vector3.zero;
 	string				strPick = "";
@@ -109,11 +99,9 @@ public class App : MonoBehaviour
 	//GameObject goAvatar = null;
 	GameObject goGrab = null;
 	Vector3		PreviousMousePosition = Vector3.zero;
-
-
+	
 	AppTab 		tab = AppTab.Lobby;
 	AppTab[] 	tabs = {AppTab.Lobby, AppTab.User, AppTab.Space, AppTab.Scene, AppTab.Options, AppTab.Chat, AppTab.About};
-	
 
 	TypeTab 	tabAssets = TypeTab.Mine;
 	TypeTab 	tabSpaces = TypeTab.Mine;
@@ -130,23 +118,13 @@ public class App : MonoBehaviour
 	bool	bPullObjects 	= false;
 	bool	bGrab 			= false;
 
-	//string[] tools = {"Cube", "Sphere", "Cylinder", "Sparkle", "Push", "Pull"};
-	//private List<NAToolBase> tools = new List<NAToolBase>();
 	private NAToolBase[] tools;
 	private int current_tool = 0;
-
 	//cameras
 	private NACamera[] camerascripts;
 	private int current_camera = 0;
 
-
-
-
-
-
-
 	GUIStyle style = new GUIStyle();
-
 	//CHAT
 	string strCurrentChatMessage = "";
 	string strName = "noname";
@@ -157,8 +135,7 @@ public class App : MonoBehaviour
 	Rect mGuiWinRectNetwork 	= new Rect(Screen.width/2-200, Screen.height/2-250, 400, 500);
 	Rect mGuiWinRectCameras 	= new Rect(0, Screen.height/2-200, 200, 400);
 	Rect mGuiWinRectLights 		= new Rect(400, Screen.height/2-200, 200, 400);
-	Rect mGuiWinRectAudioSources 		= new Rect(Screen.width/2-200, Screen.height/2-300, 400, 600);
-
+	Rect mGuiWinRectAudioSources = new Rect(Screen.width/2-200, Screen.height/2-300, 400, 600);
 	Rect mGuiWinRectSpaces 		= new Rect(Screen.width/2-WindowSize.x/2, Screen.height/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
 	Rect mGuiWinRectOptions 	= new Rect(600, Screen.height/2-200, 200, 400);
 	Rect mGuiWinRectAbout 		= new Rect(800, Screen.height/2-200, 200, 400);
@@ -166,10 +143,16 @@ public class App : MonoBehaviour
 	Rect mGuiWinRectRegister 	= new Rect(Screen.width/2-150, Screen.height/2-150, 300, 300);
 	Rect mGuiWinRectSpace 		= new Rect(Screen.width/2-200, Screen.height/2-200, 400, 400);
 	Rect mGuiWinRectAsset 		= new Rect(Screen.width/2-200, Screen.height/2-200, 400, 400);
-
-	Rect mGuiWinRectLobby 	= new Rect(Screen.width/2-WindowSize.x/2, Screen.height/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
-	Rect mGuiWinRectUser 	= new Rect(Screen.width/2-WindowSize.x/2, Screen.height/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
-	//options
+	Rect mGuiWinRectLobby 		= new Rect(Screen.width/2-WindowSize.x/2, Screen.height/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
+	Rect mGuiWinRectUser 		= new Rect(Screen.width/2-WindowSize.x/2, Screen.height/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
+	private Vector2 scrollPos 	= Vector2.zero;
+	private Vector2 scrollPosMySpaces 		= Vector2.zero;
+	private Vector2 scrollPosSharedSpaces 	= Vector2.zero;
+	private Vector2 scrollPosMyAssets 		= Vector2.zero;
+	private Vector2 scrollPosAssetFileDialog = Vector2.zero;
+	private Vector2 scrollPosSharedAssets 	= Vector2.zero;
+	private Vector2 scrollPosLobbySpaces 	= Vector2.zero;
+	private Vector2 scrollPosSpace 			= Vector2.zero;
 
 
 	string 	strLogin 			= "";
@@ -177,18 +160,16 @@ public class App : MonoBehaviour
 	string 	strPasswordRetype 	= "";
 	string 	strEmail 			= "";
 	string 	strSpaceName 		= "";
-	string 	strSpaceType 		= "";
 	bool	bSpacePublic 		= true;
 	bool	bAssetPublic 		= true;
 
 	List<Space> 	listSpaces 	= new List<Space>();
 	List<Asset> 	listAssets 	= new List<Asset>(); //Asset bundles library 
-	//List<Asset> 	listAssetsShared 	= new List<Asset>(); 
-	string[] assets = {"cube", "sphere", "cylinder", "plane", "soundhouse"};
 	Asset 			CurrentAsset = null;
 	string			AssetFilter = "";
 	string			SpaceFilter = "";
 	HostData 		currentHost = null;
+
 
 	// Use this for initialization
 	void Start () 
@@ -197,7 +178,7 @@ public class App : MonoBehaviour
 		//AssetBundlePreviewGenerator.Test("Bundles/CubeRouge.unity3d");
 		//AssetBundlePreviewGenerator.Test("Bundles/Lobby.unity3d");
 		//AssetBundlePreviewGenerator.Test("Bundles/sea.unity3d");
-		NA.app = this;
+		NA.app 			= this;
 		TransitionManager.Init();
 		TransitionManager.Start(TransitionManager.FadeIn,3f,Color.black, null);
 		Init();
@@ -208,7 +189,6 @@ public class App : MonoBehaviour
 		refreshHostList();
 		goRootSpace 	= new GameObject("root_space");
 		goRootSpace.transform.position = Vector3.zero;
-		GameObject go 	= GameObject.Find ("Cylinder");
 		mainCamera 		= Camera.main;
 		selectedCamera 	= mainCamera;
 		NA.listener 	= mainCamera.GetComponent<AudioListener>();
@@ -216,15 +196,9 @@ public class App : MonoBehaviour
 		texWhite 		= Resources.Load ("white") as Texture2D;
 		goMainLight 	= GameObject.Find ("MainLightViewer");
 		ChatManager.Log("system", "welcome to New Atlantis", 0);
-
 		NAToolBase[] _tools = GetComponents<NAToolBase>();
-		foreach (NAToolBase b in _tools)
-		{
-			//b.
-		}
-
-
 	}
+
 
 
 	void Init()
@@ -236,9 +210,6 @@ public class App : MonoBehaviour
 		camerascripts = GetComponents<NACamera>();
 		current_camera = 0;
 		SetCurrentCamera(camerascripts[current_camera]);
-
-
-
 	}
 
 	void SetCurrentTool(NAToolBase t)
@@ -315,23 +286,30 @@ public class App : MonoBehaviour
 				al.enabled = false;
 			}
 		}
-
 	}
+
+
 
 	void LateUpdate()
 	{
 		NA.SetAvatarPositionAndAngles(transform.position, transform.eulerAngles);
 	}
 
+
+
+
+
+
 	// Update is called once per frame
 	void Update () 
 	{
-		ObjectUploader.Process ();
+		ObjectUploader.Process();
 		NADownloader.Process();
 		TransitionManager.Process();
-		timerGC+=Time.deltaTime;
-		/*timerRefresh+=Time.deltaTime;
 
+		timerGC+=Time.deltaTime;
+
+		/*timerRefresh+=Time.deltaTime;
 		if (timerRefresh > 5f && state != AppState.Asset)
 		{
 			timerRefresh = 0f;
@@ -356,6 +334,7 @@ public class App : MonoBehaviour
 		if (currentLocal != null)
 			currentLocal.Process();
 
+
 		if (www != null)
 		{
 			if (www.isDone)
@@ -364,7 +343,6 @@ public class App : MonoBehaviour
 				ParseXML(www.text);
 				www.Dispose();
 				www = null;
-				//DownloadAll(); //we download all the objects
 			}
 		}
 
@@ -406,42 +384,7 @@ public class App : MonoBehaviour
 			}
 		}
 
-
-
-		//actions
-
 		//ACTION
-		//JUMP
-		//CAMERA
-		//MENU
-
-		//Debug.Log ("scan buttons");
-		if (Input.GetButtonDown("Action"))
-		{
-			Debug.Log ("Action");
-		}
-		if (Input.GetButtonDown("Menu"))
-		{
-			Debug.Log ("Menu");
-
-		}
-		if (Input.GetButtonDown("Camera"))
-		{
-			Debug.Log ("Camera");
-
-		}
-		if (Input.GetButtonDown("Jump"))
-		{
-			Debug.Log ("Jump");
-
-		}
-
-
-
-
-
-		//ACTION
-		//if (Input.GetKeyDown(KeyCode.Return))
 		if (NAInput.GetControlDown(NAControl.Action))
 		{
 			NAToolBase t = tools[current_tool];
@@ -449,43 +392,34 @@ public class App : MonoBehaviour
 		}
 
 		//Previous tool
-		//if (Input.GetKeyDown(KeyCode.A))
 		if (NAInput.GetControlDown(NAControl.PreviousTool))
 		{
-			//current_tool = (current_tool + tools.Count-1)%tools.Count;
 			current_tool = (current_tool + tools.Length-1)%tools.Length;
 			SetCurrentTool(tools[current_tool]);
 		}
 
 		//Next tool
-		//if (Input.GetKeyDown(KeyCode.Z))
 		if (NAInput.GetControlDown(NAControl.NextTool))
 		{
-			//current_tool = (current_tool + 1)%tools.Count;
 			current_tool = (current_tool + 1)%tools.Length;
 			SetCurrentTool(tools[current_tool]);
         }
 
-
+		//camera change
 		if (NAInput.GetControlDown(NAControl.Camera))
 		{
 			current_camera = (current_camera + 1)%camerascripts.Length;
 			SetCurrentCamera(camerascripts[current_camera]);
 		}
 
-
 		//touche menu
-		//if (Input.GetKeyDown(KeyCode.LeftControl))
 		if (NAInput.GetControlDown(NAControl.Menu))
 		{
 			bGUI = !bGUI;
-
 			Cursor.visible = bGUI;
-
 		}
 
 		//à déplacer dans un tool ?
-
 		if (Input.GetKeyDown(KeyCode.P))
 		{
 			//RaycastHit hit;
@@ -495,50 +429,7 @@ public class App : MonoBehaviour
 				currentSelection.go.transform.position = hit.point;
 			}
 		}
-
 		/*
-		if (Input.GetKeyDown(KeyCode.S))// || Input.GetButtonDown("Fire2"))
-		{
-				GameObject goProjectile = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-				goProjectile.transform.position = selectedCamera.transform.position;
-				goProjectile.transform.localScale = Vector3.one*1f;
-				goProjectile.AddComponent<Rigidbody>();
-				goProjectile.GetComponent<Rigidbody>().AddForce(selectedCamera.transform.forward*2000f);
-				goProjectile.GetComponent<Renderer>().material.color = Color.blue;
-				goProjectile.GetComponent<Rigidbody>().collisionDetectionMode = CollisionDetectionMode.Continuous;
-				goProjectile.GetComponent<Rigidbody>().mass = 0.1f;
-				goProjectile.GetComponent<Rigidbody>().drag = 0f;
-				goProjectile.GetComponent<Rigidbody>().interpolation = RigidbodyInterpolation.Interpolate;
-				AudioSource src = goProjectile.AddComponent<AudioSource>();
-				src.playOnAwake = false;
-				//src.rolloffMode = AudioRolloffMode.Linear;
-				src.clip = Resources.Load ("CLANG") as AudioClip;
-				goProjectile.AddComponent<NAPlayOnCollide>();
-				goProjectile.AddComponent<NAAudioSource>();
-				NAPlayOnKeyPressed kp = goProjectile.AddComponent<NAPlayOnKeyPressed>();
-				kp.key = KeyCode.A;
-				NA.DecorateAudioSource(src);
-		}
-		*/
-
-		/*if (Input.GetKeyDown(KeyCode.N))
-		{
-			CreateCube();
-		}
-		*/
-
-		//if (Input.GetButtonDown("Fire1"))
-		{
-			
-		}
-		/*if (Input.GetKeyDown(KeyCode.N))
-        {
-			if (goAvatar != null)
-			{
-				Rigidbody rb = GetComponent<Rigidbody>();
-				rb.isKinematic = !rb.isKinematic;
-			}
-		}*/
 		if (Input.GetKeyDown(KeyCode.J))
 		{
 			GetComponent<NetworkView>().RPC("ServerSpawnObject", RPCMode.AllBuffered, "sphere", gameObject.transform.position+selectedCamera.transform.forward, Vector3.zero, colorAvatar);
@@ -551,6 +442,7 @@ public class App : MonoBehaviour
 		{
 			GetComponent<NetworkView>().RPC("ServerSpawnObject", RPCMode.AllBuffered, "cylinder", gameObject.transform.position+selectedCamera.transform.forward, selectedCamera.transform.forward, colorAvatar);
         }
+        */
 		/* removed on 30/11
 		if (Input.GetKeyDown(KeyCode.Return))// || Input.GetButtonDown("Fire1"))
 		{
@@ -560,24 +452,8 @@ public class App : MonoBehaviour
 		if (Input.GetKeyDown(KeyCode.T))// || Input.GetButtonDown("Fire3"))
 		{
 			GetComponent<NetworkView>().RPC("ServerSpawnObject", RPCMode.AllBuffered, "trunk", gameObject.transform.position+selectedCamera.transform.forward, selectedCamera.transform.forward, colorAvatar);
-			/*GameObject goTrunk = GameObject.CreatePrimitive(PrimitiveType.Cube);
-			goTrunk.transform.position = selectedCamera.transform.position;
-			goTrunk.transform.localScale = new Vector3(1f,0.4f, 0.6f);
-			goTrunk.AddComponent<Rigidbody>();
-			goTrunk.GetComponent<Rigidbody>().AddForce(selectedCamera.transform.forward*1000f);
-			goTrunk.GetComponent<Renderer>().material.color = Color.red;
-			goTrunk.GetComponent<Rigidbody>().collisionDetectionMode = CollisionDetectionMode.Continuous;
-			goTrunk.GetComponent<Rigidbody>().mass = 2f;
-			goTrunk.GetComponent<Rigidbody>().drag = 0f;
-			AudioSource src = goTrunk.AddComponent<AudioSource>();
-			src.playOnAwake = false;
-			//src.rolloffMode = AudioRolloffMode.Linear;
-			goTrunk.AddComponent<NAPlayOnCollide>();
-			goTrunk.AddComponent<NAAudioRecorder>();
-
-			NA.DecorateAudioSource(src);
-			*/
 		}
+
 		UnactivateCameras (); //FIXME
 
 		foreach (WWW w in requests) 
@@ -591,12 +467,9 @@ public class App : MonoBehaviour
 		}
 
 
-
 		//force add
 		if (Input.GetMouseButton(0))
 		{
-
-
 			if (goPick != null)
 			{
 				if (bPushObjects && Input.GetMouseButtonDown(0))
@@ -697,28 +570,7 @@ public class App : MonoBehaviour
         }
 	}
 
-
-        
-    /*
-    GameObject InstantiateObject(GameObject goModel, Vector3 pos, Quaternion rot, Vector3 scale, int group)
-	{
-		GameObject goProjectile = null;
-		if (Network.isServer || Network.isClient)
-		{
-			goProjectile = Network.Instantiate(goModel, pos, rot, 0) as GameObject;
-
-		}
-		else
-		{
-			goProjectile = GameObject.Instantiate(goModel, pos, rot) as GameObject;
-
-		}
-		goProjectile.transform.localScale = scale;
-		player_objects.Add(goProjectile);
-		return goProjectile;
-	}
-	*/
-
+	
 
 	//Parse incoming server XML
 	void ParseXML(string str)
@@ -814,15 +666,12 @@ public class App : MonoBehaviour
 											string name = xpnicc.Current.GetAttribute("name","");
 											string filename = xpnicc.Current.GetAttribute("filename","");
 											string id = xpnicc.Current.GetAttribute("id","");
-											
 											float x = float.Parse(xpnicc.Current.GetAttribute("x",""));
 											float y = float.Parse(xpnicc.Current.GetAttribute("y",""));
 											float z = float.Parse(xpnicc.Current.GetAttribute("z",""));
-											
 											float ax = float.Parse(xpnicc.Current.GetAttribute("ax",""));
 											float ay = float.Parse(xpnicc.Current.GetAttribute("ay",""));
 											float az = float.Parse(xpnicc.Current.GetAttribute("az",""));
-											
 											NetworkLoadObject(name, new Vector3 (x, y, z), new Vector3(ax, ay, az), filename, id);
 										}
 										else
@@ -887,12 +736,6 @@ public class App : MonoBehaviour
 						continue;
 
 					NetworkLoadObject(name, new Vector3 (x, y, z), new Vector3(ax, ay, az), filename, id);
-					/*
-					NAObject n = new NAObject (name, new Vector3 (x, y, z), new Vector3(ax, ay, az), filename);
-					n.id = id;
-
-					listObjects.Add(n);
-					*/
 				}
 			}
 		}
@@ -916,24 +759,20 @@ public class App : MonoBehaviour
 	[RPC]
 	void LoadObject(string _name, NetworkViewID _viewID, Vector3 _pos, Vector3 _angles, string _filename, string _id) 
 	{
-
 		//on regarde si l'object n'existe pas déjà
-
 		foreach (NAObject o in listObjects) 
         {
 			if (o.id == _id)
 				return;
 		}
-
 		Debug.Log ("RPC LoadObject " + _name + " " + _filename);
 		// créer un objet vide pour la synchro, puis ajouter l'objet téléchargé en child
 		NAObject n = new NAObject (goRootSpace, _name, _pos, _angles, _filename, _viewID);
 		n.id = _id;
-
-
 		listObjects.Add(n);
 		n.Download();
 	}
+
 
 
 	void Connect(string space)
@@ -943,9 +782,9 @@ public class App : MonoBehaviour
 		bStartPopup = false;
 	}
 
+
 	public void GoToSpace(int spaceid)
 	{
-
 		foreach (Space space in listSpaces)
 		{
 			if (space.id == spaceid)
@@ -954,9 +793,8 @@ public class App : MonoBehaviour
 				break;			
 			}
 		}
-
-
 	}
+
 
 	public void GoToSpace(Space space)
 	{
@@ -968,12 +806,9 @@ public class App : MonoBehaviour
 		DestroyAllSpaceObjects();
 		Get(); //get the space description
 	}
+	
 
 
-	public void TestInput()
-	{
-		//Input.GetBu
-	}
 	public void DestroyAllSpaceObjects()
 	{
 		foreach (NAObject o in listObjects) 
@@ -986,10 +821,11 @@ public class App : MonoBehaviour
 		}
 		listObjects.Clear ();
 	}
+
+
 	void Disconnect()
 	{
 		//bStartPopup = true;
-
 		if (Network.isClient)
 		{
 			Network.RemoveRPCs(Network.player);
@@ -999,7 +835,6 @@ public class App : MonoBehaviour
 				Network.DestroyPlayerObjects(player); 
             }
 		}
-           
 		DestroyAllSpaceObjects();
 		selectedCamera = mainCamera;
         cameras.Clear ();
@@ -1008,22 +843,14 @@ public class App : MonoBehaviour
 		NA.DestroyPlayerObjects2();
     }
     
+
+
     void OnGUI()
     {
-
-
 		//reticule
 		int reticule_size = 50;
 		GUI.DrawTexture (new Rect (Screen.width/2-reticule_size/2, Screen.height/2, reticule_size, 2), texWhite);
 		GUI.DrawTexture (new Rect (Screen.width/2, Screen.height/2-reticule_size/2, 2, reticule_size), texWhite);
-
-
-		//tools
-		//NAToolBase tool = tools[current_tool];
-		//GUI.Label(new Rect(0, Screen.height-30, 100, 30), tool.GetName());
-
-
-
 
 		if (bDisplayAvatarNames)
 		{
@@ -1095,52 +922,6 @@ public class App : MonoBehaviour
 			GUI.HorizontalScrollbar(new Rect(Screen.width-200, 0, 200, 30), 0, progress_val, 0, progress_count);
 		}
 
-		/*strSpace = GUI.TextField (new Rect (300, 0, 200, 30), strSpace);
-		if (GUI.Button (new Rect(500,0, 100, 30), "Connect"))
-		{
-			Connect(strSpace);
-			return;
-		}
-		if (GUI.Button (new Rect(600,0,100,30), "Disconnect"))
-		{
-			Disconnect();
-			return;
-        }
-
-*/
-
-		/*if (GUI.Button (new Rect (700, 0, 50, 30), "pause")) 
-		{
-			Time.timeScale = 0f;
-		}
-		if (GUI.Button (new Rect (750, 0, 50, 30), "play")) 
-		{
-			Time.timeScale = 1f;
-        }*/
-
-		/*
-		GUI.Label (new Rect(0, 30, 200, 30), "ip=" + Network.player.ipAddress);
-		strIP = GUI.TextField(new Rect(100, 30, 100, 30), strIP);
-		if (GUI.Button (new Rect (200, 30, 100, 30), "start server")) 
-		{
-			Network.InitializeServer(32, 25002, false);
-			CreateNetworkAvatar();
-		}
-
-		if (GUI.Button (new Rect (300, 30, 100, 30), "connect to server")) 
-		{
-			Network.Connect(strIP, 25002);
-			//CreateNetworkAvatar();
-		}
-
-		*/
-
-
-
-
-
-
-		//Debug.Log ("state=" + state);
 		if (state == AppState.Login)
 		{
 			mGuiWinRectLogin = GUI.Window(1, mGuiWinRectLogin, WindowFunctionLogin, "Login");
@@ -1165,93 +946,11 @@ public class App : MonoBehaviour
 
 
 
-
-
 		//bottom toolbar 
 		int bottomy = Screen.height - 30;
 		GUI.color = new Color (0, 0, 0, 0.5f);
 		GUI.DrawTexture (new Rect (0, bottomy, Screen.width, 30), texWhite);
 		GUI.color = Color.white;
-		//GUI.color = goMainLight.activeSelf ? Color.red : Color.white;
-		/*if (GUI.Button (new Rect(0, bottomy, 100, 30), "light"))
-		{
-			goMainLight.SetActive(!goMainLight.activeSelf);
-		}
-		GUI.color = mainCamera.light.enabled ? Color.red : Color.white;
-		if (GUI.Button (new Rect(100, bottomy, 100, 30), "headlight"))
-		{
-			mainCamera.light.enabled = !mainCamera.light.enabled;
-		}
-		*/
-
-		//right toolbar
-		/*GUI.color = new Color (0, 0, 0, 0.5f);
-		GUI.DrawTexture (new Rect (Screen.width-100, 0, 100, Screen.height), texWhite);
-		GUI.color = Color.white;
-		int lightx = Screen.width-100;
-		int lighty = Screen.height/2;
-		GUI.Label(new Rect(lightx, lighty, 200, 30), "Lights");
-		lighty += 30;
-		Light[] lights = Light.FindObjectsOfType (typeof(Light)) as Light[];
-		foreach (Light l in lights)
-		{
-			GUI.color = l.enabled ? Color.red : Color.white;
-			if (l.name.Contains("Creature"))
-				continue;
-			if (l.name.Contains("Area"))
-				continue;
-			if (GUI.Button (new Rect(lightx, lighty, 100, 30), l.name))
-			{
-				l.enabled = !l.enabled;
-			}
-			//lightx +=100;
-			lighty += 30;
-		}
-		*/
-
-
-
-
-
-		/*
-		GUI.color = bPushObjects?Color.red:Color.white;
-		if (GUI.Button (new Rect(0, Screen.height-30, 100, 30), "push"))
-		{
-			bPushObjects = !bPushObjects;
-		}
-
-		GUI.color = bHit?Color.red:Color.white;
-		if (GUI.Button (new Rect(200, Screen.height-30, 100, 30), "hit"))
-		{
-			bHit = !bHit;
-        }
-
-
-
-		GUI.color = bFrotte?Color.red:Color.white;
-		if (GUI.Button (new Rect(300, Screen.height-30, 100, 30), "scrub"))
-		{
-			bFrotte = !bFrotte;
-        }
-
-		GUI.color = bPullObjects?Color.red:Color.white;
-		if (GUI.Button (new Rect(100, Screen.height-30, 100, 30), "pull"))
-		{
-			bPullObjects = !bPullObjects;
-        }
-
-		GUI.color = bGrab?Color.red:Color.white;
-		if (GUI.Button (new Rect(400, Screen.height-30, 100, 30), "grab"))
-		{
-			bGrab = !bGrab;
-		}
-		*/
-		/*
-		if (GUI.Button (new Rect(100, Screen.height-30, 100, 30), "augment water"))
-		{
-			VerySpecialCase();
-		}
-		*/
 
 
 		//tabs
@@ -1281,104 +980,6 @@ public class App : MonoBehaviour
         //to do : list of objects ?
         
         GUI.color = Color.white;
-
-        /*if (false)
-        {
-
-			if (GUI.Button (new Rect(300, 60, 50, 30), "x-"))
-			{
-				currentSelection.go.transform.position += new Vector3(-1,0,0);
-			}
-			if (GUI.Button (new Rect(350, 60, 50, 30), "x+"))
-			{
-				currentSelection.go.transform.position += new Vector3(1,0,0);
-			}
-			if (GUI.Button (new Rect(400, 60, 50, 30), "y-"))
-			{
-				currentSelection.go.transform.position += new Vector3(0,-1,0);
-			}
-			if (GUI.Button (new Rect(450, 60, 50, 30), "y+"))
-			{
-				currentSelection.go.transform.position += new Vector3(0,1,0);
-			}
-			if (GUI.Button (new Rect(500, 60, 50, 30), "z-"))
-			{
-				currentSelection.go.transform.position += new Vector3(0,0,-1);
-			}
-			if (GUI.Button (new Rect(550, 60, 50, 30), "z+"))
-			{
-				currentSelection.go.transform.position += new Vector3(0,0,1);
-			}
-
-			if (GUI.Button (new Rect(600, 60, 50, 30), "ry+"))
-			{
-				currentSelection.go.transform.eulerAngles += new Vector3(0,10,0);
-			}
-			if (GUI.Button (new Rect(650, 60, 50, 30), "ry-"))
-			{
-				currentSelection.go.transform.eulerAngles += new Vector3(0,-10,0);
-			}
-
-
-
-
-			//downloads state
-			int y = 100;
-
-			foreach (NAObject o in listObjects) 
-			{
-				if (o == currentSelection)
-				{
-					GUI.color = Color.red;
-				}
-				else
-				{
-					GUI.color = Color.white;
-				}
-				GUI.Label(new Rect(0,y,200,30), o.name);
-				string strLabel = o.file + " [" + o.go.transform.position.x + ";" +o.go.transform.position.y + ";" + o.go.transform.position.z + "]"; 
-				GUI.Label(new Rect(200,y,200,30), strLabel);
-				if (o.www != null)
-					GUI.Label (new Rect(400, y, 100, 30), "downloading");
-				else
-					GUI.Label (new Rect(400, y, 100, 30), ""+o.downloaded/1000 + " KB");
-				//GUI.Label(new Rect(400,y,100,30), o.GetStatus());
-				if (o.go != null)
-				{
-					if (GUI.Button (new Rect(500, y, 50, 30), "select"))
-					{
-						if (currentSelection == o)
-							currentSelection = null;
-						else
-							currentSelection = o;
-					}
-					if (GUI.Button (new Rect(550, y, 50, 30), "save"))
-					{
-						o.position = o.go.transform.position;
-						o.angles = o.go.transform.eulerAngles;
-						SetObjectPosition(o.id, o.position.x, o.position.y, o.position.z);
-					}
-					if (GUI.Button (new Rect(600, y, 50, 30), "delete"))
-					{
-						o.position = o.go.transform.position;
-						o.angles = o.go.transform.eulerAngles;
-						SetObjectSpace(o.id, "trash"); //move to trash
-						GameObject.Destroy(o.go);
-						o.go = null;
-                    }
-				}
-
-				//GUI.Label(new Rect(300,y,200,30), o.name);
-				y+=30;
-				GUI.color = Color.white;
-
-			}
-
-			int x = 0;
-
-		}
-		*/
-
 
 		switch (tab)
 		{
@@ -1411,19 +1012,21 @@ public class App : MonoBehaviour
 
 
 
-	void DownloadAll()
+
+
+
+	/*void DownloadAll()
 	{
 		foreach (NAObject o in listObjects) 
 		{
 			o.Download();
 		}
-	}
+	}*/
 
 
 	//get the XML description of a given space name
 	void GetSpaceDescription(string space)
 	{
-		//string url = "http://www.tanant.info/newatlantis/getspace.php?password=qkvnhr7d3Y";
 		string url = Settings.URLWebServer + "getspace.php?password=qkvnhr7d3Y";
 		url += "&space=" + space;
 		www = new WWW (url);
@@ -1431,13 +1034,13 @@ public class App : MonoBehaviour
 
 	void GetWorldDescription(string space)
 	{
-		//string url = "http://www.tanant.info/newatlantis/getspace.php?password=qkvnhr7d3Y";
 		string url = Settings.URLWebServer + "getworld.php?password=qkvnhr7d3Y";
 		url += "&space=" + space;
 		www = new WWW (url);
 	}
 
 	//set an object position
+	/*
 	void SetObjectPosition(string id, float x, float y, float z)
 	{
 		return;
@@ -1451,6 +1054,7 @@ public class App : MonoBehaviour
 		WWW lwww = new WWW (url);
 		requests.Add (lwww);
 	}
+	*/
 
 	//move an object to a given space name
 	void SetObjectSpace(string id, string space)
@@ -1815,111 +1419,8 @@ public class App : MonoBehaviour
 			NetworkChat(strCurrentChatMessage);
 			strCurrentChatMessage = "";
 		}
-
 		GUILayout.EndHorizontal();
-
-
-        
-        //GUI.DragWindow();
     }
-
-	/*
-	void WindowFunctionNetwork (int windowID)
-	{
-		return;
-		GUI.color = Color.white;
-
-		GUILayout.BeginHorizontal();
-		GUILayout.Label ("This machine ip : " + Network.player.ipAddress + "(" + Network.player.externalIP + ")");// + " " + Network.player.externalIP);
-		if (Network.isServer)
-			GUILayout.Label ("[SERVER STARTED]");
-		else if (Network.isClient)
-			GUILayout.Label ("[CLIENT CONNECTED]");
-
-
-		GUILayout.EndHorizontal();
-
-		GUILayout.BeginHorizontal();
-
-		if (GUILayout.Button ("start server at " + Network.player.ipAddress)) 
-		{
-			MasterServer.RegisterHost("NewAtlantis", "New Atlantis test", "comment");
-			Network.InitializeServer(32, 7890, true);
-			CreateNetworkAvatar();
-			NetworkConnectToSpace(strSpace);
-			refreshHostList();
-        }
-		GUILayout.EndHorizontal();
-
-		GUILayout.BeginHorizontal();
-		strIP = GUILayout.TextField(strIP);
-
-		
-		if (GUILayout.Button ("connect to " + strIP)) 
-		{
-            Network.Connect(strIP, 7890);
-        }
-		GUILayout.EndHorizontal();
-
-		//GUI.color = new Color(0.7f,0.7f,1f);
-
-
-		foreach (NetworkPlayer player in Network.connections)
-		{
-			GUILayout.BeginHorizontal();
-			GUILayout.Label ("Player="+player.guid + " ip="+player.ipAddress + " port=" + player.port + " ping=" + Network.GetAveragePing(player) + "ms");
-			GUILayout.EndHorizontal();
-		}
-
-        //serveurs dans le monde
-		if( loading )
-		{
-			GUILayout.BeginHorizontal();
-			GUILayout.Label( "Loading..." );
-			GUILayout.EndHorizontal();
-		}
-		else
-		{
-			GUILayout.BeginScrollView( scrollPos, 
-			                                      GUILayout.Width( Screen.width ), GUILayout.Height( 500f ) );
-			
-			HostData[] hosts = MasterServer.PollHostList();
-			for( int i = 0; i < hosts.Length; i++ )
-			{
-				HostData d = hosts[i];
-				string ip = "";
-				foreach (string s in d.ip)
-				{
-					ip += s + ".";
-				}
-				
-				string caption = d.gameName + "[" + d.connectedPlayers + "/" + d.playerLimit + "]";
-				if( GUILayout.Button( caption,
-				                     GUILayout.ExpandWidth( true ) ) )
-				{
-					Network.Connect( hosts[i] );
-				}
-			}
-			if( hosts.Length == 0 )
-			{
-				GUILayout.Label( "No servers running" );
-			}
-			
-			GUILayout.EndScrollView();
-		}
-       
-        
-        
-        
-        GUI.DragWindow();
-    }
-	*/
-
-
-
-
-
-
 
 
 	void WindowFunctionUser (int windowID)
@@ -1966,15 +1467,7 @@ public class App : MonoBehaviour
 				caption = "Shared with me";
 			if (GUILayout.Button (caption, GUILayout.Width(100)))
 			{
-				/*if (tab == t)
-				{
-                    tabAssets = TypeTab.None;
-                }
-                else
-                */
-                {
-					tabAssets = t;
-				}
+				tabAssets = t;
             }
         }
 		GUI.color = Color.white;
@@ -2116,100 +1609,25 @@ public class App : MonoBehaviour
         }
 		GUI.color = Color.white;
 		SpaceFilter = GUILayout.TextField (SpaceFilter, GUILayout.Width(200));
-
         GUILayout.EndHorizontal();
-        
 		GUISpacesHeader();
         scrollPosMySpaces = GUILayout.BeginScrollView( scrollPosMySpaces, GUILayout.Height( 150 ) );
-
-		/*foreach (Space space in listSpaces)
-		{
-			if (
-				(tabSpaces == TypeTab.Mine && space.creator == strLogin || tabSpaces == TypeTab.SharedWithMe && space.type == "public" && space.creator != strLogin)
-				&&
-				(SpaceFilter == "" || space.name.Contains(SpaceFilter) || space.creator.Contains (SpaceFilter))
-				)
-			{
-				GUILayout.BeginHorizontal();
-				if (space.name == strSpace)
-				{
-					GUI.color = Color.green;
-				}
-				else
-				{
-					GUI.color = Color.white;
-				}
-				if (GUILayout.Button(space.name, GUILayout.Width(200)))
-				{
-					strSpace = space.name;
-					NA.CurrentSpace = space;
-					Debug.Log ("Current Space id = " + NA.CurrentSpace.id);
-
-					if (Network.isServer)
-					{
-//						ConnectToSpace(strSpace);
-					}
-
-				}
-				GUILayout.Label(space.creator, GUILayout.Width(100));
-				GUILayout.EndHorizontal();
-			}
-		
-		}
-		*/
-
 		GUISpaces(true);
-
 		GUILayout.EndScrollView();
-
-		/*GUILayout.BeginHorizontal();
-		GUILayout.Label ("Shared with me :");
-		GUILayout.EndHorizontal();
-
-		scrollPosSharedSpaces = GUILayout.BeginScrollView( scrollPosSharedSpaces, GUILayout.Height( 100 ) );
-
-		foreach (string space in spaces)
-		{
-			GUILayout.BeginHorizontal();
-			if (space == strSpace)
-			{
-				GUI.color = Color.green;
-			}
-			else
-			{
-				GUI.color = Color.white;
-			}
-			if (GUILayout.Button(space))
-			{
-				strSpace = space;
-				if (Network.isServer)
-				{
-					ConnectToSpace(strSpace);
-				}
-				//Connect(space);
-				
-			}
-			GUILayout.EndHorizontal();
-		}
-		
-		GUILayout.EndScrollView();
-		*/
-		
-		//GUILayout.EndArea();
 		GUI.color = Color.white;
 	}
+
 
 	void GUISpacesHeader()
 	{
 		GUILayout.BeginHorizontal();
-		GUILayout.Label("name", GUILayout.Width(200));
-		GUILayout.Label("label", GUILayout.Width(100));
-		GUILayout.Label("ID", GUILayout.Width(50));
-		GUILayout.Label("creator", GUILayout.Width(100));
+		GUILayout.Label("name", 		GUILayout.Width(200));
+		GUILayout.Label("label", 		GUILayout.Width(100));
+		GUILayout.Label("ID", 			GUILayout.Width(50));
+		GUILayout.Label("creator", 		GUILayout.Width(100));
 		GUILayout.Label("creation date", GUILayout.Width(100));
-		GUILayout.Label("last change", GUILayout.Width(100));
-		GUILayout.Label("objects", GUILayout.Width(100));
-		
+		GUILayout.Label("last change", 	GUILayout.Width(100));
+		GUILayout.Label("objects", 		GUILayout.Width(100));
 		GUILayout.EndHorizontal();
 	}
 
@@ -2242,9 +1660,7 @@ public class App : MonoBehaviour
 						GoToSpace(space);
 						ConnectToSpace(strSpace);
 					}
-					
 					//Connect(space);
-					
 				}
 				GUILayout.Label(space.type, GUILayout.Width(100));
 				GUILayout.Label(""+space.id, GUILayout.Width(50));
@@ -2887,6 +2303,8 @@ public class App : MonoBehaviour
         */
 	}
 
+
+
 	//=====================================
 	//Space window
 	//=====================================
@@ -2897,8 +2315,6 @@ public class App : MonoBehaviour
 		GUILayout.Label("Create or Modify space below");
 		GUILayout.EndHorizontal();
 
-
-		
 		GUILayout.BeginHorizontal();
 		GUILayout.Label("Name", GUILayout.Width(100));
 		strSpaceName = GUILayout.TextField (strSpaceName);
@@ -2934,7 +2350,6 @@ public class App : MonoBehaviour
 			return;
 		}
 		GUILayout.EndHorizontal();
-
 	}
 
     //=====================================
@@ -2973,6 +2388,15 @@ public class App : MonoBehaviour
 	}
 
 
+
+
+
+
+
+
+
+
+
 	void UserConnect()
 	{
 		PlayerPrefs.SetString("login", strLogin);
@@ -3003,7 +2427,6 @@ public class App : MonoBehaviour
 		form.AddField("login", 	strLogin);
 		form.AddField("pwd", 	strPassword);
 		form.AddField("name", 	strSpaceName);
-		//form.AddField("type", 	strSpaceType);
 		if (bSpacePublic)
 			form.AddField("type", 	"public");
 		else
@@ -3098,75 +2521,30 @@ public class App : MonoBehaviour
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	void WindowFunctionSpaces (int windowID)
 	{
 		GUI.color = Color.white;
-		/*GUILayout.BeginHorizontal();
-		strSpace = GUILayout.TextField (strSpace);
-		if (GUILayout.Button ("Connect", GUILayout.Width(100)))
-		{
-			Connect(strSpace);
-			return;
-		}
-		GUILayout.EndHorizontal();
-		*/
 
-
-		/*
-		GUILayout.BeginHorizontal();
-		GUILayout.Label(strSpace, GUILayout.Width(200));
-		if (GUILayout.Button ("Disconnect"))
-        {
-            Disconnect();
-            return;
-        }
-		GUILayout.EndHorizontal();
-		*/
-
-
-
-		/*
-		if (GUI.Button (new Rect(300, 60, 50, 30), "x-"))
-		{
-			currentSelection.go.transform.position += new Vector3(-1,0,0);
-		}
-		if (GUI.Button (new Rect(350, 60, 50, 30), "x+"))
-		{
-			currentSelection.go.transform.position += new Vector3(1,0,0);
-		}
-		if (GUI.Button (new Rect(400, 60, 50, 30), "y-"))
-		{
-			currentSelection.go.transform.position += new Vector3(0,-1,0);
-		}
-		if (GUI.Button (new Rect(450, 60, 50, 30), "y+"))
-		{
-			currentSelection.go.transform.position += new Vector3(0,1,0);
-		}
-		if (GUI.Button (new Rect(500, 60, 50, 30), "z-"))
-		{
-			currentSelection.go.transform.position += new Vector3(0,0,-1);
-		}
-		if (GUI.Button (new Rect(550, 60, 50, 30), "z+"))
-		{
-			currentSelection.go.transform.position += new Vector3(0,0,1);
-		}
-		
-		if (GUI.Button (new Rect(600, 60, 50, 30), "ry+"))
-		{
-			currentSelection.go.transform.eulerAngles += new Vector3(0,10,0);
-		}
-		if (GUI.Button (new Rect(650, 60, 50, 30), "ry-"))
-		{
-			currentSelection.go.transform.eulerAngles += new Vector3(0,-10,0);
-		}
-		*/
 		GUILayout.BeginHorizontal();
 		GUILayout.Label("OBJECTS IN SPACE", GUILayout.Width(200));
 		GUILayout.EndHorizontal();
 
 		scrollPosSpace = GUILayout.BeginScrollView( scrollPosSpace, GUILayout.Height( 400 ) );
 
-        
         //HERE
         foreach (NAObject o in listObjects) 
 		{
@@ -3194,49 +2572,29 @@ public class App : MonoBehaviour
 					if (currentSelection == o)
 					{
 						currentSelection = null;
-						PlayPhysics();
+						NA.PlayPhysics();
 					}
 					else
 					{
-					
 						currentSelection = o;
-
 						currentSelection.goGizmo.SetActive(true);
 						trs.startTRSGizmo(currentSelection.go);
-
-
-						PausePhysics();
+						NA.PausePhysics();
 					}
 					
 				
 					if (currentSelection != null)
 					{
-
 					}
 					else
 					{
 						trs.stopTRSGizmo();
 					}
 				}
-				
-				
-				
-				
 			}
 			else
 				GUILayout.Label(o.name, GUILayout.Width(200));
-			//GUI.Label(new Rect(200,y,200,30), o.file);
-			//GUILayout.Label (""+o.downloaded/1000 + " KB", GUILayout.Width(100));
-			/*if (GUILayout.Button("download"))
-			{
-				o.Download();
-			}*/
 
-
-
-
-			//GUILayout.Label( o.name);
-			//GUILayout.Label( o.file);
 			int distance = (int)(Camera.main.transform.position-o.go.transform.position).magnitude;
 			string strLabel = "" + distance + /*o.file + */"m [" + o.go.transform.position.x + ";" +o.go.transform.position.y + ";" + o.go.transform.position.z + "]"; 
 			GUILayout.Label(strLabel);
@@ -3271,7 +2629,6 @@ public class App : MonoBehaviour
 			{
 				currentSelection.position = currentSelection.go.transform.position;
 				currentSelection.angles = currentSelection.go.transform.eulerAngles;
-				//SetObjectPosition(o.id, o.position.x, o.position.y, o.position.z);
 				ObjectUpdate(currentSelection.id, currentSelection.position, currentSelection.angles);
 			}
 
@@ -3325,10 +2682,6 @@ public class App : MonoBehaviour
 			}
 		}
 		GUILayout.EndHorizontal();
-
-
-            
-        //GUI.DragWindow();
     }
 
 
@@ -3363,6 +2716,7 @@ public class App : MonoBehaviour
 		GUILayout.EndHorizontal();
         GUI.DragWindow();
     }
+
 
 	void WindowFunctionOptions (int windowID)
 	{
@@ -3440,42 +2794,9 @@ public class App : MonoBehaviour
 		//Debug.Log(info.);
 		Debug.Log("instantiate");
 	}
-        
-    void PausePhysics()
-	{
-		Time.timeScale = 0;
-		/*
-		Rigidbody[] rbs = Rigidbody.FindObjectsOfType(typeof(Rigidbody)) as Rigidbody[];
-		foreach (Rigidbody rb in rbs)
-		{
-			rb.isKinematic = true;
-            rb.Sleep();
-        }
-        */
-	}
+     
 
-	void PlayPhysics()
-	{
-		Time.timeScale = 1;
-		/*
-		Rigidbody[] rbs = Rigidbody.FindObjectsOfType(typeof(Rigidbody)) as Rigidbody[];
-		foreach (Rigidbody rb in rbs)
-		{
-			rb.isKinematic = false;
-			rb.WakeUp();
-        }
-        */
-    }
-
-
-	/*
-	void OnDrawGizmosSelected() 
-	{
-		Gizmos.color = new Color(1, 0, 0, 0.5F);
-		Gizmos.DrawCube(transform.position, new Vector3(1, 1, 1));
-	}
-	*/
-
+    
 
 	public  void RefreshBundles()
 	{

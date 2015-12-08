@@ -232,4 +232,14 @@ public static class NA
 		}
 	}
 
+	public static void PausePhysics()
+	{
+		Time.timeScale = 0;
+	}
+	
+	public static void PlayPhysics()
+	{
+		Time.timeScale = 1;
+	}
+
 }
