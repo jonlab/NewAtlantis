@@ -2,21 +2,20 @@
 using System.Collections;
 using System.Collections.Generic;
 
-
+//interface with the New Atlantis web server
 public class NAServer
 {	
-	private static WWW www = null;
-	public static WWW wwwPost = null;
-	private static List<WWW> 	requests 	= new List<WWW>();
+	private static WWW 		www 				= null;
+	public static WWW 		wwwPost 			= null;
+	private static List<WWW> 	requests 		= new List<WWW>();
 	public static string 	strLogin 			= "";
 	public static string 	strPassword 		= "";
 	public static string 	strPasswordRetype 	= "";
 	public static string 	strEmail 			= "";
 	public static string 	strSpaceName 		= "";
-	public static bool	bSpacePublic 		= true;
-	public static bool	bAssetPublic 		= true;
-
-
+	public static bool		bSpacePublic 		= true;
+	public static bool		bAssetPublic 		= true;
+	
 	public static void Process()
 	{
 		if (www != null)
@@ -186,6 +185,9 @@ public class NAServer
 		form.AddField("pwd", 	strPassword);
 		wwwPost = new WWW("http://tanant.info/newatlantis2/get.php", form);
 	}
+
+
+	//deprecated :
 
 	public static void GetSpaceDescription(string space)
 	{
