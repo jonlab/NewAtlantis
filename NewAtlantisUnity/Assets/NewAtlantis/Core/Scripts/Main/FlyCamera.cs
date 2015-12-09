@@ -5,6 +5,7 @@ public class FlyCamera : MonoBehaviour {
 
 	Vector3 previousmouseposition;
 	public bool bPhysics = true;
+	public bool bGravity = true;
 	// Use this for initialization
 	void Start () 
 	{
@@ -46,6 +47,11 @@ public class FlyCamera : MonoBehaviour {
 		float joy_speed = 4f;
 		if (NAInput.GetControl(NAControl.Jump))
 			joy_speed = 20f;
+		if (Input.GetKeyDown(KeyCode.W))
+		{
+			bGravity = !bGravity;
+		}
+
 
 		bool jump = NAInput.GetControlUp(NAControl.Jump);
 
@@ -64,6 +70,9 @@ public class FlyCamera : MonoBehaviour {
 			{
 				rb.AddForce(transform.up * joy_speed *100);
 			}
+
+
+			rb.useGravity = bGravity;
 		}
 		else
 		{

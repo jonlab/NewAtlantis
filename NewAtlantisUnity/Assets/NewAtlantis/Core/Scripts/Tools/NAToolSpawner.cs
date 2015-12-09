@@ -121,7 +121,7 @@ public class NAToolSpawner : NAToolBase {
 		if (NA.isServer() || NA.isStandalone())
 		{
 			rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
-			rb.AddRelativeForce(forward*1000f);
+			rb.AddRelativeForce(forward*200f);
 		}
 		else
 		{

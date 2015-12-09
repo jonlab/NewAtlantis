@@ -74,6 +74,8 @@ public class NAReflectionsFX : MonoBehaviour
 	
 	void OnGUI()
 	{
+		if (!NA.app.bGUI)
+			return;
 		/*float average_first = 0f;
 		for (int t=0;t<tap_count;++t)
 		{

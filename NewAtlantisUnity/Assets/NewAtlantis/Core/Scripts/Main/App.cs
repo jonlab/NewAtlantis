@@ -72,7 +72,7 @@ public class App : MonoBehaviour
 	Texture2D			texWhite 	= null;
 	Camera 				mainCamera 	= null;
 	Camera 				selectedCamera = null;
-	bool	 			bGUI 		= true;
+	public bool	 			bGUI 		= true;
 
 	float 				timerGC		= 0;
 	float 				timerRefresh		= 0;
@@ -178,6 +178,7 @@ public class App : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
+		Debug.Log ("IP="+MasterServer.ipAddress);
 		//AssetBundlePreviewGenerator.Test("Bundles/grass_ground.unity3d");
 		//AssetBundlePreviewGenerator.Test("Bundles/CubeRouge.unity3d");
 		//AssetBundlePreviewGenerator.Test("Bundles/Lobby.unity3d");
@@ -201,17 +202,28 @@ public class App : MonoBehaviour
 		goMainLight 	= GameObject.Find ("MainLightViewer");
 		ChatManager.Log("system", "welcome to New Atlantis", 0);
 		NAToolBase[] _tools = GetComponents<NAToolBase>();
+
+		ConnectionTesterStatus status = Network.TestConnection(false);
+		LogManager.Log ("Network connection tests result=" + status.ToString());
+		NA.PausePhysics();
 	}
 
 
 
 	void Init()
 	{
-		tools = GetComponents<NAToolBase>();
+		//tools = GetComponents<NAToolBase>();
+		tools = GetComponentsInChildren<NAToolBase>();
 		current_tool = 0;
 		SetCurrentTool(tools[current_tool]);
+		/*
+		foreach (NAToolBase t in tools)
+		{
 
-		camerascripts = GetComponents<NACamera>();
+		}
+		*/
+		//camerascripts = GetComponents<NACamera>();
+		camerascripts = GetComponentsInChildren<NACamera>();
 		current_camera = 0;
 		SetCurrentCamera(camerascripts[current_camera]);
 	}
@@ -297,6 +309,35 @@ public class App : MonoBehaviour
 	void LateUpdate()
 	{
 		NA.SetAvatarPositionAndAngles(transform.position, transform.eulerAngles);
+
+		bool bPlayPhysics = false;
+		if (listObjects.Count > 0)
+			bPlayPhysics = true;
+		foreach (NAObject o in listObjects) 
+		{
+			if (o.downloading)
+				bPlayPhysics = false;
+		}
+		if (currentSelection != null)
+			bPlayPhysics = false;
+		if (bPlayPhysics)
+			NA.PlayPhysics();
+		else
+			NA.PausePhysics();
+	}
+
+
+	float GetLoadingProgress()
+	{
+		if (listObjects.Count == 0)
+			return -1f;
+		float loaded = 0f;
+		foreach (NAObject o in listObjects) 
+		{
+			if (!o.downloading)
+			loaded += 1f;
+        }
+		return loaded/(float)listObjects.Count;
 	}
 
 
@@ -329,7 +370,6 @@ public class App : MonoBehaviour
 			timerGC = 0f;
 			NA.GC();
 		}
-        
 
 		foreach (NAObject o in listObjects) 
 		{
@@ -339,42 +379,7 @@ public class App : MonoBehaviour
 			currentLocal.Process();
 
 		NAServer.Process();
-		/*
-		if (www != null)
-		{
-			if (www.isDone)
-			{
-				Debug.Log (www.text);
-				ParseXML(www.text);
-				www.Dispose();
-				www = null;
-			}
-		}
 
-
-
-		if (wwwPost != null)
-		{
-			if (wwwPost.error != null)
-			{
-				Debug.Log (wwwPost.error);
-				LogManager.LogError("HTTP ERROR");
-				wwwPost.Dispose();
-				wwwPost = null;
-				//return -1;
-				return;
-			}
-			if (wwwPost.isDone)
-			{
-				Debug.Log ("Web Server returned " + wwwPost.text);
-				string xml = wwwPost.text;	
-				wwwPost.Dispose();
-				wwwPost = null;
-
-				ParseXML(xml);
-			}
-		}
-		*/
 
 		//Mouse/Touch Raycasting
 		RaycastHit hit;
@@ -889,6 +894,14 @@ public class App : MonoBehaviour
 		}
 
 		TransitionManager.DrawGUI();
+
+		float loading = GetLoadingProgress();
+		if (loading != -1f && loading != 1f)
+		{
+			GUI.color = Color.red;
+			GUI.Label(new Rect(Screen.width/2-100, Screen.height/2-15, 200, 30), "loading... " + (int)(loading*100f) + "%");
+			GUI.color = Color.white;
+		}
 		if (!bGUI)
 		{
 			return;
@@ -900,7 +913,7 @@ public class App : MonoBehaviour
 		GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
 		GUI.color = Color.white;
 		//GUI.Label(new Rect(0,0,400,30), "NewAtlantisNew Client - SAIC workshop");
-		GUI.Label(new Rect(0,0,400,30), "New Atlantis Client v0.77");
+		GUI.Label(new Rect(0,0,400,30), "New Atlantis Client v0.80");
 		GUI.Label(new Rect(Screen.width-200, 0, 200, 30), strPick);
 
 
@@ -1782,7 +1795,8 @@ public class App : MonoBehaviour
 		}
 		else
 		{
-
+			Debug.Log ("IP="+MasterServer.ipAddress);
+			Debug.Log ("PORT="+MasterServer.port);
 			GUILayout.BeginHorizontal();
 			GUILayout.Label( "name"	,GUILayout.Width(150 ));
 			GUILayout.Label( "players"	,GUILayout.Width(50 ));
@@ -1900,66 +1914,6 @@ public class App : MonoBehaviour
 		GUILayout.EndHorizontal();
 
 
-		//GUILayout.EndArea();
-
-
-
-
-		/*
-
-		GUILayout.BeginHorizontal();
-		GUILayout.Label ("Assets");
-		GUILayout.EndHorizontal();
-
-		GUILayout.BeginHorizontal();
-		GUILayout.Label("local file", GUILayout.Width(100));
-		strFile = GUILayout.TextField (strFile, GUILayout.Width(200));
-		GUILayout.Label("name", GUILayout.Width(100));
-		strObjectName = GUILayout.TextField (strObjectName, GUILayout.Width(100));
-		if (GUILayout.Button ("upload asset to my library"))
-		{
-			byte[] data = System.IO.File.ReadAllBytes( strFile );
-			this.AssetAdd(data, strObjectName);
-		
-		}
-		
-		GUILayout.EndHorizontal();
-		foreach (Asset asset in listAssets)
-		{
-			GUILayout.BeginHorizontal();
-			GUILayout.Label(asset.name);
-			if (GUILayout.Button("add to space"))
-			{
-				//we add this asset to the current space
-				ObjectAdd(CurrentSpace, asset);
-			}
-			GUILayout.EndHorizontal();
-		}
-
-
-		GUILayout.BeginHorizontal();
-		GUILayout.Label ("New Atlantis spaces (shared with you) :");
-		GUILayout.EndHorizontal();
-		GUILayout.BeginHorizontal();
-		if (GUILayout.Button ("Create a new space", GUILayout.Width(200 ))) 
-		{
-			state = AppState.Space;
-		}
-		GUILayout.EndHorizontal();
-        
-        
-        GUILayout.Space(20);
-
-
-
-		*/
-
-
-		//GUILayout.BeginHorizontal();
-		
-		//GUILayout.BeginArea(new Rect(0,0,1024,200), texWhite);
-		//GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
-
 		GUILayout.BeginHorizontal();
 		GUILayout.Label ("SPACES LIBRARY");
 		SpaceFilter = GUILayout.TextField (SpaceFilter, GUILayout.Width(200));
@@ -2028,14 +1982,6 @@ public class App : MonoBehaviour
 		GUI.color = Color.white;
 			
 
-
-
-		
-		
-		
-		
-		
-		//GUI.DragWindow();
 	}
     
     
@@ -2092,6 +2038,7 @@ public class App : MonoBehaviour
         
         GUI.DragWindow();
     }
+
 
 	void WindowFunctionAudioSources (int windowID)
 	{
@@ -2183,7 +2130,7 @@ public class App : MonoBehaviour
 
 
 	//=====================================
-	//Asset window
+	//Asset window : create or modify an asset
 	//=====================================
 	void WindowFunctionAsset (int windowID)
 	{
@@ -2244,6 +2191,7 @@ public class App : MonoBehaviour
             return;
         }
 #if UNITY_WEBPLAYER
+		//this feature is not available on the Web Player because of disk access restriction
 #else
 		if (GUILayout.Button ("upload asset to my library"))
 		{
@@ -2395,146 +2343,6 @@ public class App : MonoBehaviour
 		GUILayout.EndHorizontal();
 		//GUI.DragWindow();
 	}
-
-
-
-
-
-
-	/*
-
-
-
-
-	void UserConnect()
-	{
-		PlayerPrefs.SetString("login", strLogin);
-		PlayerPrefs.SetString("pwd", strPassword);
-		strName = strLogin;
-		WWWForm form = new WWWForm();
-		form.AddField("login", strLogin);
-		form.AddField("pwd", strPassword);
-
-		wwwPost = new WWW("http://tanant.info/newatlantis2/login.php", form);
-	}
-
-
-	void UserRegister()
-	{
-		strName = strLogin;
-		WWWForm form = new WWWForm();
-		form.AddField("login", 	strLogin);
-		form.AddField("pwd", 	strPassword);
-		form.AddField("email", 	strEmail);
-		wwwPost = new WWW("http://tanant.info/newatlantis2/adduser.php", form);
-	}
-
-
-	void SpaceCreate()
-	{
-		WWWForm form = new WWWForm();
-		form.AddField("login", 	strLogin);
-		form.AddField("pwd", 	strPassword);
-		form.AddField("name", 	strSpaceName);
-		if (bSpacePublic)
-			form.AddField("type", 	"public");
-		else
-			form.AddField("type", 	"private");
-		
-		wwwPost = new WWW("http://tanant.info/newatlantis2/addspace.php", form);
-	}
-
-	void AssetAdd(byte[] data, string name)
-	{
-		WWWForm form = new WWWForm();
-		form.AddField("file", "file");
-		form.AddBinaryData("file", data);
-		form.AddField("login", 	strLogin);
-		form.AddField("pwd", 	strPassword);
-		form.AddField("name", 	name);
-		if (bAssetPublic)
-			form.AddField("type", 	"public");
-		else
-			form.AddField("type", 	"private");
-		
-		wwwPost = new WWW("http://tanant.info/newatlantis2/addasset.php", form);
-
-	}
-
-	void AssetUpdate(int asset_id, byte[] data, string name)
-	{
-		WWWForm form = new WWWForm();
-		form.AddField("file", "file");
-		form.AddBinaryData("file", data);
-		form.AddField("login", 	strLogin);
-		form.AddField("pwd", 	strPassword);
-		form.AddField("name", 	name);
-		if (bAssetPublic)
-			form.AddField("type", 	"public");
-		else
-			form.AddField("type", 	"private");
-
-		form.AddField("asset_id", ""+asset_id);
-		
-		wwwPost = new WWW("http://tanant.info/newatlantis2/addasset.php", form);
-		
-	}
-
-	void ObjectAdd(Space space, Asset asset)
-	{
-		WWWForm form = new WWWForm();
-		form.AddField("login", 	strLogin);
-		form.AddField("pwd", 	strPassword);
-		form.AddField("asset_id", 	asset.id);
-		form.AddField("space_id", 	space.id);
-		
-		wwwPost = new WWW("http://tanant.info/newatlantis2/addobject.php", form);
-	}
-
-	void ObjectDelete(string id)
-	{
-		WWWForm form = new WWWForm();
-		form.AddField("login", 	strLogin);
-		form.AddField("pwd", 	strPassword);
-		form.AddField("object_id", 	id);
-		wwwPost = new WWW("http://tanant.info/newatlantis2/deleteobject.php", form);
-    }
-
-	//AssetDelete
-	//SpaceDelete
-	//AssetUpdate
-
-	void ObjectUpdate(string id, Vector3 position, Vector3 angles)
-	{
-		WWWForm form = new WWWForm();
-		form.AddField("login", 	strLogin);
-		form.AddField("pwd", 	strPassword);
-		form.AddField("object_id", 	id);
-		form.AddField("x", 	""+position.x);
-		form.AddField("y", 	""+position.y);
-		form.AddField("z", 	""+position.z);
-		form.AddField("ax", 	""+angles.x);
-		form.AddField("ay", 	""+angles.y);
-		form.AddField("az", 	""+angles.z);
-		wwwPost = new WWW("http://tanant.info/newatlantis2/setobject.php", form);
-    }
-    
-    void Get()
-	{
-		WWWForm form = new WWWForm();
-		form.AddField("login", 	strLogin);
-		form.AddField("pwd", 	strPassword);
-		wwwPost = new WWW("http://tanant.info/newatlantis2/get.php", form);
-	}
-
-	*/
-
-
-
-
-
-
-
 
 
 

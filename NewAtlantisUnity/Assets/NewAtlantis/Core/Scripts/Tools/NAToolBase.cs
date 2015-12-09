@@ -23,6 +23,21 @@ public class NAToolBase : MonoBehaviour
 		Debug.Log ("Action !");
 	}
 
+	virtual public void Press()
+	{
+
+	}
+
+	virtual public void Maintain()
+	{
+
+	}
+
+	virtual public void Release()
+	{
+
+	}
+
 	virtual public string GetName() 
 	{
 		return name;
