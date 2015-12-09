@@ -12,6 +12,9 @@ In New Atlantis all elements have (by default) audio qualities: spaces resonate,
 
 A collection of purpose built scripts implement low level sound synthesis and multiple parameter interactivity enabling the creation of complex sound sources and environments linked to animation or navigation in the visual scene.   
 
+##Get the latest Unity package and viewer
+http://www.tanant.info/newatlantis/
+
 ##Team
 
 ###Current Participants:
