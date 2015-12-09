@@ -2453,6 +2453,7 @@ public class App : MonoBehaviour
 			{
 				currentSelection.position = currentSelection.go.transform.position;
 				currentSelection.angles = currentSelection.go.transform.eulerAngles;
+
 				NAServer.ObjectDelete(currentSelection.id);
 				//SetObjectSpace(o.id, "trash"); //move to trash
 				GameObject.Destroy(currentSelection.go);
