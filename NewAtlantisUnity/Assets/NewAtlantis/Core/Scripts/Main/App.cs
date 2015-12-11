@@ -133,9 +133,9 @@ public class App : MonoBehaviour
 	static Vector2 WindowSize = new Vector2(790,530);
 	Rect mGuiWinRectChat 		= new Rect(Screen.width-300, 200, 300, Screen.height-200);
 	Rect mGuiWinRectNetwork 	= new Rect(Screen.width/2-200, Screen.height/2-250, 400, 500);
-	Rect mGuiWinRectCameras 	= new Rect(0, Screen.height/2-200, 200, 400);
-	Rect mGuiWinRectLights 		= new Rect(400, Screen.height/2-200, 200, 400);
-	Rect mGuiWinRectAudioSources = new Rect(Screen.width/2-200, Screen.height/2-300, 400, 600);
+	
+	Rect mGuiWinRectScene 		= new Rect(Screen.width/2-WindowSize.x/2, Screen.height/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
+
 	Rect mGuiWinRectSpaces 		= new Rect(Screen.width/2-WindowSize.x/2, Screen.height/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
 	Rect mGuiWinRectOptions 	= new Rect(600, Screen.height/2-200, 200, 400);
 	Rect mGuiWinRectAbout 		= new Rect(800, Screen.height/2-200, 200, 400);
@@ -153,6 +153,12 @@ public class App : MonoBehaviour
 	private Vector2 scrollPosSharedAssets 	= Vector2.zero;
 	private Vector2 scrollPosLobbySpaces 	= Vector2.zero;
 	private Vector2 scrollPosSpace 			= Vector2.zero;
+
+	private Vector2 scrollPosLights 			= Vector2.zero;
+	private Vector2 scrollPosCameras 			= Vector2.zero;
+	private Vector2 scrollPosSources 			= Vector2.zero;
+
+
 
 	/*
 	string 	strLogin 			= "";
@@ -192,7 +198,6 @@ public class App : MonoBehaviour
 		//AssetBundlePreviewGenerator.Test("Bundles/object_5669cde3e8d6c2.73707730.unity3d");
 		//AssetBundlePreviewGenerator.Test("Bundles/object_5669cdf72da595.13058200.unity3d");
 		//AssetBundlePreviewGenerator.Test("Bundles/object_5669cb9c015478.93079789.unity3d");
-
 
 		//AssetBundlePreviewGenerator.Test("Bundles/sea.unity3d");
 		NA.app 			= this;
@@ -1011,9 +1016,7 @@ public class App : MonoBehaviour
 			mGuiWinRectSpaces 	= GUI.Window(8, mGuiWinRectSpaces, WindowFunctionSpaces, "SPACE");
 			break;
 		case AppTab.Scene:
-			mGuiWinRectCameras 	= GUI.Window(3, mGuiWinRectCameras, WindowFunctionCameras, "CAMERAS");
-			mGuiWinRectLights 	= GUI.Window(4, mGuiWinRectLights, WindowFunctionLights, "LIGHTS");
-			mGuiWinRectAudioSources = GUI.Window(5, mGuiWinRectAudioSources, WindowFunctionAudioSources, "SOURCES");
+			mGuiWinRectScene = GUI.Window(3, mGuiWinRectScene, WindowFunctionScene, "SCENE");
 			break;
 		case AppTab.Lobby:
 			GUI.Window(2, mGuiWinRectLobby, WindowFunctionLobby, "Lobby");
@@ -1858,11 +1861,16 @@ public class App : MonoBehaviour
 
 	}
     
-    
-	void WindowFunctionCameras (int windowID)
+
+
+	void WindowFunctionScene (int windowID)
 	{
 		GUI.color = Color.white;
 
+		GUILayout.BeginHorizontal();
+		GUILayout.Label ("Cameras " + "[" + cameras.Count + "]");
+		GUILayout.EndHorizontal();
+		scrollPosCameras = GUILayout.BeginScrollView( scrollPosCameras, GUILayout.Height( 60 ) );
 		foreach (GameObject c in cameras)
 		{
 			if (selectedCamera == c.GetComponent<Camera>())
@@ -1873,26 +1881,28 @@ public class App : MonoBehaviour
 			if (c.gameObject.transform.parent != null)
 				name = c.gameObject.transform.parent.gameObject.name;
 			GUILayout.BeginHorizontal();
-			if (GUILayout.Button (name))
+			if (GUILayout.Button (name, GUILayout.Width(150)))
 			{
 				selectedCamera.enabled = false;
 				selectedCamera.GetComponent<AudioListener>().enabled = false;
 				selectedCamera = c.GetComponent<Camera>();
 				selectedCamera.enabled = true;
-                selectedCamera.GetComponent<AudioListener>().enabled = true;
-            }
-			GUILayout.EndHorizontal();
-            GUI.color = Color.white;
-        }
-        
-        GUI.DragWindow();
-    }
+				selectedCamera.GetComponent<AudioListener>().enabled = true;
+			}
+			string path = getPath(c.gameObject, "");
+			GUILayout.Label (path, GUILayout.Width(380));
+            
+            GUILayout.EndHorizontal();
+			GUI.color = Color.white;
+		}
+		GUILayout.EndScrollView();
 
-	void WindowFunctionLights (int windowID)
-	{
 		GUI.color = Color.white;
-		
 		Light[] lights = Light.FindObjectsOfType (typeof(Light)) as Light[];
+		GUILayout.BeginHorizontal();
+		GUILayout.Label ("Lights " + "[" + lights.Length + "]");
+		GUILayout.EndHorizontal();
+		scrollPosLights = GUILayout.BeginScrollView( scrollPosLights, GUILayout.Height( 180 ) );
 		foreach (Light l in lights)
 		{
 			GUI.color = l.enabled ? Color.red : Color.white;
@@ -1901,44 +1911,56 @@ public class App : MonoBehaviour
 			if (l.name.Contains("Area"))
 				continue;
 			GUILayout.BeginHorizontal();
-			if (GUILayout.Button (l.name))
-            {
-                l.enabled = !l.enabled;
-            }
-			GUILayout.EndHorizontal();
-        }
-        
-        
-        
-        GUI.DragWindow();
-    }
+			if (GUILayout.Button (l.name, GUILayout.Width(150)))
+			{
+				l.enabled = !l.enabled;
+			}
+			string path = getPath(l.gameObject, "");
+			GUILayout.Label (path, GUILayout.Width(380));
 
-
-	void WindowFunctionAudioSources (int windowID)
-	{
+			string ltype = "" + l.type;
+			GUILayout.Label (ltype, GUILayout.Width(100));
+			GUILayout.Label (""+(int)l.range, GUILayout.Width(100));
+            GUILayout.EndHorizontal();
+		}
+		GUILayout.EndScrollView();
 		GUI.color = Color.white;
-		
 		AudioSource[] sources = AudioSource.FindObjectsOfType (typeof(AudioSource)) as AudioSource[];
+		GUILayout.BeginHorizontal();
+		GUILayout.Label ("AudioSources " + "[" + sources.Length + "]");
+		GUILayout.EndHorizontal();
+		scrollPosSources = GUILayout.BeginScrollView( scrollPosSources, GUILayout.Height( 180 ) );
 		foreach (AudioSource s in sources)
 		{
 			GUI.color = s.enabled ? Color.red : Color.white;
-
+			
 			GUILayout.BeginHorizontal();
-			if (GUILayout.Button (s.name))
+			if (GUILayout.Button (s.name, GUILayout.Width(150)))
 			{
-
+				
 				s.enabled = !s.enabled;
 			}
 			GUI.color = Color.white;
-			s.volume = GUILayout.HorizontalSlider(s.volume, 0, 1);
-            GUILayout.EndHorizontal();
-        }
-        
-        
-        
-        GUI.DragWindow();
-    }
+
+			string path = getPath(s.gameObject, "");
+			GUILayout.Label (path, GUILayout.Width(380));
+
+			s.volume = GUILayout.HorizontalSlider(s.volume, 0, 1, GUILayout.Width(50));
+			GUILayout.Label (""+s.spatialBlend, GUILayout.Width(20));
+			GUILayout.Label (""+s.rolloffMode, GUILayout.Width(70));
+			GUILayout.Label (""+(int)s.maxDistance, GUILayout.Width(50));
+
+			GUILayout.EndHorizontal();
+		}
+		GUILayout.EndScrollView();
+
+
+	}
     
+
+    
+
+
 	//=====================================
 	//register window
 	//=====================================
@@ -1948,8 +1970,7 @@ public class App : MonoBehaviour
 		GUILayout.BeginHorizontal();
 		GUILayout.Label("Welcome to the New Atlantis. Here you can register as a new New Atlantis user...");
 		GUILayout.EndHorizontal();
-		
-		
+
 		GUILayout.BeginHorizontal();
 		GUILayout.Label("Login", GUILayout.Width(100));
 		NAServer.strLogin = GUILayout.TextField (NAServer.strLogin);
@@ -2003,12 +2024,12 @@ public class App : MonoBehaviour
 	}
 
 
+
 	//=====================================
 	//Asset window : create or modify an asset
 	//=====================================
 	void WindowFunctionAsset (int windowID)
 	{
-
 		GUI.color = Color.white;
 		GUILayout.BeginHorizontal();
 		if (CurrentAsset != null)
@@ -2084,54 +2105,13 @@ public class App : MonoBehaviour
         GUILayout.EndHorizontal();
 
 		GUILayout.BeginHorizontal();
-
 		if (NAServer.wwwPost != null)
 		{
 			float p = NAServer.wwwPost.uploadProgress;
 			//GUILayout.Label("Upload=" + p, GUILayout.Width(100));
 			GUILayout.HorizontalScrollbar(0, p, 0, 1);
 		}
-
 		GUILayout.EndHorizontal();
-
-
-		
-		/*GUILayout.BeginHorizontal();
-		GUILayout.Label("Name", GUILayout.Width(100));
-		strSpaceName = GUILayout.TextField (strSpaceName);
-		GUILayout.EndHorizontal();
-		*/
-		/*GUILayout.BeginHorizontal();
-		GUILayout.Label("Type", GUILayout.Width(100));
-		strSpaceType = GUILayout.TextField (strSpaceType);
-		GUILayout.EndHorizontal();*/
-		
-		/*GUILayout.BeginHorizontal();
-		GUILayout.Label("Type", GUILayout.Width(100));
-		bSpacePublic = GUILayout.Toggle(bSpacePublic, "public");
-		GUILayout.EndHorizontal();
-		
-		
-		
-		
-		GUILayout.BeginHorizontal();
-		if (GUILayout.Button ("Cancel"))
-		{
-			state = AppState.Spaces;
-			return;
-		}
-        if (GUILayout.Button ("Delete"))
-        {
-            //SpaceDelete();
-            return;
-        }
-        if (GUILayout.Button ("Create"))
-        {
-            SpaceCreate();
-            return;
-        }
-        GUILayout.EndHorizontal();
-        */
 	}
 
 
@@ -2232,6 +2212,7 @@ public class App : MonoBehaviour
 
 		GUILayout.BeginHorizontal();
 		GUILayout.Label("OBJECTS IN SPACE", GUILayout.Width(200));
+		GUILayout.Label("Click on an object to modify it.", GUILayout.Width(200));
 		GUILayout.EndHorizontal();
 
 		scrollPosSpace = GUILayout.BeginScrollView( scrollPosSpace, GUILayout.Height( 400 ) );
@@ -2251,7 +2232,7 @@ public class App : MonoBehaviour
 			GUILayout.BeginHorizontal();
 			if (o.go != null)
 			{
-				if (GUILayout.Button (o.name, GUILayout.Width(200))) //50
+				if (GUILayout.Button (o.name, GUILayout.Width(150))) //50
 				{
 					//Alex Gizmo
 					GameObject goGizmo = GameObject.Find("TRS Gizmo");
@@ -2287,8 +2268,8 @@ public class App : MonoBehaviour
 				GUILayout.Label(o.name, GUILayout.Width(200));
 
 			int distance = (int)(Camera.main.transform.position-o.go.transform.position).magnitude;
-			string strLabel = "" + distance + /*o.file + */"m [" + o.go.transform.position.x + ";" +o.go.transform.position.y + ";" + o.go.transform.position.z + "]"; 
-			GUILayout.Label(strLabel);
+			string strLabel = "" + distance + /*o.file + */"m [" + (int)o.go.transform.position.x + ";" +(int)o.go.transform.position.y + ";" + (int)o.go.transform.position.z + "]"; 
+			GUILayout.Label(strLabel, GUILayout.Width(100));
             
             //if (o.www != null)
 			if (o.downloading)
@@ -2302,6 +2283,7 @@ public class App : MonoBehaviour
 				GUILayout.Label ("OK", GUILayout.Width(50));
 			//GUI.Label(new Rect(400,y,100,30), o.GetStatus());
 
+			GUILayout.Label(""+o.GetAudioSourcesCount(), GUILayout.Width(100));
 			GUILayout.Label(o.file, GUILayout.Width(300));
 			GUILayout.EndHorizontal();
 
@@ -2509,6 +2491,16 @@ public class App : MonoBehaviour
         }
     }
 
+
+	public string getPath(GameObject go, string path)
+	{
+		if (go.transform.parent != null)
+		{
+			path += getPath(go.transform.parent.gameObject, path);
+		}
+
+		return path+"/"+go.name;//+"/"+go.name;
+	}
 
     
     

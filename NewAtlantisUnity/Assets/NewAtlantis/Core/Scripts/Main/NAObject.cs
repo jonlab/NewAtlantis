@@ -20,6 +20,7 @@ public class NAObject
 	private NetworkViewID NetworkViewId;
 	public bool downloading 	= false;
 	public string download_id 	= "";
+	public AudioSource[] sources = null;
 
 	//private static Dictionary<string, AssetBundle> AssetBundles = new Dictionary<string, AssetBundle>();
 
@@ -120,7 +121,7 @@ public class NAObject
 					go.transform.localScale 	= scale;
 					bundle.Unload(false);
 
-					goGizmo = new GameObject("object_gizmo");
+					/*goGizmo = new GameObject("object_gizmo");
 					goGizmo.transform.parent = go.transform;
 					goGizmo.transform.localPosition = Vector3.zero;
 					GameObject goGizmoX = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -141,9 +142,10 @@ public class NAObject
 		            goGizmoY.GetComponent<Renderer>().material.color = Color.green;
 		            goGizmoZ.GetComponent<Renderer>().material.color = Color.blue;
 		            goGizmo.SetActive(false);
+		            */
 		            
 					//AudioSource[] sources = AudioSource.FindObjectsOfType(typeof(AudioSource)) as AudioSource[];
-					AudioSource[] sources = go.GetComponentsInChildren<AudioSource>();
+					sources = go.GetComponentsInChildren<AudioSource>();
 					//audio sources have to be augmented with specific NA behaviour
 					Debug.Log ("Sources count = " + sources.Length);
 					foreach (AudioSource s in sources)
@@ -243,6 +245,17 @@ public class NAObject
 		}
 	}
 
+	public int GetAudioSourcesCount()
+	{
+		if (sources != null)
+		{
+			return sources.Length;
+		}
+		else
+		{
+			return -1;
+		}
+	}
 
 
 
