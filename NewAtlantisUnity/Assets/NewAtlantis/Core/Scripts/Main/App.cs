@@ -183,6 +183,18 @@ public class App : MonoBehaviour
 		//AssetBundlePreviewGenerator.Test("Bundles/CubeRouge.unity3d");
 		//AssetBundlePreviewGenerator.Test("Bundles/Lobby.unity3d");
 		//AssetBundlePreviewGenerator.Test("Bundles/sea.unity3d");
+
+		//AssetBundlePreviewGenerator.Test("Bundles/object_566998620efb62.87109271.unity3d");
+		//AssetBundlePreviewGenerator.Test("Bundles/object_56699e44b6b8d2.24800951.unity3d");
+
+
+		//AssetBundlePreviewGenerator.Test("Bundles/object_5669cdf72da595.13058200.unity3d");
+		//AssetBundlePreviewGenerator.Test("Bundles/object_5669cde3e8d6c2.73707730.unity3d");
+		//AssetBundlePreviewGenerator.Test("Bundles/object_5669cdf72da595.13058200.unity3d");
+		//AssetBundlePreviewGenerator.Test("Bundles/object_5669cb9c015478.93079789.unity3d");
+
+
+		//AssetBundlePreviewGenerator.Test("Bundles/sea.unity3d");
 		NA.app 			= this;
 		TransitionManager.Init();
 		TransitionManager.Start(TransitionManager.FadeIn,3f,Color.black, null);
@@ -192,8 +204,10 @@ public class App : MonoBehaviour
 		colorAvatar 	= new Vector3(Random.value, Random.value, Random.value);
 		GameObject.DontDestroyOnLoad(gameObject);
 		refreshHostList();
+		//root of Space objects - must be at the origin
 		goRootSpace 	= new GameObject("root_space");
 		goRootSpace.transform.position = Vector3.zero;
+
 		mainCamera 		= Camera.main;
 		selectedCamera 	= mainCamera;
 		NA.listener 	= mainCamera.GetComponent<AudioListener>();
@@ -678,13 +692,31 @@ public class App : MonoBehaviour
 											string name = xpnicc.Current.GetAttribute("name","");
 											string filename = xpnicc.Current.GetAttribute("filename","");
 											string id = xpnicc.Current.GetAttribute("id","");
+
 											float x = float.Parse(xpnicc.Current.GetAttribute("x",""));
 											float y = float.Parse(xpnicc.Current.GetAttribute("y",""));
 											float z = float.Parse(xpnicc.Current.GetAttribute("z",""));
+
 											float ax = float.Parse(xpnicc.Current.GetAttribute("ax",""));
 											float ay = float.Parse(xpnicc.Current.GetAttribute("ay",""));
 											float az = float.Parse(xpnicc.Current.GetAttribute("az",""));
-											NetworkLoadObject(name, new Vector3 (x, y, z), new Vector3(ax, ay, az), filename, id);
+
+											float sx = 1;
+											float sy = 1;
+											float sz = 1;
+
+											try
+											{
+												sx = float.Parse(xpnicc.Current.GetAttribute("sx",""));
+												sy = float.Parse(xpnicc.Current.GetAttribute("sy",""));
+												sz = float.Parse(xpnicc.Current.GetAttribute("sz",""));
+											}
+											catch (System.Exception e)
+											{
+
+											}
+
+											NetworkLoadObject(name, new Vector3 (x, y, z), new Vector3(ax, ay, az), new Vector3(sx, sy, sz), filename, id);
 										}
 										else
 										{
@@ -714,50 +746,13 @@ public class App : MonoBehaviour
 				}
 			}
 		}
-
-
-
-
-		//previous system, deprecated
-		XPathNodeIterator xpni = xpn.Select("/space");
-		xpni.MoveNext();
-		if (xpni.Current != null)
-		{
-			XPathNodeIterator xpnic = xpni.Current.SelectChildren(XPathNodeType.Element);
-			if (xpnic == null)
-				return;
-			while(xpnic.MoveNext())
-			{
-				if(xpnic.Current.Name.Equals("object"))
-				{
-					Hashtable httags = null;
-
-					string name = xpnic.Current.GetAttribute("name","");
-					string filename = xpnic.Current.GetAttribute("filename","");
-					string id = xpnic.Current.GetAttribute("id","");
-
-					float x = float.Parse(xpnic.Current.GetAttribute("x",""));
-					float y = float.Parse(xpnic.Current.GetAttribute("y",""));
-					float z = float.Parse(xpnic.Current.GetAttribute("z",""));
-
-					float ax = float.Parse(xpnic.Current.GetAttribute("ax",""));
-					float ay = float.Parse(xpnic.Current.GetAttribute("ay",""));
-					float az = float.Parse(xpnic.Current.GetAttribute("az",""));
-
-					if (filename.Contains ("2.9"))
-						continue;
-
-					NetworkLoadObject(name, new Vector3 (x, y, z), new Vector3(ax, ay, az), filename, id);
-				}
-			}
-		}
 	}
 
 
 
-	void NetworkLoadObject(string _name, Vector3 _pos, Vector3 _angles, string _filename, string _id)
+	void NetworkLoadObject(string _name, Vector3 _pos, Vector3 _angles, Vector3 _scale, string _filename, string _id)
 	{
-		GetComponent<NetworkView>().RPC("LoadObject", RPCMode.AllBuffered, _name, Network.AllocateViewID(), _pos, _angles, _filename, _id);
+		GetComponent<NetworkView>().RPC("LoadObject", RPCMode.AllBuffered, _name, Network.AllocateViewID(), _pos, _angles, _scale, _filename, _id);
 	}
 
 
@@ -769,7 +764,7 @@ public class App : MonoBehaviour
 
 
 	[RPC]
-	void LoadObject(string _name, NetworkViewID _viewID, Vector3 _pos, Vector3 _angles, string _filename, string _id) 
+	void LoadObject(string _name, NetworkViewID _viewID, Vector3 _pos, Vector3 _angles, Vector3 _scale, string _filename, string _id) 
 	{
 		//on regarde si l'object n'existe pas déjà
 		foreach (NAObject o in listObjects) 
@@ -779,7 +774,7 @@ public class App : MonoBehaviour
 		}
 		Debug.Log ("RPC LoadObject " + _name + " " + _filename);
 		// créer un objet vide pour la synchro, puis ajouter l'objet téléchargé en child
-		NAObject n = new NAObject (goRootSpace, _name, _pos, _angles, _filename, _viewID);
+		NAObject n = new NAObject (goRootSpace, _name, _pos, _angles, _scale, _filename, _viewID);
 		n.id = _id;
 		listObjects.Add(n);
 		n.Download();
@@ -1152,29 +1147,7 @@ public class App : MonoBehaviour
 		Network.DestroyPlayerObjects(player); //à voir
 	}
     
-
-	/*
-	void DestroyPlayerObjects()
-	{
-		foreach (GameObject go in player_objects)
-		{
-			if (Network.isServer || Network.isClient)
-			{
-				Network.Destroy(go);
-			}
-			else
-			{
-				GameObject.Destroy(go);
-			}
-		}
-		player_objects.Clear();
-
-		GameObject.Destroy(goAvatar);
-		goAvatar = null;
-
-		NA.ClearAvatars();
-	}
-	*/
+	
 
 
 
@@ -1239,106 +1212,7 @@ public class App : MonoBehaviour
 		ChatManager.Log(_name, _message, 0);
 	}
 
-	/*
-	[RPC]
-	void SpawnBox(NetworkViewID viewID, Vector3 location) 
-	{
-		//Transform clone;
-		GameObject clone;
-		//clone = Instantiate(cubePrefab, location, Quaternion.identity) as Transform as Transform;
-		clone = GameObject.CreatePrimitive(PrimitiveType.Cube);
-		NetworkView nView = clone.AddComponent<NetworkView>();
-		//NetworkView nView;
-		//nView = clone.GetComponent<NetworkView>();
-		nView.viewID = viewID;
 
-		if (Network.isServer)
-		{
-			clone.AddComponent<Rigidbody>();
-		}
-	}
-
-
-	[RPC]
-	void ServerSpawnObject(string name, Vector3 position, Vector3 forward, Vector3 color) 
-    {
-		if (!Network.isServer)
-		{
-			return;
-		}
-		LogManager.Log ("ServerSpawnObject");
-		GetComponent<NetworkView>().RPC("SpawnObject", RPCMode.AllBuffered, name, Network.AllocateViewID(), position, forward, color);
-	}
-
-	[RPC]
-	void SpawnObject(string name, NetworkViewID viewID, Vector3 location, Vector3 forward, Vector3 color) 
-	{
-		GameObject clone = null;
-		if (name == "cube")
-		{
-			clone = GameObject.Instantiate(goPrefabCubeSimple, Vector3.zero, Quaternion.identity) as GameObject;
-			//clone = GameObject.CreatePrimitive(PrimitiveType.Cube);
-		}
-		else if (name == "sphere")
-		{
-			clone = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-			clone.transform.localScale = Vector3.one*0.2f;
-			AudioSource audio = clone.AddComponent<AudioSource>();
-			audio.spatialBlend = 1.0f;
-			NAAudioSynthFM fm = clone.AddComponent<NAAudioSynthFM>();
-			fm.duration = 1f;
-			fm.CarrierFrequency = 20f+Random.value*2000f;
-			fm.ModulatorFrequency = Random.value*4f;
-			fm.ModulationAmount = Random.value*0.1f;
-			clone.AddComponent<NAPlayOnCollide>();
-			audio.playOnAwake = false;
-			fm.Compute();
-		}
-		else if (name == "cylinder")
-		{
-			clone = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-		}
-		else if (name == "trunk")
-		{
-			clone = GameObject.CreatePrimitive(PrimitiveType.Cube);
-			clone.transform.position = selectedCamera.transform.position;
-			clone.transform.localScale = new Vector3(1f,0.4f, 0.6f);
-			clone.GetComponent<Renderer>().material.color = Color.red;
-			AudioSource src = clone.AddComponent<AudioSource>();
-			src.playOnAwake = false;
-			//clone.AddComponent<NAPlayOnCollide>();
-			clone.AddComponent<NAAudioRecorder>();
-			NA.DecorateAudioSource(src);
-		}
-		else
-		{
-			clone = GameObject.CreatePrimitive(PrimitiveType.Plane);
-		}
-
-		NetworkView nView = clone.AddComponent<NetworkView>();
-		nView.viewID = viewID;
-
-		clone.transform.position = location;
-
-		MeshRenderer renderer = clone.GetComponent<MeshRenderer>();
-		renderer.material.color = new Color(color.x, color.y, color.z);
-
-		Rigidbody rb = clone.AddComponent<Rigidbody>();
-        if (NA.isServer() || NA.isStandalone())
-        {
-			rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
-			rb.AddForce(forward*1000f);
-        }
-		else
-		{
-			//client, we need the RB for local collisions but in kinematic mode only
-			rb.isKinematic = true;
-		}
-		player_objects.Add(clone);
-    }
-
-
-	*/
 
 	[RPC]
 	void DestroyObject(NetworkViewID viewID)
@@ -1795,8 +1669,8 @@ public class App : MonoBehaviour
 		}
 		else
 		{
-			Debug.Log ("IP="+MasterServer.ipAddress);
-			Debug.Log ("PORT="+MasterServer.port);
+			//Debug.Log ("IP="+MasterServer.ipAddress);
+			//Debug.Log ("PORT="+MasterServer.port);
 			GUILayout.BeginHorizontal();
 			GUILayout.Label( "name"	,GUILayout.Width(150 ));
 			GUILayout.Label( "players"	,GUILayout.Width(50 ));
@@ -2439,14 +2313,18 @@ public class App : MonoBehaviour
 		{
 			if (GUILayout.Button ("revert", GUILayout.Width(100)))
 			{
+				//retrieve from NAObject
 				currentSelection.go.transform.position  	= currentSelection.position;
 				currentSelection.go.transform.eulerAngles  	= currentSelection.angles;
+				currentSelection.go.transform.localScale  	= currentSelection.scale;
 			}
 			if (GUILayout.Button ("save", GUILayout.Width(100)))
 			{
-				currentSelection.position = currentSelection.go.transform.position;
-				currentSelection.angles = currentSelection.go.transform.eulerAngles;
-				NAServer.ObjectUpdate(currentSelection.id, currentSelection.position, currentSelection.angles);
+				//save to NAObject and send to database
+				currentSelection.position 	= currentSelection.go.transform.position;
+				currentSelection.angles 	= currentSelection.go.transform.eulerAngles;
+				currentSelection.scale 		= currentSelection.go.transform.localScale;
+				NAServer.ObjectUpdate(currentSelection.id, currentSelection.position, currentSelection.angles, currentSelection.scale);
 			}
 
 			if (GUILayout.Button ("delete", GUILayout.Width(100)))
@@ -2455,7 +2333,6 @@ public class App : MonoBehaviour
 				currentSelection.angles = currentSelection.go.transform.eulerAngles;
 
 				NAServer.ObjectDelete(currentSelection.id);
-				//SetObjectSpace(o.id, "trash"); //move to trash
 				GameObject.Destroy(currentSelection.go);
 				currentSelection.go = null;
 				listObjects.Remove(currentSelection);

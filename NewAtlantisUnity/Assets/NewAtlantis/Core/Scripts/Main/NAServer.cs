@@ -163,7 +163,7 @@ public class NAServer
 	//SpaceDelete
 	//AssetUpdate
 	
-	public static void ObjectUpdate(string id, Vector3 position, Vector3 angles)
+	public static void ObjectUpdate(string id, Vector3 position, Vector3 angles, Vector3 scale)
 	{
 		WWWForm form = new WWWForm();
 		form.AddField("login", 	strLogin);
@@ -175,6 +175,9 @@ public class NAServer
 		form.AddField("ax", 	""+angles.x);
 		form.AddField("ay", 	""+angles.y);
 		form.AddField("az", 	""+angles.z);
+		form.AddField("sx", 	""+scale.x);
+		form.AddField("sy", 	""+scale.y);
+		form.AddField("sz", 	""+scale.z);
 		wwwPost = new WWW("http://tanant.info/newatlantis2/setobject.php", form);
 	}
 	

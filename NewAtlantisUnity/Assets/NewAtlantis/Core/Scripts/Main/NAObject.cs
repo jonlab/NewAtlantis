@@ -10,6 +10,7 @@ public class NAObject
 	public string 	name 		= "";
 	public Vector3 	position 	= Vector3.zero;
 	public Vector3 	angles 		= Vector3.zero;
+	public Vector3 	scale 		= Vector3.one;
 	public string 	file 		= "";
 	public GameObject go 		= null;
 	public GameObject goGizmo 	= null;
@@ -22,24 +23,27 @@ public class NAObject
 
 	//private static Dictionary<string, AssetBundle> AssetBundles = new Dictionary<string, AssetBundle>();
 
-	public NAObject(GameObject _root, string _name, Vector3 _position, Vector3 _angles, string _file, NetworkViewID _NetworkViewId)
+	public NAObject(GameObject _root, string _name, Vector3 _position, Vector3 _angles, Vector3 _scale, string _file, NetworkViewID _NetworkViewId)
 	{
 
 		Debug.Log ("Creating NAObject " + _name);
 		name 				= _name;
 		position 			= _position;
 		angles 				= _angles;
+		scale 				= _scale;
 		file 				= _file;
 		NetworkViewId 		= _NetworkViewId;
 
 		//create and sync the Main GameObject
-		go 						= new GameObject(_name+_NetworkViewId);
-		go.transform.position 	= _position;
-		go.transform.eulerAngles = _angles;
-		go.transform.parent		= _root.transform;
-		NetworkView nView 		= go.AddComponent<NetworkView>();
-		nView.viewID 			= this.NetworkViewId;
-		NetworkSync nSync 		= go.AddComponent<NetworkSync>();
+		go 							= new GameObject(_name+_NetworkViewId);
+		go.transform.parent			= _root.transform;
+		go.transform.position 		= _position;
+		go.transform.eulerAngles 	= _angles;
+		//go.transform.localScale 	= _scale;
+
+		NetworkView nView 			= go.AddComponent<NetworkView>();
+		nView.viewID 				= this.NetworkViewId;
+		NetworkSync nSync 			= go.AddComponent<NetworkSync>();
 	}
 
 	public void Download()
@@ -69,6 +73,7 @@ public class NAObject
 				bool bInstantiateObjects = true;
 				if (bInstantiateObjects)
 				{
+					Debug.Log ("instantiate object " + name);
 					Object[] objs = bundle.LoadAllAssets();
 					Debug.Log ("Asset Bundle Objects count = " + objs.Length);
 					string[] strAssets = bundle.GetAllAssetNames();
@@ -94,9 +99,10 @@ public class NAObject
 								if (goChild != null)
 								{
 									goChild.name = o.name;
-									goChild.transform.parent = go.transform;
-									goChild.transform.localPosition = Vector3.zero;
-									goChild.transform.localEulerAngles = Vector3.zero;
+									goChild.transform.parent 			= go.transform;
+									goChild.transform.localPosition 	= Vector3.zero;
+									goChild.transform.localEulerAngles 	= Vector3.zero;
+									//goChild.transform.localScale 		= Vector3.one;
 								}
 							}
 						}
@@ -108,7 +114,10 @@ public class NAObject
 						goChild.transform.parent = go.transform;
 						goChild.transform.localPosition = Vector3.zero;
 						goChild.transform.localEulerAngles = Vector3.zero;
+						//goChild.transform.localScale = Vector3.one;
 	                }
+					//we have to scale after instantiation
+					go.transform.localScale 	= scale;
 					bundle.Unload(false);
 
 					goGizmo = new GameObject("object_gizmo");

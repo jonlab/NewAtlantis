@@ -27,7 +27,7 @@ public class NADownloader
 			//Debug.Log ("www is not null");
 			if (www.isDone)
 			{
-				//Debug.Log ("get asset bundle for url " + url);
+				Debug.Log ("get asset bundle for url " + current.url);
 				AssetBundle bundle = www.assetBundle;
 				if (GetAssetBundle(current.id) == null && bundle != null)
 				{

@@ -48,11 +48,10 @@ public static class NA
 		return (!Network.isClient && !Network.isServer);
 	}
 
-
-
+	
 	public static AudioListener listener = null;
 	//public static Camera currentcam = null;
-	public static bool bAugmentAudioSources = true;
+	public static bool bAugmentAudioSources = false;
 
 	//public static bool bDisplayAudioSourceName = true;
 
