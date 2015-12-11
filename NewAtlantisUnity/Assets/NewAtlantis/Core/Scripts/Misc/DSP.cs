@@ -11,6 +11,13 @@ public class MixSettings
 public class DSP
 {
 
+	public static void GenerateSilence(float[] data)
+	{
+		for (int i = 0; i < data.Length; i++) 
+		{
+			data[i] = 0;
+		}
+	}
 
 	public static void GenerateNoise(float[] data)
 	{
