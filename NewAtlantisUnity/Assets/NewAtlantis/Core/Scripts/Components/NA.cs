@@ -98,14 +98,14 @@ public static class NA
 
 	}
 
-	public static void AddAvatar(GameObject goAvatar)
+	public static void AddAvatar(GameObject _goAvatar)
 	{
-		listAvatars.Add(goAvatar);
+		listAvatars.Add(_goAvatar);
 	}
 
-	public static void RemoveAvatar(GameObject goAvatar)
+	public static void RemoveAvatar(GameObject _goAvatar)
 	{
-		listAvatars.Remove(goAvatar);
+		listAvatars.Remove(_goAvatar);
 	}
 
 	public static void ClearAvatars()

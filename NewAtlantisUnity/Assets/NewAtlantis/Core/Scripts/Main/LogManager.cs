@@ -9,7 +9,6 @@ public class LogEntry
 }
 public class LogManager : MonoBehaviour 
 {
-	
 	public static bool bGUI = false;
 	public static Texture2D texWhite = null;
 	public static List<LogEntry> logs = new List<LogEntry>();
@@ -26,7 +25,7 @@ public class LogManager : MonoBehaviour
 	void Update () 
 	{
 		timer+=Time.deltaTime;
-		if (Input.GetKeyDown(KeyCode.LeftShift))
+		if (Input.GetKeyDown(KeyCode.L))
 		{
 			bGUI = !bGUI;
 		}

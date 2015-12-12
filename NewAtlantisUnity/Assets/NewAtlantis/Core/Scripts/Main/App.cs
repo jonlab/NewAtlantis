@@ -72,7 +72,7 @@ public class App : MonoBehaviour
 	Texture2D			texWhite 	= null;
 	Camera 				mainCamera 	= null;
 	Camera 				selectedCamera = null;
-	public bool	 			bGUI 		= true;
+	public bool	 		bGUI 		= true;
 
 	float 				timerGC		= 0;
 	float 				timerRefresh		= 0;
@@ -268,12 +268,17 @@ public class App : MonoBehaviour
 
 
 
+
+
+
+
 	void CreateNetworkAvatar()
 	{
 		//goAvatar = InstantiateObject(goPrefabAvatar, Vector3.zero, Quaternion.identity, Vector3.one, 0);
 
 		if (Network.isServer || Network.isClient)
 		{
+			//in all cases the current app keeps the avatar
 			//goAvatar = Network.Instantiate(goPrefabAvatar, Vector3.zero, Quaternion.identity, 0) as GameObject;
 			GetComponent<NetworkView>().RPC("SpawnAvatar", RPCMode.AllBuffered, Network.AllocateViewID(), colorAvatar, NAServer.strLogin);
 		}
@@ -282,8 +287,8 @@ public class App : MonoBehaviour
 			//no need ?
 			//goAvatar = InstantiateObject(goPrefabAvatar, Vector3.zero, Quaternion.identity, Vector3.one, 0);
 		}
-
 	}
+
 
 
 	void UnactivateCameras()
@@ -313,6 +318,7 @@ public class App : MonoBehaviour
 				}
 			}
 		}
+
 		AudioListener[] listeners = AudioListener.FindObjectsOfType (typeof(AudioListener)) as AudioListener[];
 		foreach (AudioListener al in listeners)
 		{
@@ -370,7 +376,6 @@ public class App : MonoBehaviour
 		ObjectUploader.Process();
 		NADownloader.Process();
 		TransitionManager.Process();
-
 		timerGC+=Time.deltaTime;
 
 		/*timerRefresh+=Time.deltaTime;
@@ -887,7 +892,7 @@ public class App : MonoBehaviour
 					}
 					catch (System.Exception e)
 					{
-						Debug.LogWarning("FIXME : avatars cleaning");
+						Debug.LogWarning("FIXME : avatars cleaning " + e.ToString());
 					}
 				}
 			}
@@ -1033,60 +1038,9 @@ public class App : MonoBehaviour
 
 
 
-	/*void DownloadAll()
-	{
-		foreach (NAObject o in listObjects) 
-		{
-			o.Download();
-		}
-	}*/
 
 
-	//get the XML description of a given space name
-	/*void GetSpaceDescription(string space)
-	{
-		string url = Settings.URLWebServer + "getspace.php?password=qkvnhr7d3Y";
-		url += "&space=" + space;
-		www = new WWW (url);
-	}
 
-	void GetWorldDescription(string space)
-	{
-		string url = Settings.URLWebServer + "getworld.php?password=qkvnhr7d3Y";
-		url += "&space=" + space;
-		www = new WWW (url);
-	}
-	*/
-
-	//set an object position
-	/*
-	void SetObjectPosition(string id, float x, float y, float z)
-	{
-		return;
-		//string url = "http://www.tanant.info/newatlantis/set.php?password=qkvnhr7d3Y&action=setposition";
-		string url = Settings.URLWebServer + "set.php?password=qkvnhr7d3Y&action=setposition";
-		url += "&x=" + x;
-		url += "&y=" + y;
-		url += "&z=" + z;
-		url += "&id=" + id;
-		Debug.Log ("Request : " + url);
-		WWW lwww = new WWW (url);
-		requests.Add (lwww);
-	}
-	*/
-
-	//move an object to a given space name
-	/*void SetObjectSpace(string id, string space)
-	{
-		//string url = "http://www.tanant.info/newatlantis/set.php?password=qkvnhr7d3Y&action=setspace";
-		string url = Settings.URLWebServer + "set.php?password=qkvnhr7d3Y&action=setspace";
-		url += "&space=" + space;
-		url += "&id=" + id;
-		Debug.Log ("Request : " + url);
-		WWW lwww = new WWW (url);
-        requests.Add (lwww);
-    }
-	*/
 
 
 
@@ -1110,7 +1064,7 @@ public class App : MonoBehaviour
     }
 
 
-	public void VerySpecialCase()
+	/*public void VerySpecialCase()
 	{
 		GameObject go = GameObject.Find ("Daylight Water");
 		if (go)
@@ -1122,22 +1076,37 @@ public class App : MonoBehaviour
 			go.AddComponent<NAPlayOnTrigger>();
 		}
 	}
+	*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	void OnConnectedToServer() 
 	{
 		Debug.Log("Connected to server");
 		CreateNetworkAvatar();
 		PlayEvent(2);
-
-
 	}
 
 	void OnPlayerConnected(NetworkPlayer player) 
 	{
+		//Called on the server whenever a player is disconnected from the server.
 		Debug.Log("Player connected from " + player.ipAddress + ":" + player.port);
 		ChatManager.Log("system", "player connected", 0);
 		PlayEvent(3);
-		LogManager.LogWarning("A new player just connected to the space");
+		LogManager.LogWarning("A new player just connected to the server.");
 
 	}
 
@@ -1147,7 +1116,8 @@ public class App : MonoBehaviour
 		PlayEvent(9);
 		Debug.Log("Clean up after player " + player);
 		Network.RemoveRPCs(player);
-		Network.DestroyPlayerObjects(player); //à voir
+		Network.DestroyPlayerObjects(player); //destroys the player objects including avatar
+		LogManager.LogWarning("A new player just leaved the server.");
 	}
     
 	
@@ -1231,6 +1201,8 @@ public class App : MonoBehaviour
     }
     
     
+
+
     [RPC]
 	void SpawnAvatar(NetworkViewID viewID, Vector3 color, string name) 
 	{
@@ -1263,12 +1235,26 @@ public class App : MonoBehaviour
     }
 
 
+
+
     
     [RPC]
 	void ConnectToSpace(string _space) 
 	{
 		Connect(_space);
 	}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	void WindowFunctionChat (int windowID)
@@ -1322,6 +1308,10 @@ public class App : MonoBehaviour
     }
 
 
+
+
+
+
 	void WindowFunctionUser (int windowID)
 	{
 		GUI.color = Color.white;
@@ -1350,6 +1340,7 @@ public class App : MonoBehaviour
 		if (GUILayout.Button ("Import a new asset to my library", GUILayout.Width(200 ))) 
 		{
 			CurrentAsset = null;
+			strObjectName = "object_name";
 			RefreshBundles();
 			state = AppState.Asset;
 		}
@@ -2090,15 +2081,22 @@ public class App : MonoBehaviour
 #else
 		if (GUILayout.Button ("upload asset to my library"))
 		{
-			//read the bytes and post to the database...
-			byte[] data = System.IO.File.ReadAllBytes("Bundles/"+strFile);
-			if (CurrentAsset != null)
+			if (strObjectName != "object_name")
 			{
-				NAServer.AssetUpdate (CurrentAsset.id, data, strObjectName);
+				//read the bytes and post to the database...
+				byte[] data = System.IO.File.ReadAllBytes("Bundles/"+strFile);
+				if (CurrentAsset != null)
+				{
+					NAServer.AssetUpdate (CurrentAsset.id, data, strObjectName);
+				}
+				else
+				{
+					NAServer.AssetAdd(data, strObjectName);
+				}
 			}
 			else
 			{
-				NAServer.AssetAdd(data, strObjectName);
+				LogManager.LogError("ERROR, please provide a name for your object !");
 			}
         }
 #endif

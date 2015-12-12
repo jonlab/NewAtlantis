@@ -27,7 +27,16 @@ public class NAToolSpawner : NAToolBase {
 
 	public override void Action() 
 	{
-		GetComponent<NetworkView>().RPC("ServerSpawnObject", RPCMode.AllBuffered, objectName, gameObject.transform.position+gameObject.transform.forward*distance, localForce, new Vector3(1,0,0)/*colorAvatar*/);
+		Vector3 worldforce = transform.rotation * localForce;
+		if (Network.isServer)
+		{
+			ServerSpawnObject(objectName, transform.position+transform.forward*distance, worldforce, new Vector3(1,0,0)/*colorAvatar*/);
+		}
+		else
+		{
+			//we send to the server
+			GetComponent<NetworkView>().RPC("ServerSpawnObject", RPCMode.Server, objectName, transform.position+transform.forward*distance, worldforce, new Vector3(1,0,0)/*colorAvatar*/);
+		}
 	}
 
 	[RPC]
@@ -117,16 +126,17 @@ public class NAToolSpawner : NAToolBase {
 			renderer.material.color = new Color(color.x, color.y, color.z);
 		}
 		clone.transform.forward = transform.rotation * Vector3.Normalize(forward) ;
-		Rigidbody rb = clone.AddComponent<Rigidbody>();
+		//Rigidbody rb = clone.AddComponent<Rigidbody>();
 		if (NA.isServer() || NA.isStandalone())
 		{
+			Rigidbody rb = clone.AddComponent<Rigidbody>();
 			rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
-			rb.AddRelativeForce(forward*200f);
+			rb.AddForce(forward*200f);
 		}
 		else
 		{
 			//client, we need the RB for local collisions but in kinematic mode only
-			rb.isKinematic = true;
+			//rb.isKinematic = true;
 		}
 		NA.player_objects.Add(clone);
 	}
