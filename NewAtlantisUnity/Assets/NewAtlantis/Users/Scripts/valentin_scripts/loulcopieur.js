@@ -27,10 +27,10 @@ function clone () {
 }
 
 function OnTriggerStay (other : Collider) {
-	if (other.attachedRigidbody) {
-		bswitch = true;
-		coll = other;
-	} else {
-		bswitch = false;
-	}
+    if (other.attachedRigidbody) {
+        bswitch = true;
+        coll = other;
+    } else {
+        bswitch = false;
+    }
 }

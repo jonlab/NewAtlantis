@@ -181,10 +181,21 @@ public class App : MonoBehaviour
 	HostData 		currentHost = null;
 
 
-	// Use this for initialization
-	void Start () 
+    GameObject goGizmo;
+    TRS_Gizmo trs;
+
+
+
+
+    // Use this for initialization
+    void Start () 
 	{
-		Debug.Log ("IP="+MasterServer.ipAddress);
+
+        goGizmo = GameObject.Find("TRS Gizmo");
+        trs = goGizmo.GetComponent<TRS_Gizmo>();
+
+
+        Debug.Log ("IP="+MasterServer.ipAddress);
 		//AssetBundlePreviewGenerator.Test("Bundles/grass_ground.unity3d");
 		//AssetBundlePreviewGenerator.Test("Bundles/CubeRouge.unity3d");
 		//AssetBundlePreviewGenerator.Test("Bundles/Lobby.unity3d");
@@ -299,7 +310,7 @@ public class App : MonoBehaviour
 			bool bIgnore = false;
 			if (c.transform.parent)
 			{
-				if (c.transform.parent.name == "TRS Gizmo" || c.transform.name == "Depth Camera")
+				if (c.transform.parent.name == "TRS Gizmo" || c.transform.name == "Depth Camera" || c.transform.name == "AvatarEditorCamera")
 				{
 					bIgnore = true; //patch pour éviter que la caméra Gizmo soit désactivée
 				}
@@ -864,10 +875,12 @@ public class App : MonoBehaviour
 
     void OnGUI()
     {
+        /*
+
 		//reticule
 		int reticule_size = 50;
-		GUI.DrawTexture (new Rect (Screen.width/2-reticule_size/2, Screen.height/2, reticule_size, 2), texWhite);
-		GUI.DrawTexture (new Rect (Screen.width/2, Screen.height/2-reticule_size/2, 2, reticule_size), texWhite);
+		//GUI.DrawTexture (new Rect (Screen.width/2-reticule_size/2, Screen.height/2, reticule_size, 2), texWhite);
+		//GUI.DrawTexture (new Rect (Screen.width/2, Screen.height/2-reticule_size/2, 2, reticule_size), texWhite);
 
 		if (bDisplayAvatarNames)
 		{
@@ -899,6 +912,7 @@ public class App : MonoBehaviour
 		}
 
 		TransitionManager.DrawGUI();
+        */
 
 		float loading = GetLoadingProgress();
 		if (loading != -1f && loading != 1f)
@@ -915,7 +929,7 @@ public class App : MonoBehaviour
 
 
 		GUI.color = new Color (0, 0, 0, 0.5f);
-		GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
+		//GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
 		GUI.color = Color.white;
 		//GUI.Label(new Rect(0,0,400,30), "NewAtlantisNew Client - SAIC workshop");
 		GUI.Label(new Rect(0,0,400,30), "New Atlantis Client v0.80");
@@ -930,16 +944,7 @@ public class App : MonoBehaviour
 		foreach (NAObject o in listObjects) 
 		{
 			progress_count += 1f;
-			/*if (o.www != null)
-			{
 
-				progress_val += o.www.progress;
-			}
-			else
-			{
-				progress_val += 1f;
-			}
-			*/
 		}
 		if (progress_count>0)
 		{
@@ -974,7 +979,7 @@ public class App : MonoBehaviour
 		//bottom toolbar 
 		int bottomy = Screen.height - 30;
 		GUI.color = new Color (0, 0, 0, 0.5f);
-		GUI.DrawTexture (new Rect (0, bottomy, Screen.width, 30), texWhite);
+		//GUI.DrawTexture (new Rect (0, bottomy, Screen.width, 30), texWhite);
 		GUI.color = Color.white;
 
 
@@ -1030,6 +1035,9 @@ public class App : MonoBehaviour
 			GUI.Window(10, mGuiWinRectUser, WindowFunctionUser, "User");
 			break;
 		}
+
+
+        
 	}
 
 
@@ -1505,8 +1513,26 @@ public class App : MonoBehaviour
 		GUISpaces(true);
 		GUILayout.EndScrollView();
 		GUI.color = Color.white;
+
+        if(GUI.Button(new Rect(200, Screen.height - 100, 200 ,  50 ), "Edit my Avatar"))
+        {
+            //    GUILayout.EndHorizontal();
+            tab = AppTab.None;
+
+            GameObject avatarEditor = GameObject.Find("NA_AvatarEditorObject");
+            NA_AvatarEditor avatarEditorScript = avatarEditor.GetComponent<NA_AvatarEditor>();
+            avatarEditorScript.StartAvatarEdition();
+        }
+
 	}
 
+    public bool getTabOpen()
+    {
+        if (tab == AppTab.None) return false;
+
+        return true;
+
+    }
 
 	void GUISpacesHeader()
 	{
@@ -2233,11 +2259,9 @@ public class App : MonoBehaviour
 				if (GUILayout.Button (o.name, GUILayout.Width(150))) //50
 				{
 					//Alex Gizmo
-					GameObject goGizmo = GameObject.Find("TRS Gizmo");
-					TRS_Gizmo trs = goGizmo.GetComponent<TRS_Gizmo>();
-
+					
 					if (currentSelection != null)
-						currentSelection.goGizmo.SetActive(false);
+						goGizmo.SetActive(false);
 					
 					if (currentSelection == o)
 					{
@@ -2247,7 +2271,7 @@ public class App : MonoBehaviour
 					else
 					{
 						currentSelection = o;
-						currentSelection.goGizmo.SetActive(true);
+						goGizmo.SetActive(true);
 						trs.startTRSGizmo(currentSelection.go);
 						NA.PausePhysics();
 					}

@@ -19,8 +19,8 @@ function OnTriggerStay(other : Collider) {
 	coll2 = other;
 }
 
-function Update() {
-	if (bswitch == false) {
-		coll2.attachedRigidbody.constraints = RigidbodyConstraints.None;
-	}
-}
+    function Update() {
+        if (bswitch == false) {
+            coll2.attachedRigidbody.constraints = RigidbodyConstraints.None;
+        }
+    }

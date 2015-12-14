@@ -11,7 +11,7 @@ public class TRS_Gizmo : MonoBehaviour {
 	GyzmoTransformScript gizmoScript;
 	bool active = false;
 
-	public GameObject gizmoLight ; 
+	//public GameObject gizmoLight ; 
 
 
 	// Use this for initialization
@@ -43,7 +43,7 @@ public class TRS_Gizmo : MonoBehaviour {
 		gizmoScript = (GyzmoTransformScript)gizmoChild.GetComponent (typeof(GyzmoTransformScript));
 
 	
-		gizmoLight.SetActive (true);
+		//gizmoLight.SetActive (true);
 		gizmoChild.SetActive (true);
 		gizmoCamera.SetActive (true);
 		gizmoScript.startGizmoAttachment (o);
@@ -76,7 +76,7 @@ public class TRS_Gizmo : MonoBehaviour {
 	
 		gizmoScript.resetParentRotation ();
 
-		gizmoLight.SetActive (false);
+		//gizmoLight.SetActive (false);
 		gizmoChild.SetActive (false);
 		gizmoCamera.SetActive (false);
 
