@@ -130,7 +130,9 @@ public class App : MonoBehaviour
 	public string strName = "noname";
 	string strObjectName = "object_name";
 
-	static Vector2 WindowSize = new Vector2(790,530);
+
+	//static Vector2 WindowSize = new Vector2(790,530);
+	static Vector2 WindowSize = new Vector2(1024-10, 768-70);
 	Rect mGuiWinRectChat 		= new Rect(Screen.width-300, 200, 300, Screen.height-200);
 	Rect mGuiWinRectNetwork 	= new Rect(Screen.width/2-200, Screen.height/2-250, 400, 500);
 	
@@ -1014,25 +1016,25 @@ public class App : MonoBehaviour
 		switch (tab)
 		{
 		case AppTab.Chat:
-			mGuiWinRectChat 	= GUI.Window(1, mGuiWinRectChat, WindowFunctionChat, "CHAT");
+			mGuiWinRectChat 	= GUI.Window(1, mGuiWinRectChat, WindowFunctionChat, "Chat");
 			break;
 		case AppTab.About:
-			mGuiWinRectAbout 	= GUI.Window(7, mGuiWinRectAbout, WindowFunctionAbout, "ABOUT");
+			mGuiWinRectAbout 	= GUI.Window(7, mGuiWinRectAbout, WindowFunctionAbout, "About");
 			break;
 		case AppTab.Options:
-			mGuiWinRectOptions 	= GUI.Window(6, mGuiWinRectOptions, WindowFunctionOptions, "OPTIONS");
+			mGuiWinRectOptions 	= GUI.Window(6, mGuiWinRectOptions, WindowFunctionOptions, "Options");
 			break;
 		case AppTab.Space:
-			mGuiWinRectSpaces 	= GUI.Window(8, mGuiWinRectSpaces, WindowFunctionSpaces, "SPACE");
+			mGuiWinRectSpaces 	= GUI.Window(8, mGuiWinRectSpaces, WindowFunctionSpaces, "Space");
 			break;
 		case AppTab.Scene:
-			mGuiWinRectScene = GUI.Window(3, mGuiWinRectScene, WindowFunctionScene, "SCENE");
+			mGuiWinRectScene = GUI.Window(3, mGuiWinRectScene, WindowFunctionScene, "Scene");
 			break;
 		case AppTab.Lobby:
 			GUI.Window(2, mGuiWinRectLobby, WindowFunctionLobby, "Lobby");
 			break;
 		case AppTab.User:
-			GUI.Window(10, mGuiWinRectUser, WindowFunctionUser, "User");
+			GUI.Window(10, mGuiWinRectUser, WindowFunctionUser, "MyNA");
 			break;
 		}
 
@@ -1388,7 +1390,7 @@ public class App : MonoBehaviour
 		GUILayout.EndHorizontal();
 		*/
 
-		scrollPosMyAssets = GUILayout.BeginScrollView( scrollPosMyAssets, GUILayout.Height( 150 ) );
+		scrollPosMyAssets = GUILayout.BeginScrollView( scrollPosMyAssets, GUILayout.Height( 230 ) ); //150
 
 		foreach (Asset asset in listAssets)
 		{
@@ -1437,9 +1439,6 @@ public class App : MonoBehaviour
 		GUILayout.EndScrollView();
 
 
-
-
-
 		GUILayout.BeginHorizontal();
 		if (CurrentAsset != null) //we act on selection
 		{
@@ -1473,14 +1472,19 @@ public class App : MonoBehaviour
 			{
 			}
 		}
+		else
+		{
+			GUILayout.Label ("");
+		}
 		
 
 		GUI.color = Color.white;
 		GUILayout.EndHorizontal();
 
-		GUILayout.BeginHorizontal();
+		/*GUILayout.BeginHorizontal();
 		if (GUILayout.Button ("")){}
 		GUILayout.EndHorizontal();
+		*/
 
 		GUILayout.BeginHorizontal();
 		GUILayout.Label ("Spaces");
@@ -1509,7 +1513,7 @@ public class App : MonoBehaviour
 		SpaceFilter = GUILayout.TextField (SpaceFilter, GUILayout.Width(200));
         GUILayout.EndHorizontal();
 		GUISpacesHeader();
-        scrollPosMySpaces = GUILayout.BeginScrollView( scrollPosMySpaces, GUILayout.Height( 150 ) );
+        scrollPosMySpaces = GUILayout.BeginScrollView( scrollPosMySpaces, GUILayout.Height( 230 ) ); //150
 		GUISpaces(true);
 		GUILayout.EndScrollView();
 		GUI.color = Color.white;
@@ -1681,7 +1685,7 @@ public class App : MonoBehaviour
 		//serveurs dans le monde
 
 		//texWhite
-		scrollPos = GUILayout.BeginScrollView( scrollPos, GUILayout.Height( 150f ) );
+		scrollPos = GUILayout.BeginScrollView( scrollPos, GUILayout.Height( 230 ) ); //150
 		if( loading )
 		{
 			GUILayout.BeginHorizontal();
@@ -1815,7 +1819,7 @@ public class App : MonoBehaviour
 		GUILayout.EndHorizontal();
 
 		GUISpacesHeader();
-		scrollPosLobbySpaces = GUILayout.BeginScrollView( scrollPosLobbySpaces, GUILayout.Height( 150f ) );
+		scrollPosLobbySpaces = GUILayout.BeginScrollView( scrollPosLobbySpaces, GUILayout.Height( 230 ) ); //150
 		GUISpaces(false);
 		GUILayout.EndScrollView();
 
@@ -1947,7 +1951,7 @@ public class App : MonoBehaviour
 		GUILayout.BeginHorizontal();
 		GUILayout.Label ("AudioSources " + "[" + sources.Length + "]");
 		GUILayout.EndHorizontal();
-		scrollPosSources = GUILayout.BeginScrollView( scrollPosSources, GUILayout.Height( 180 ) );
+		scrollPosSources = GUILayout.BeginScrollView( scrollPosSources, GUILayout.Height( 340 ) ); //180
 		foreach (AudioSource s in sources)
 		{
 			GUI.color = s.enabled ? Color.red : Color.white;
