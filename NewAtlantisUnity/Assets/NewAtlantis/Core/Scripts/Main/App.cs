@@ -1385,7 +1385,7 @@ public class App : MonoBehaviour
 		foreach (Asset asset in listAssets)
 		{
 			if (
-				(tabAssets == TypeTab.Mine && asset.creator == NAServer.strLogin || tabAssets == TypeTab.SharedWithMe && asset.type == "public" && asset.creator != NAServer.strLogin)
+				(tabAssets == TypeTab.Mine && asset.creator == NAServer.strLogin || tabAssets == TypeTab.SharedWithMe && /*asset.type == "public" &&*/ asset.creator != NAServer.strLogin)
 				&&
 				(AssetFilter == "" || asset.name.Contains(AssetFilter) || asset.creator.Contains (AssetFilter))
 			 )
