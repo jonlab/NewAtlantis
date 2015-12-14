@@ -1,0 +1,7 @@
+Scripts
+
+CameraView : genere une vue selon un tableau de Game Object ( views )
+CameraRandomView : gener une vue aleatoire
+CameraRotateWithKeyboard : tourne la camera autour d'un point manuellement avec des touches clavier
+CameraRotateAround : tourne la camera autour d'un point automatiquement
+CameraRandomRotateAround : tourne la camera autour d'un point automatiquement avec des vues aleatoires
