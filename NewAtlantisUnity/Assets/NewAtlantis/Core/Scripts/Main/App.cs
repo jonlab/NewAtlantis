@@ -877,6 +877,13 @@ public class App : MonoBehaviour
 
     void OnGUI()
     {
+
+		if (Screen.height < 768)
+		{
+			float scale = (float)Screen.height / 768f;
+			GUI.matrix = Matrix4x4.Scale(Vector3.one * scale);
+		}
+
         /*
 
 		//reticule
@@ -934,7 +941,7 @@ public class App : MonoBehaviour
 		//GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
 		GUI.color = Color.white;
 		//GUI.Label(new Rect(0,0,400,30), "NewAtlantisNew Client - SAIC workshop");
-		GUI.Label(new Rect(0,0,400,30), "New Atlantis Client v0.80");
+		GUI.Label(new Rect(0,0,400,30), "New Atlantis Client v0.81");
 		GUI.Label(new Rect(Screen.width-200, 0, 200, 30), strPick);
 
 
@@ -967,7 +974,7 @@ public class App : MonoBehaviour
 		if (state == AppState.Space)
 		{
 			mGuiWinRectSpace = GUI.Window(1, mGuiWinRectSpace, WindowFunctionSpace, "Space");
-			//return;
+			return;
 		}
 		if (state == AppState.Asset)
 		{
@@ -1395,7 +1402,7 @@ public class App : MonoBehaviour
 		foreach (Asset asset in listAssets)
 		{
 			if (
-				(tabAssets == TypeTab.Mine && asset.creator == NAServer.strLogin || tabAssets == TypeTab.SharedWithMe && /*asset.type == "public" &&*/ asset.creator != NAServer.strLogin)
+				(tabAssets == TypeTab.Mine && asset.creator == NAServer.strLogin || tabAssets == TypeTab.SharedWithMe && asset.type == "public" && asset.creator != NAServer.strLogin)
 				&&
 				(AssetFilter == "" || asset.name.Contains(AssetFilter) || asset.creator.Contains (AssetFilter))
 			 )
