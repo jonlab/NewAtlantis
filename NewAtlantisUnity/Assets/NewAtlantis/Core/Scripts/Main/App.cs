@@ -1514,7 +1514,8 @@ public class App : MonoBehaviour
 		GUILayout.EndScrollView();
 		GUI.color = Color.white;
 
-        if(GUI.Button(new Rect(200, Screen.height - 100, 200 ,  50 ), "Edit my Avatar"))
+        //if(GUI.Button(new Rect(200, Screen.height - 100, 200 ,  50 ), "Edit my Avatar"))
+		if(GUILayout.Button("Edit my Avatar"))
         {
             //    GUILayout.EndHorizontal();
             tab = AppTab.None;
