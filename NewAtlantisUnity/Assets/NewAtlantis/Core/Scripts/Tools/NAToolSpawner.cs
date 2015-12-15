@@ -39,6 +39,23 @@ public class NAToolSpawner : NAToolBase {
 		}
 	}
 
+	public override void Press() 
+	{
+		
+	}
+
+	public override void Maintain() 
+	{
+		
+	}
+
+	public override void Release() 
+	{
+		
+	}
+
+
+
 	[RPC]
 	void SpawnBox(NetworkViewID viewID, Vector3 location) 
 	{

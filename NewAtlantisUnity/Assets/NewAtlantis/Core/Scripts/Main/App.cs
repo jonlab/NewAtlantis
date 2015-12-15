@@ -438,6 +438,24 @@ public class App : MonoBehaviour
 			t.Action();
 		}
 
+		if (NAInput.GetControlDown(NAControl.Action))
+		{
+			NAToolBase t = tools[current_tool];
+			t.Press();
+		}
+		else if (NAInput.GetControl(NAControl.Action))
+		{
+			NAToolBase t = tools[current_tool];
+			t.Maintain();
+		}
+		else if (NAInput.GetControlUp(NAControl.Action))
+		{
+			NAToolBase t = tools[current_tool];
+			t.Release();
+		}
+
+
+
 		//Previous tool
 		if (NAInput.GetControlDown(NAControl.PreviousTool))
 		{
@@ -926,10 +944,19 @@ public class App : MonoBehaviour
 		float loading = GetLoadingProgress();
 		if (loading != -1f && loading != 1f)
 		{
-			GUI.color = Color.red;
 
-			GUI.Label(new Rect(Screen.width/2-100, Screen.height/2-15, 200, 30), "loading... " + (int)(loading*1000f)/10f + "%");
+			GUI.color = Color.red;
+			GUI.DrawTexture (new Rect (Screen.width/2-300, Screen.height/2-50, 600, 20), texWhite);
+
 			GUI.color = Color.white;
+			GUI.DrawTexture (new Rect (Screen.width/2-300, Screen.height/2-50, 600f*loading, 20), texWhite);
+
+
+			GUI.color = Color.white;
+			string str = "loading " + NADownloader.current.name + " ... " + (int)(loading*1000f)/10f + "%";
+			GUI.Label(new Rect(Screen.width/2-150, Screen.height/2-15, 300, 30), str);
+			GUI.color = Color.white;
+
 		}
 		if (!bGUI)
 		{
@@ -942,7 +969,7 @@ public class App : MonoBehaviour
 		//GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
 		GUI.color = Color.white;
 		//GUI.Label(new Rect(0,0,400,30), "NewAtlantisNew Client - SAIC workshop");
-		GUI.Label(new Rect(0,0,400,30), "New Atlantis Client v0.81");
+		GUI.Label(new Rect(0,0,400,30), "New Atlantis Client v0.83");
 		GUI.Label(new Rect(Screen.width-200, 0, 200, 30), strPick);
 
 
@@ -1201,6 +1228,7 @@ public class App : MonoBehaviour
 	void Chat(string _name, string _message) 
 	{
 		ChatManager.Log(_name, _message, 0);
+		LogManager.LogWarning(_name + " : " + _message);
 	}
 
 
@@ -1777,6 +1805,8 @@ public class App : MonoBehaviour
 		GUI.color = Network.isClient ? Color.gray : Color.white;
 		if (GUILayout.Button ("Join server", GUILayout.Width(100 )) && !Network.isClient) 
 		{
+			
+			LogManager.Log("try to join " + currentHost.gameName + " at " + currentHost.ip + ":" + currentHost.port);
 			Network.Connect(currentHost);
 		}
 		GUI.color = !Network.isClient ? Color.gray : Color.white;

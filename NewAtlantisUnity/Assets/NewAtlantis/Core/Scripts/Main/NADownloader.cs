@@ -7,6 +7,7 @@ public class NADownloadInfo
 {
 	public string url = "";
 	public string id = "";
+	public string name = "";
 }
 public class NADownloader 
 {
@@ -64,7 +65,7 @@ public class NADownloader
 		}
 	}
 
-	public static string Download(string url)
+	public static string Download(string url, string name)
 	{
 		//JT : we have to download again even if already downloaded because the Unload() destroys the Asset Bundle
 		/*
@@ -76,6 +77,7 @@ public class NADownloader
 		*/
 		NADownloadInfo info = new NADownloadInfo();
 		info.url = url;
+		info.name = name;
 		//info.id = ""+Time.time*1000; //"unique ID"
 		info.id = ""+Random.value*10000000f;
 		Debug.Log ("id = " + info.id);

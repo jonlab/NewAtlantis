@@ -6,13 +6,25 @@ public class FlyCamera : MonoBehaviour {
 	Vector3 previousmouseposition;
 	public bool bPhysics = true;
 	public bool bGravity = true;
+
+	public float timerFly = 0;
 	// Use this for initialization
 	void Start () 
 	{
 
 	
 	}
-	
+
+	void OnCollisionEnter(Collision collision) 
+	{
+		if (!bGravity)
+		{
+			bGravity = true;
+			LogManager.LogWarning("you are now in walk mode");
+		}
+	}
+
+
 	// Update is called once per frame
 	void Update () 
 	{
@@ -44,6 +56,10 @@ public class FlyCamera : MonoBehaviour {
 		}
 
 		//axes
+
+		float x = NAInput.GetAxis(NAControl.MoveHorizontal);
+		float y = NAInput.GetAxis(NAControl.MoveVertical);
+
 		float joy_speed = 4f;
 		if (NAInput.GetControl(NAControl.Jump))
 			joy_speed = 20f;
@@ -52,11 +68,31 @@ public class FlyCamera : MonoBehaviour {
 			bGravity = !bGravity;
 		}
 
+		if (NAInput.GetControl(NAControl.Jump) && x == 0 && y == 0 )
+		{
+			timerFly += Time.deltaTime;
+
+			if (timerFly > 3f)
+			{
+				timerFly = 0f;
+				bGravity = !bGravity;
+				if (bGravity)
+					LogManager.LogWarning("you are now in walk mode");
+				else
+					LogManager.LogWarning("you are now in fly mode");
+			}
+		}
+		else
+		{
+			timerFly = 0;
+		}
+
+
+
 
 		bool jump = NAInput.GetControlUp(NAControl.Jump);
 
-		float x = NAInput.GetAxis(NAControl.MoveHorizontal);
-		float y = NAInput.GetAxis(NAControl.MoveVertical);
+
 
 		if (bPhysics)
 		{

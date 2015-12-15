@@ -33,6 +33,12 @@ public static class NA
 
 	}
 
+	public static bool isViewer(GameObject go)
+	{
+		App app = go.GetComponent<App>();
+		return (app != null);
+	}
+
 	public static bool isClient()
 	{
 		return Network.isClient;

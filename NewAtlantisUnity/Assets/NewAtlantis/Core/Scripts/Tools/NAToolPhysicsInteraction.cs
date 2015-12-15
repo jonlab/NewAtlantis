@@ -14,6 +14,9 @@ public class NAToolPhysicsInteraction : NAToolBase {
 
 	public PhysicsInteraction interaction = PhysicsInteraction.Push;
 	// Use this for initialization
+	private GameObject current = null;
+
+	private Vector3 dir;
 	void Start () 
 	{
 	
@@ -63,5 +66,42 @@ public class NAToolPhysicsInteraction : NAToolBase {
 		}
 		hit = new RaycastHit();
 		return null;
+	}
+
+
+	public override void Press() 
+	{
+		if (interaction == PhysicsInteraction.Drag)
+		{
+			RaycastHit hit;
+			GameObject go = PickObject(new Ray(transform.position, transform.forward), out hit);
+			if (go != null)
+			{
+				current = go;
+				dir = go.transform.position-transform.position;
+			}
+		}
+
+	}
+
+	public override void Maintain() 
+	{
+		if (current != null)
+		{
+			Vector3 newposition = transform.position+dir;
+			Vector3 velocity = (newposition-current.transform.position)/Time.deltaTime;
+			current.transform.position = newposition;
+			Rigidbody rb = current.GetComponent<Rigidbody>();
+			if (rb != null)
+			{
+				rb.velocity = velocity;
+			}
+		}
+	}
+
+	public override void Release() 
+	{
+		current = null;
+
 	}
 }

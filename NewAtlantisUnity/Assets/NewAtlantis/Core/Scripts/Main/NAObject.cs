@@ -51,7 +51,7 @@ public class NAObject
 	{
 		url = "http://tanant.info/newatlantis2/objects/"+file;
 		Debug.Log ("try to download object from " + url);
-		download_id = NADownloader.Download(url);
+		download_id = NADownloader.Download(url, name);
 		downloading = true;
 	}
 	public void DownloadLocal()
@@ -89,6 +89,7 @@ public class NAObject
 						{
 							Material mat = o as Material;
 							//ShaderCompiler
+							mat.shader = Shader.Find(mat.shader.name); //hack to force reapply of Shader (Unity 5.3 bug)
 						}
 					}
 
