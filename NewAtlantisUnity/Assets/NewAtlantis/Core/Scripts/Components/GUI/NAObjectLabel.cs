@@ -39,16 +39,12 @@ public class NAObjectLabel : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other) 
 	{
-		if (!NA.isClient())
-		{
-
-
-		}
+		bActive = true;
 	}
 
 	void OnTriggerExit(Collider other) 
 	{
-
+		bActive = false;
 	}
 
 

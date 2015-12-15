@@ -375,7 +375,7 @@ public class App : MonoBehaviour
 			if (!o.downloading)
 			loaded += 1f;
         }
-		return loaded/(float)listObjects.Count;
+		return loaded/(float)listObjects.Count+NADownloader.GetCurrentProgress()/(float)listObjects.Count;
 	}
 
 
@@ -927,7 +927,8 @@ public class App : MonoBehaviour
 		if (loading != -1f && loading != 1f)
 		{
 			GUI.color = Color.red;
-			GUI.Label(new Rect(Screen.width/2-100, Screen.height/2-15, 200, 30), "loading... " + (int)(loading*100f) + "%");
+
+			GUI.Label(new Rect(Screen.width/2-100, Screen.height/2-15, 200, 30), "loading... " + (int)(loading*1000f)/10f + "%");
 			GUI.color = Color.white;
 		}
 		if (!bGUI)
@@ -1704,7 +1705,7 @@ public class App : MonoBehaviour
 			//Debug.Log ("IP="+MasterServer.ipAddress);
 			//Debug.Log ("PORT="+MasterServer.port);
 			GUILayout.BeginHorizontal();
-			GUILayout.Label( "name"	,GUILayout.Width(150 ));
+			GUILayout.Label( "name"	,GUILayout.Width(250 ));
 			GUILayout.Label( "players"	,GUILayout.Width(50 ));
 			GUILayout.Label( "IP/port"	,GUILayout.Width(140 ));
 			GUILayout.Label( "GUID"	,GUILayout.Width(140 ));
@@ -1749,7 +1750,7 @@ public class App : MonoBehaviour
                 }
 				GUILayout.BeginHorizontal();
 				//GUILayout.Label( "Loading..." );
-				if( GUILayout.Button( d.gameName,GUILayout.Width(150 )) )
+				if( GUILayout.Button( d.gameName,GUILayout.Width(250 )) )
 				{
 					//Network.Connect( hosts[i] );
 					currentHost = d;

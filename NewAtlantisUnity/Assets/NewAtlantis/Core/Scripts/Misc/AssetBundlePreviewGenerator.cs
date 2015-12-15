@@ -21,7 +21,7 @@ public class AssetBundlePreviewGenerator
 		//create Asset Bundle objects
 		//we will use the layer 12 to render selectively
 		Vector3 pos = Vector3.zero;
-		AssetBundle b = AssetBundle.CreateFromMemoryImmediate(bundledata);
+		AssetBundle b = AssetBundle.LoadFromMemory(bundledata);
 		Object[] objs = b.LoadAllAssets();
 		List<GameObject> temp = new List<GameObject>();
 		if (b.mainAsset == null) //no main Asset in the bundle

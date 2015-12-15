@@ -16,6 +16,17 @@ public class NADownloader
 	public static bool bUseCache = true;
 	public static NADownloadInfo current = null;
 
+	public static float GetCurrentProgress()
+	{
+		if (www != null)
+		{
+			return www.progress;
+		}
+		else
+		{
+			return 0;
+		}
+	}
 	public static void Process()
 	{
 		/*foreach( KeyValuePair<string, AssetBundle> kvp in bundles )

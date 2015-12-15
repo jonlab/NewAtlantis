@@ -78,6 +78,20 @@ public class NAObject
 					Object[] objs = bundle.LoadAllAssets();
 					Debug.Log ("Asset Bundle Objects count = " + objs.Length);
 					string[] strAssets = bundle.GetAllAssetNames();
+
+					//recompilation des shaders
+					foreach (Object o in objs)
+					{
+						
+						Debug.Log ("Object " + o.name + " type:" + o.GetType());
+
+						if (o.GetType() == typeof(Material))
+						{
+							Material mat = o as Material;
+							//ShaderCompiler
+						}
+					}
+
 					/*
 					foreach (string s in strAssets)
 					{
@@ -92,6 +106,7 @@ public class NAObject
 					*/
 					if (bundle.mainAsset == null) //no main Asset in the bundle
 					{
+						Debug.Log("no mainAsset in bundle, manually instantiating objects");
 						foreach (Object o in objs)
 						{
 							if (o != null)
@@ -110,6 +125,7 @@ public class NAObject
 					}
 					else
 					{
+						Debug.Log("instantiating mainAsset in bundle");
 						goChild = GameObject.Instantiate(bundle.mainAsset) as GameObject;
 						goChild.name = bundle.mainAsset.name + id;
 						goChild.transform.parent = go.transform;
@@ -119,7 +135,7 @@ public class NAObject
 	                }
 					//we have to scale after instantiation
 					go.transform.localScale 	= scale;
-					bundle.Unload(false);
+					//bundle.Unload(false); //FIXME ?
 
 					/*goGizmo = new GameObject("object_gizmo");
 					goGizmo.transform.parent = go.transform;
