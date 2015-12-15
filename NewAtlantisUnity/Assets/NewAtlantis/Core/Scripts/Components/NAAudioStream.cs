@@ -5,26 +5,62 @@ public class NAAudioStream : MonoBehaviour {
 
 	WWW www = null;
 	//public string url = "http://locus.creacast.com:9001/galilee_pennsylvania.ogg";
-	private string url = "http://locus.creacast.com:9001/liverpool_ormskirk";
+	//private string url = "http://locus.creacast.com:9001/liverpool_ormskirk";
+	//private string url = "http://locus.creacast.com:9001/wave_farm_pond_station_new_york.mp3"; //not supported
+	//private string url = "http://locus.creacast.com:9001/mrs_splitsoundscape1.ogg";
+	private string url = "http://locus.creacast.com:9001/london_camberwell.ogg";
+
 	float t = 0;
 	bool playing = false;
 	// Use this for initialization
 	void Start () 
 	{
-		www = new WWW(url);
+		//StartCoroutine(DownloadAndPlay("http://api.ispeech.org/api/rest?apikey=...&action=convert&voice=eurspanishfemale&text=Hola+que+tal"));  
+		StartCoroutine(DownloadAndPlay(url));  
+		/*www = new WWW(url);
+		yield www;
+
+		AudioClip clip = www.GetAudioClip(false, true);//, AudioType.OGGVORBIS);
+		AudioSource audio = GetComponent<AudioSource>();
+		audio.clip = clip;
+		*/
 		//WWW.LoadFromCacheOrDownload(
 
 		//audio.Play();
 
 
 	}
+
+	/*void Start(){
+		StartCoroutine(DownloadAndPlay("http://api.ispeech.org/api/rest?apikey=...&action=convert&voice=eurspanishfemale&text=Hola+que+tal"));  
+	}
+	*/
+	
+	IEnumerator DownloadAndPlay(string url)
+	{
+		www = new WWW(url);
+		yield return www;
+		AudioSource audio = GetComponent<AudioSource>();
+		Debug.Log ("GetAudioClip");
+		audio.clip = www.GetAudioClip(false, true);//, AudioType.MPEG);
+		audio.Play();
+	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
-		AudioSource audio = GetComponent<AudioSource>();
 
-		AudioClip clip = www.GetAudioClip(false, true, AudioType.OGGVORBIS);
+		Debug.Log ("bytes=" + www.bytesDownloaded);
+		/*
+		AudioSource audio = GetComponent<AudioSource>();
+		Debug.Log ("progress=" + www.progress);
+		Debug.Log ("error=" + www.error);
+		Debug.Log ("isDone=" + www.isDone);
+		//Debug.Log ("header = " + www.responseHeaders);
+		Debug.Log ("size = " + www.size);
+		*/
+		//Debug.Log ("bytes="+www.bytesDownloaded);
+		/*AudioClip clip = www.GetAudioClip(false, true);//, AudioType.OGGVORBIS);
 		if (clip != null && audio.clip == null)
 		{
 			//AudioSource audio = GetComponent<AudioSource>();
@@ -36,7 +72,7 @@ public class NAAudioStream : MonoBehaviour {
 			audio.Play();
 		}
 
-
+		*/
 		/*if (!playing && audio.clip.isReadyToPlay)
 		{
 			audio.PlayOneShot(audio.clip);
