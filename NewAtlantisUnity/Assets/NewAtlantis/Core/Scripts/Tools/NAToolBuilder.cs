@@ -49,10 +49,6 @@ public class NAToolBuilder : NAToolBase
 	public override void Release() 
 	{
 		current = null;
-		
 	}
-
-
-
 
 }

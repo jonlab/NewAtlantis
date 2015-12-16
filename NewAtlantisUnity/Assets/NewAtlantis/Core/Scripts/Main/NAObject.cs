@@ -136,7 +136,7 @@ public class NAObject
 	                }
 					//we have to scale after instantiation
 					go.transform.localScale 	= scale;
-					//bundle.Unload(false); //FIXME ?
+					bundle.Unload(false); 
 
 					/*goGizmo = new GameObject("object_gizmo");
 					goGizmo.transform.parent = go.transform;
