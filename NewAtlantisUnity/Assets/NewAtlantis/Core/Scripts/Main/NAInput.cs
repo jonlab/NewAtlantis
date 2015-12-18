@@ -13,12 +13,68 @@ public enum NAControl
 	MoveVertical,
 	MoveHorizontal,
 	ViewVertical,
-	ViewHorizontal
+	ViewHorizontal,
+	PadHorizontal,
+	PadVertical,
+	PadUp,
+	PadDown,
+	PadLeft,
+	PadRight
 }
 
 public class NAInput 
 {
+	public static float PreviousPadX = 0;
+	public static float PreviousPadY = 0;
 
+	public static bool PadHorizontalPressed = false;
+	public static bool PadHorizontalReleased = false;
+
+	public static bool PadVerticalPressed = false;
+	public static bool PadVerticalReleased = false;
+
+	static public void Process()
+	{
+		float CurrentPadX = NAInput.GetAxis(NAControl.PadHorizontal);
+
+		if (Mathf.Abs(CurrentPadX)>Mathf.Abs(PreviousPadX))
+		{
+			PadHorizontalPressed = true;
+		}
+		else
+		{
+			PadHorizontalPressed = false;
+		}
+		if (Mathf.Abs(CurrentPadX)<Mathf.Abs(PreviousPadX))
+		{
+			PadHorizontalReleased = true;
+		}
+		else
+		{
+			PadHorizontalReleased = false;
+		}
+		PreviousPadX = CurrentPadX;
+
+		float CurrentPadY = NAInput.GetAxis(NAControl.PadVertical);
+		if (Mathf.Abs(CurrentPadY)>Mathf.Abs(PreviousPadY))
+		{
+			PadVerticalPressed = true;
+		}
+		else
+		{
+			PadVerticalPressed = false;
+		}
+		if (Mathf.Abs(CurrentPadY)<Mathf.Abs(PreviousPadY))
+		{
+			PadVerticalReleased = true;
+		}
+		else
+		{
+			PadVerticalReleased = false;
+		}
+		PreviousPadY = CurrentPadY;
+	}
+		
 	static public bool GetControlDown(NAControl control)
 	{
 		string button = GetControlName(control);
@@ -79,7 +135,12 @@ public class NAInput
 		case NAControl.ViewHorizontal:
 			return "ViewX";
 			break;
-
+		case NAControl.PadVertical:
+			return "PadY";
+			break;
+		case NAControl.PadHorizontal:
+			return "PadX";
+			break;
 		}
 		return "";
 	}

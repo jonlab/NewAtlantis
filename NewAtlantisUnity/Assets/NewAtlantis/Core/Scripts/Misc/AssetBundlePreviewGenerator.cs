@@ -11,6 +11,7 @@ public class AssetBundlePreviewGenerator
 {
 	public static void Test(string path)
 	{
+		
 		byte[] data = System.IO.File.ReadAllBytes(path);
 		byte[] png = GeneratePreviewPNG(data, 256, 256);
 		System.IO.File.WriteAllBytes(path+".png", png);

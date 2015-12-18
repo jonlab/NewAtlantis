@@ -110,6 +110,9 @@ public class App : MonoBehaviour
 
 	bool bDisplayAvatarNames = true;
 
+
+	bool bToolPanel = false;
+
 	//"tools", à restructurer
 	bool 	bFrotte			= false;
 	GameObject goFrotte 	= null;
@@ -187,12 +190,32 @@ public class App : MonoBehaviour
     TRS_Gizmo trs;
 
 
+	void TestAB()
+	{
+#if UNITY_WEBPLAYER
+#else
+		byte[] bytes = System.IO.File.ReadAllBytes("Bundles/Rooms.unity3d");
+		//byte[] bytes = System.IO.File.ReadAllBytes("Bundles/MagicFountain.unity3d");
+		AssetBundle b = AssetBundle.LoadFromMemory(bytes);
+		b.LoadAllAssets();
 
+		GameObject go = GameObject.Instantiate(b.mainAsset, Vector3.zero, Quaternion.identity) as GameObject;
+		NAReverbResonator[] resonators = go.GetComponentsInChildren<NAReverbResonator>();
+		foreach (NAReverbResonator r in resonators)
+		{
+			Debug.Log("found NAReverbResonator");
+			r.enabled = true;
+		}
+		b.Unload(false);
+
+#endif
+
+	}
 
     // Use this for initialization
     void Start () 
 	{
-
+		//TestAB();
         goGizmo = GameObject.Find("TRS Gizmo");
         trs = goGizmo.GetComponent<TRS_Gizmo>();
 
@@ -235,8 +258,8 @@ public class App : MonoBehaviour
 		ChatManager.Log("system", "welcome to New Atlantis", 0);
 		NAToolBase[] _tools = GetComponents<NAToolBase>();
 
-		ConnectionTesterStatus status = Network.TestConnection(false);
-		LogManager.Log ("Network connection tests result=" + status.ToString());
+		//ConnectionTesterStatus status = Network.TestConnection(false);
+		//LogManager.Log ("Network connection tests result=" + status.ToString());
 		NA.PausePhysics();
 	}
 
@@ -389,6 +412,7 @@ public class App : MonoBehaviour
 		ObjectUploader.Process();
 		NADownloader.Process();
 		TransitionManager.Process();
+		NAInput.Process();
 		timerGC+=Time.deltaTime;
 
 		/*timerRefresh+=Time.deltaTime;
@@ -432,10 +456,22 @@ public class App : MonoBehaviour
 		}
 
 		//ACTION
-		if (NAInput.GetControlDown(NAControl.Action))
+		if (bToolPanel)
 		{
-			NAToolBase t = tools[current_tool];
-			t.Action();
+			if (NAInput.GetControlDown(NAControl.Action))
+			{
+				//close panel
+				bToolPanel = false;
+			}
+			
+		}
+		else
+		{
+			if (NAInput.GetControlDown(NAControl.Action))
+			{
+				NAToolBase t = tools[current_tool];
+				t.Action();
+			}
 		}
 
 		if (NAInput.GetControlDown(NAControl.Action))
@@ -469,6 +505,61 @@ public class App : MonoBehaviour
 			current_tool = (current_tool + 1)%tools.Length;
 			SetCurrentTool(tools[current_tool]);
         }
+
+		float padx = NAInput.GetAxis(NAControl.PadHorizontal);
+		float pady = NAInput.GetAxis(NAControl.PadVertical);
+		if ((padx != 0 || pady != 0) && !bToolPanel)
+		{
+			bToolPanel = true;
+		}
+		else
+		{
+			int ny = current_tool/6;
+			int nx = current_tool-ny*6;
+			int linecount = tools.Length/6;
+			int lastline = tools.Length-linecount*6;
+			if (lastline>0)
+				linecount++;
+			//Debug.Log("nx=" + nx + " ny=" + ny);
+			if (padx > 0 && NAInput.PadHorizontalPressed)
+			{
+				//RIGHT
+				nx = (nx+1)%6;
+				//current_tool = (current_tool + 1)%tools.Length;
+				current_tool = ny*6+nx;
+				current_tool = Mathf.Min(current_tool, tools.Length-1);
+				SetCurrentTool(tools[current_tool]);
+			}
+			else if (padx < 0 && NAInput.PadHorizontalPressed)
+			{
+				//LEFT
+				nx = (nx+6-1)%6;
+
+				//current_tool = (current_tool + tools.Length-1)%tools.Length;
+				current_tool = ny*6+nx;
+				SetCurrentTool(tools[current_tool]);
+				
+			}
+
+			if (pady > 0 && NAInput.PadVerticalPressed)
+			{
+				//DOWN
+				ny = (ny+1) % linecount;
+				//current_tool = (current_tool + 6)%tools.Length;
+				current_tool = ny*6+nx;
+				SetCurrentTool(tools[current_tool]);
+			}
+			else if (pady < 0 && NAInput.PadVerticalPressed)
+			{
+				//UP
+				ny = (ny+linecount-1) % linecount;
+				//current_tool = (current_tool + tools.Length-6)%tools.Length;
+				current_tool = ny*6+nx;
+				SetCurrentTool(tools[current_tool]);
+
+			}
+		}
+
 
 		//camera change
 		if (NAInput.GetControlDown(NAControl.Camera))
@@ -902,6 +993,28 @@ public class App : MonoBehaviour
 			GUI.matrix = Matrix4x4.Scale(Vector3.one * scale);
 		}
 
+		if (bToolPanel)
+		{
+			//we draw the tools
+			int x = 0;
+			int y = 0;
+			NAToolBase ToolSelected = tools[current_tool];
+			foreach (NAToolBase t in tools)
+			{
+				
+				bool selected = (t==ToolSelected) ? true : false;
+				Vector3 pos = new Vector3(Screen.width/2-64f*2.5f+x*64, Screen.height-256+y*64, 0);
+				t.DrawBaseGUI(pos, selected);
+				x++;
+				if (x > 5)
+				{
+					y++;
+					x = 0;
+				}
+			}
+
+			
+		}
         /*
 
 		//reticule
@@ -969,7 +1082,7 @@ public class App : MonoBehaviour
 		//GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
 		GUI.color = Color.white;
 		//GUI.Label(new Rect(0,0,400,30), "NewAtlantisNew Client - SAIC workshop");
-		GUI.Label(new Rect(0,0,400,30), "New Atlantis Client v0.83");
+		GUI.Label(new Rect(0,0,400,30), "New Atlantis Client v0.84");
 		GUI.Label(new Rect(Screen.width-200, 0, 200, 30), strPick);
 
 

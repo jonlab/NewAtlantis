@@ -36,23 +36,23 @@ public class FlyCamera : MonoBehaviour {
 		float dt = Time.deltaTime;
 		if (Input.GetKey(KeyCode.LeftArrow))
 		{
-			transform.position -= transform.right * speed * dt;
+			//transform.position -= transform.right * speed * dt;
 		}
 		if (Input.GetKey(KeyCode.RightArrow))
 		{
-			transform.position += transform.right * speed * dt;
+			//transform.position += transform.right * speed * dt;
 		}
 		if (Input.GetKey(KeyCode.UpArrow))
 		{
-			transform.position += transform.forward * speed * dt;
+			//transform.position += transform.forward * speed * dt;
 		}
 		if (Input.GetKey(KeyCode.DownArrow))
 		{
-			transform.position -= transform.forward * speed * dt;
+			//transform.position -= transform.forward * speed * dt;
 		}
 		if (Input.GetKey (KeyCode.RightShift)) 
 		{
-			transform.position += transform.up * speed * dt;
+			//transform.position += transform.up * speed * dt;
 		}
 
 		//axes
@@ -67,6 +67,7 @@ public class FlyCamera : MonoBehaviour {
 		{
 			bGravity = !bGravity;
 		}
+
 
 		if (NAInput.GetControl(NAControl.Jump) && x == 0 && y == 0 )
 		{
@@ -87,25 +88,35 @@ public class FlyCamera : MonoBehaviour {
 			timerFly = 0;
 		}
 
-
-
-
 		bool jump = NAInput.GetControlUp(NAControl.Jump);
+
+
+
 
 
 
 		if (bPhysics)
 		{
 			Rigidbody rb = GetComponent<Rigidbody>();
-			rb.AddForce(transform.right * joy_speed * dt*x *100);
-			rb.AddForce(transform.forward * joy_speed * dt*y*100);
+			rb.AddForce(transform.right * joy_speed *x *5, ForceMode.Force);
+			rb.AddForce(transform.forward * joy_speed *y*5, ForceMode.Force);
+			//rb.velocity = transform.right * joy_speed * dt*x *100+transform.forward * joy_speed * dt*y*100;
 			//transform.position += transform.right * joy_speed * dt*x;
 			//transform.position += transform.forward * joy_speed * dt*y;
 
 			if (jump)
 			{
-				rb.AddForce(transform.up * joy_speed *100);
+				//question do use world up or local up ?
+				//mix 
+				Vector3 jumpup = (transform.up+Vector3.up)/2f;
+				rb.AddForce(jumpup * joy_speed *100, ForceMode.Force);
 			}
+
+			/*if (rb.velocity.magnitude>1)
+			{
+				rb.velocity.Normalize();
+			}
+			*/
 
 
 			rb.useGravity = bGravity;

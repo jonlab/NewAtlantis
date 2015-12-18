@@ -5,6 +5,7 @@ public class NAToolBase : MonoBehaviour
 {
 	public string name = "noname";
 	public Texture2D icon = null;
+	private Texture2D white = null;
 	// Use this for initialization
 	void Start () 
 	{
@@ -45,16 +46,30 @@ public class NAToolBase : MonoBehaviour
 	
 	void OnGUI()
 	{
+		//DrawBaseGUI(new Vector3(Screen.width/2, Screen.height-32, 0), false);
 		DrawBaseGUI();
 	}
 
-	protected void DrawBaseGUI()
+	public void DrawBaseGUI()
 	{
+		DrawBaseGUI(new Vector3(Screen.width/2, Screen.height-32, 0), false);
+	}
 
+	public void DrawBaseGUI(Vector3 pos, bool selected)
+	{
+		if (!white)
+			white = Resources.Load("white") as Texture2D;
 		//tool GUI
-		GUI.DrawTexture(new Rect(Screen.width/2-32,Screen.height-64,64,64), icon);
+		if (selected)
+			GUI.color = Color.red;
+		else
+			GUI.color = Color.white;
+
+
+		GUI.DrawTexture(new Rect(pos.x-32,pos.y-32,64,64), white);
+		GUI.DrawTexture(new Rect(pos.x-32,pos.y-32,64,64), icon);
 		GUI.color = Color.red;
-		GUI.Label(new Rect(Screen.width/2-32,Screen.height-64,64,64), name);
+		GUI.Label(new Rect(pos.x-32,pos.y-32,64,64), name);
 		GUI.color = Color.white;
 	}
 
