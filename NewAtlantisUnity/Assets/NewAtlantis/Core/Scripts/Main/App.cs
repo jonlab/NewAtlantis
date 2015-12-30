@@ -261,6 +261,10 @@ public class App : MonoBehaviour
 		//ConnectionTesterStatus status = Network.TestConnection(false);
 		//LogManager.Log ("Network connection tests result=" + status.ToString());
 		NA.PausePhysics();
+
+		#if UNITY_WEBPLAYER
+		LogManager.LogError("You are in Web Player build settings !");
+		#endif
 	}
 
 
@@ -455,45 +459,13 @@ public class App : MonoBehaviour
 			}
 		}
 
-		//ACTION
-		if (bToolPanel)
-		{
-			if (NAInput.GetControlDown(NAControl.Action))
-			{
-				//close panel
-				bToolPanel = false;
-			}
-			
-		}
-		else
-		{
-			if (NAInput.GetControlDown(NAControl.Action))
-			{
-				NAToolBase t = tools[current_tool];
-				t.Action();
-			}
-		}
 
-		if (NAInput.GetControlDown(NAControl.Action))
-		{
-			NAToolBase t = tools[current_tool];
-			t.Press();
-		}
-		else if (NAInput.GetControl(NAControl.Action))
-		{
-			NAToolBase t = tools[current_tool];
-			t.Maintain();
-		}
-		else if (NAInput.GetControlUp(NAControl.Action))
-		{
-			NAToolBase t = tools[current_tool];
-			t.Release();
-		}
+
 
 
 
 		//Previous tool
-		if (NAInput.GetControlDown(NAControl.PreviousTool))
+		/*if (NAInput.GetControlDown(NAControl.PreviousTool))
 		{
 			current_tool = (current_tool + tools.Length-1)%tools.Length;
 			SetCurrentTool(tools[current_tool]);
@@ -505,6 +477,7 @@ public class App : MonoBehaviour
 			current_tool = (current_tool + 1)%tools.Length;
 			SetCurrentTool(tools[current_tool]);
         }
+        */
 
 		float padx = NAInput.GetAxis(NAControl.PadHorizontal);
 		float pady = NAInput.GetAxis(NAControl.PadVertical);
@@ -560,19 +533,112 @@ public class App : MonoBehaviour
 			}
 		}
 
-
-		//camera change
-		if (NAInput.GetControlDown(NAControl.Camera))
+		//on scanne les objects interactifs de la scene
+		NAObjectBase[] interactive_objects = GameObject.FindObjectsOfType(typeof(NAObjectBase)) as NAObjectBase[];
+		NAObjectBase closest = null;
+		if (NAInput.GetControl(NAControl.PreviousTool))
 		{
-			current_camera = (current_camera + 1)%camerascripts.Length;
-			SetCurrentCamera(camerascripts[current_camera]);
+			//recherche du plus proche
+
+			float distance = 20f;
+			foreach (NAObjectBase o in interactive_objects)
+			{
+				float d = (o.gameObject.transform.position-gameObject.transform.position).magnitude;
+				if (d<distance)
+				{
+					distance = d;
+					closest = o;
+				}
+			}
+			foreach (NAObjectBase o in interactive_objects)
+			{
+				o.SetGUI(true);
+				o.SetExtendedGUI(false);
+			}
+			if (closest != null)
+			{
+				closest.SetExtendedGUI(true);
+			}
+
+			//closest.
+			if (closest != null)
+			{
+				closest.ExtendedControl();
+			}
+
+		}
+		else
+		{
+			foreach (NAObjectBase o in interactive_objects)
+			{
+				o.SetGUI(false);
+			}
+		}
+		if (NAInput.GetControl(NAControl.NextTool)) //Extended tool mode
+		{
+			NAToolBase t = tools[current_tool];
+			//extended control if R1 is maintained
+			t.ExtendedControl();
 		}
 
-		//touche menu
-		if (NAInput.GetControlDown(NAControl.Menu))
+		else if (NAInput.GetControl(NAControl.PreviousTool))
 		{
-			bGUI = !bGUI;
-			Cursor.visible = bGUI;
+			
+		}
+		else
+		{
+
+			//ACTION
+			if (bToolPanel)
+			{
+				if (NAInput.GetControlDown(NAControl.Action))
+				{
+					//close panel
+					bToolPanel = false;
+				}
+
+			}
+			else
+			{
+				NAToolBase t = tools[current_tool];
+				if (NAInput.GetControlDown(NAControl.Action))
+				{
+
+					t.Action();
+				}
+
+
+			}
+
+			if (NAInput.GetControlDown(NAControl.Action))
+			{
+				NAToolBase t = tools[current_tool];
+				t.Press();
+			}
+			else if (NAInput.GetControl(NAControl.Action))
+			{
+				NAToolBase t = tools[current_tool];
+				t.Maintain();
+			}
+			else if (NAInput.GetControlUp(NAControl.Action))
+			{
+				NAToolBase t = tools[current_tool];
+				t.Release();
+			}
+
+			//camera change
+			if (NAInput.GetControlDown(NAControl.Camera))
+			{
+				current_camera = (current_camera + 1)%camerascripts.Length;
+				SetCurrentCamera(camerascripts[current_camera]);
+			}
+
+			//touche menu
+			if (NAInput.GetControlDown(NAControl.Menu))
+			{
+				bGUI = !bGUI;
+				Cursor.visible = bGUI;
+			}
 		}
 
 		//à déplacer dans un tool ?
@@ -1082,7 +1148,7 @@ public class App : MonoBehaviour
 		//GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
 		GUI.color = Color.white;
 		//GUI.Label(new Rect(0,0,400,30), "NewAtlantisNew Client - SAIC workshop");
-		GUI.Label(new Rect(0,0,400,30), "New Atlantis Client v0.84");
+		GUI.Label(new Rect(0,0,400,30), "New Atlantis Client v0.85");
 		GUI.Label(new Rect(Screen.width-200, 0, 200, 30), strPick);
 
 
@@ -1096,11 +1162,26 @@ public class App : MonoBehaviour
 			progress_count += 1f;
 
 		}
+		/*
 		if (progress_count>0)
 		{
 			//Debug.Log ("val="+progress_val+"/" + progress_count);
 			GUI.HorizontalScrollbar(new Rect(Screen.width-200, 0, 200, 30), 0, progress_val, 0, progress_count);
 		}
+		*/
+
+		string strInteractionMode = "normal - R1:extended tool - L1:object interaction";
+		if (NAInput.GetControl(NAControl.NextTool))
+		{
+			strInteractionMode = "extended tool";
+		}
+			
+		else if (NAInput.GetControl(NAControl.PreviousTool))
+		{
+			strInteractionMode = "object interaction";
+		}
+		GUI.Label(new Rect(Screen.width-300, 0, 300, 30), strInteractionMode);
+
 
 		if (state == AppState.Login)
 		{

@@ -32,7 +32,10 @@ public class MouseLook : MonoBehaviour {
 
 	void Update ()
 	{
-
+		if (NAInput.GetControl(NAControl.NextTool) || NAInput.GetControl(NAControl.PreviousTool))
+		{
+			return;
+		}
 		//joystick
 		/*
 		float rotationJX = transform.localEulerAngles.y + Input.GetAxis("ViewX") * sensitivityX;

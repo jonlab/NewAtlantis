@@ -13,13 +13,13 @@ public enum WaveForm
 }
 
 
-public class NAAudioSynthOscillator : MonoBehaviour 
+public class NAAudioSynthOscillator : NAObjectBase 
 {
 	public float 	duration 	= 10f;
 	public float 	frequency	= 440;
 	public WaveForm waveform 	= WaveForm.Sin;
 	private int 	samplerate 	= 44100;
-	private bool 	bShowGUI	= true;
+	//private bool 	bShowGUI	= true;
 
 	// Use this for initialization
 	void Awake () 
@@ -67,28 +67,67 @@ public class NAAudioSynthOscillator : MonoBehaviour
 	}
 
 
-	int GUIParamEdit(Rect rect, string caption, string unit, int value)
+
+
+	public override void DrawSimpleGUI(Vector3 pos2d)
 	{
-		GUI.Label (new Rect(rect.x, rect.y, rect.width/3, rect.height), caption);
-		string strVal = ""+value;
-		strVal = GUI.TextField(new Rect(rect.x+rect.width/3, rect.y, rect.width/3, rect.height), strVal); 
-		GUI.Label (new Rect(rect.x+2*rect.width/3, rect.y, rect.width/3, rect.height), unit);
-		int.TryParse(strVal, out value);
-		return value;
+		GUI.color = Color.white;
+		string strDisplay = name;
+		int x = (int)(pos2d.x*Screen.width);
+		int y = (int)(Screen.height-pos2d.y*Screen.height);
+		GUI.Box (new Rect(x,y,100,30), "Oscillator");
+
+	}
+	public override void DrawExtendedGUI(Vector3 pos2d)
+	{
+		GUI.color = Color.white;
+		string strDisplay = name;
+		int x = (int)(pos2d.x*Screen.width);
+		int y = (int)(Screen.height-pos2d.y*Screen.height);
+		GUI.Box (new Rect(x,y,200,100), "Oscillator");
+
+		string[] waveforms = {"sin", "cos", "squ", "tri", "saw"};
+		frequency = GUIParamEdit(new Rect(x, y+20, 200, 20), "frequency", "Hz", frequency);
+		duration = GUIParamEdit(new Rect(x, y+40, 200, 20), "duration", "s", duration);
+		waveform = (WaveForm)GUI.SelectionGrid(new Rect(x,y+60,200,20), (int)waveform, waveforms, waveforms.Length);
+
+		if (GUI.Button (new Rect(x,y+80,100,20), "Generate (∆)"))
+		{
+			Generate();
+		}
+		if (GUI.Button (new Rect(x+100,y+80,100,20), "Play (∆)"))
+		{
+			Play();
+		}
+		/*if (GUI.Button (new Rect(x+100,y+60,100,20), "Stop"))
+				{
+					Stop();
+				}*/
+
 	}
 
-	float GUIParamEdit(Rect rect, string caption, string unit, float value)
+	public override void ExtendedControl()
 	{
-		GUI.Label (new Rect(rect.x, rect.y, rect.width/3, rect.height), caption);
-		string strVal = ""+value;
-		strVal = GUI.TextField(new Rect(rect.x+rect.width/3, rect.y, rect.width/3, rect.height), strVal); 
-		GUI.Label (new Rect(rect.x+2*rect.width/3, rect.y, rect.width/3, rect.height), unit);
-		float.TryParse(strVal, out value);
-		return value;
+		float dt = Time.deltaTime;
+
+		float x1 = NAInput.GetAxis(NAControl.MoveHorizontal);
+		float y1 = NAInput.GetAxis(NAControl.MoveVertical);
+		float x2 = NAInput.GetAxis(NAControl.ViewHorizontal);
+		float y2 = NAInput.GetAxis(NAControl.ViewVertical);
+
+		bool buttonAction 	= NAInput.GetControlDown(NAControl.Action); 
+		bool buttonJump 	= NAInput.GetControlDown(NAControl.Jump); 
+		bool buttonCamera 	= NAInput.GetControlDown(NAControl.Camera);
+		bool buttonMenu 	= NAInput.GetControlDown(NAControl.Menu);
+
+		if (buttonCamera)
+		{
+			Generate();
+			Play();
+			
+		}
 	}
-
-
-
+	/*
 	void OnGUI()
 	{
 		if (bShowGUI)
@@ -115,15 +154,12 @@ public class NAAudioSynthOscillator : MonoBehaviour
 				{
 					Play();
 				}
-				/*if (GUI.Button (new Rect(x+100,y+60,100,20), "Stop"))
-				{
-					Stop();
-				}*/
+
 				
 			}
 		}
 	}
-
+	*/
 	void Play()
 	{
 		if (GetComponent<AudioSource>().clip != null)

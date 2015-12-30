@@ -51,6 +51,8 @@ public class WriteFile : MonoBehaviour {
 
 	public void editFile(float r,float g,float b, float tailleYeux, float tailleOreilles , float tailleBouche ){
 
+#if UNITY_WEBPLAYER
+#else
 		var sr = File.CreateText(fileName);
 		sr.WriteLine ("_");
 		sr.WriteLine (r);
@@ -69,7 +71,7 @@ public class WriteFile : MonoBehaviour {
 
 		sr.Close();
 
-
+#endif
 	}
 
 

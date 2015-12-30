@@ -249,6 +249,14 @@ public class NAObject
 		*/
 	}
 
+
+	/*
+	 * Prepare this Object as Server
+	 * We call the AttachNetworkView on the clients so that the same NetworkViews are created in sync 
+	 * on the clients :
+	 * The server allocates the Network Ids and send them to the clients with the path to object
+	 * 
+	 */
 	public void PrepareAsServer(GameObject root, string path)
 	{
 		//Debug.Log ("PrepareAsServer " + path);

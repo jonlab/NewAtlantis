@@ -39,6 +39,11 @@ public class NAToolBase : MonoBehaviour
 
 	}
 
+	virtual public void ExtendedControl()
+	{
+		
+	}
+
 	virtual public string GetName() 
 	{
 		return name;

@@ -10,6 +10,7 @@ public class NAToolLight : NAToolBase
 		Light light = GetComponent<Light>();
 		if (light == null)
 		{
+			//if no light, we add one standard
 			light 			= gameObject.AddComponent<Light>();
 			light.type 		= LightType.Point;
 			light.intensity = 2;
@@ -31,6 +32,34 @@ public class NAToolLight : NAToolBase
 		light.enabled = !light.enabled;
 	}
 
+	//manages the Extended control
+	public override void ExtendedControl()
+	{
+		float dt = Time.deltaTime;
+
+		float x1 = NAInput.GetAxis(NAControl.MoveHorizontal);
+		float y1 = NAInput.GetAxis(NAControl.MoveVertical);
+		float x2 = NAInput.GetAxis(NAControl.ViewHorizontal);
+		float y2 = NAInput.GetAxis(NAControl.ViewVertical);
+
+		bool buttonJump 	= NAInput.GetControlDown(NAControl.Jump); 
+		bool buttonCamera 	= NAInput.GetControlDown(NAControl.Camera);
+		bool buttonMenu 	= NAInput.GetControlDown(NAControl.Menu);
+
+
+		Light light 		= GetComponent<Light>();
+		light.spotAngle 	+= x1*dt*10f;
+		light.range 		+= y1*dt*1f;
+		light.intensity 	-= y2*dt*1f;
+
+		if (buttonCamera)
+			light.color = new Color(Random.value, Random.value, Random.value);
+		if (buttonJump)
+			light.color = Color.white;
+
+
+
+	}
 
 
 }

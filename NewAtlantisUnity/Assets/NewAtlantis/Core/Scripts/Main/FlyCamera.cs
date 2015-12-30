@@ -28,12 +28,18 @@ public class FlyCamera : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
+
+		if (NAInput.GetControl(NAControl.NextTool) || NAInput.GetControl(NAControl.PreviousTool))
+		{
+			return;
+		}
 		float speed = 2f;
 		if (Input.GetKey (KeyCode.LeftShift)) 
 		{
 						speed = 20f;
 		}
 		float dt = Time.deltaTime;
+		/*
 		if (Input.GetKey(KeyCode.LeftArrow))
 		{
 			//transform.position -= transform.right * speed * dt;
@@ -54,6 +60,7 @@ public class FlyCamera : MonoBehaviour {
 		{
 			//transform.position += transform.up * speed * dt;
 		}
+		*/
 
 		//axes
 

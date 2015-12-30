@@ -3,7 +3,7 @@ using System.Collections;
 
 
 
-public class NAAudioRecorder : MonoBehaviour 
+public class NAAudioRecorder : NAObjectBase 
 {
 	AudioClip record 			= null;
 	public int SampleRate 		= 22050;
@@ -73,49 +73,81 @@ public class NAAudioRecorder : MonoBehaviour
 	}
 
 
-	void OnGUI()
+	public override void ExtendedControl()
 	{
-		if (bShowGUI)
+		float dt = Time.deltaTime;
+
+		float x1 = NAInput.GetAxis(NAControl.MoveHorizontal);
+		float y1 = NAInput.GetAxis(NAControl.MoveVertical);
+		float x2 = NAInput.GetAxis(NAControl.ViewHorizontal);
+		float y2 = NAInput.GetAxis(NAControl.ViewVertical);
+
+		bool buttonAction 	= NAInput.GetControlDown(NAControl.Action); 
+		bool buttonJump 	= NAInput.GetControlDown(NAControl.Jump); 
+		bool buttonCamera 	= NAInput.GetControlDown(NAControl.Camera);
+		bool buttonMenu 	= NAInput.GetControlDown(NAControl.Menu);
+
+		if (buttonCamera)
 		{
-			Vector3 pos2d = Camera.main.WorldToViewportPoint(transform.position);
-			if (pos2d.z > 0)
-			{
-				GUI.color = Color.white;
-				string strDisplay = name;
-				int x = (int)(pos2d.x*Screen.width);
-				int y = (int)(Screen.height-pos2d.y*Screen.height);
-				GUI.Box (new Rect(x,y,250,60), "AudioTrunk");
-				GUI.color = GetComponent<AudioSource>().isPlaying ? Color.green : Color.white;
-				if (GUI.Button (new Rect(x,y+30,50,30), "play"))
-				{
-					Play();
-				}
-				GUI.color = Color.white;
-				if (GUI.Button (new Rect(x+50,y+30,50,30), "stop"))
-				{
-					Stop();
-				}
-				GUI.color = Microphone.IsRecording("") ? Color.red : Color.white;
-				if (GUI.Button (new Rect(x+100,y+30,50,30), "rec"))
-				{
-					Record();
-				}
-
-				GUI.color = GetComponent<AudioSource>().loop ? Color.red : Color.white;
-				if (GUI.Button (new Rect(x+150,y+30,50,30), "loop"))
-				{
-					GetComponent<AudioSource>().loop = !GetComponent<AudioSource>().loop;
-				}
-
-				if (GUI.Button (new Rect(x+200,y+30,50,30), "sync"))
-				{
-					SendAudioDataToServer();
-                }
-
-			}
+			Play();
 		}
+		if (buttonMenu)
+		{
+			Record();
+		}
+		if (buttonAction)
+		{
+			Stop();
+		}
+
 	}
 
+	public override void DrawSimpleGUI(Vector3 pos2d)
+	{
+		GUI.color = Color.white;
+		string strDisplay = name;
+		int x = (int)(pos2d.x*Screen.width);
+		int y = (int)(Screen.height-pos2d.y*Screen.height);
+		GUI.Box (new Rect(x,y,100,30), "Trunk");
+
+	}
+	public override void DrawExtendedGUI(Vector3 pos2d)
+	{
+		GUI.color = Color.white;
+		string strDisplay = name;
+		int x = (int)(pos2d.x*Screen.width);
+		int y = (int)(Screen.height-pos2d.y*Screen.height);
+		GUI.Box (new Rect(x,y,320,60), "Trunk");
+		GUI.color = GetComponent<AudioSource>().isPlaying ? Color.green : Color.white;
+		if (GUI.Button (new Rect(x,y+30,80,30), "play (∆)"))
+		{
+			Play();
+		}
+		GUI.color = Color.white;
+		if (GUI.Button (new Rect(x+80,y+30,80,30), "stop (□)"))
+		{
+			Stop();
+		}
+		GUI.color = Microphone.IsRecording("") ? Color.red : Color.white;
+		if (GUI.Button (new Rect(x+160,y+30,80,30), "rec (o)"))
+		{
+			Record();
+		}
+
+		GUI.color = GetComponent<AudioSource>().loop ? Color.red : Color.white;
+		if (GUI.Button (new Rect(x+240,y+30,80,30), "loop"))
+		{
+			GetComponent<AudioSource>().loop = !GetComponent<AudioSource>().loop;
+		}
+
+		/*
+		if (GUI.Button (new Rect(x+200,y+30,50,30), "sync"))
+		{
+			SendAudioDataToServer();
+		}
+		*/
+
+	}
 
 
 
