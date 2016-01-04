@@ -23,7 +23,7 @@ public class TRS_Gizmo : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+	/*
 		if (Input.GetKeyDown (KeyCode.Space)) {
 			GameObject exemple = GameObject.Find ("Point");
 
@@ -33,7 +33,7 @@ public class TRS_Gizmo : MonoBehaviour {
 			}
 
 		}
-
+*/
 	}
 
 
