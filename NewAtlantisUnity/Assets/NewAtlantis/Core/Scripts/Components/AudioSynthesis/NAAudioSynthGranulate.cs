@@ -23,20 +23,6 @@ public class NAAudioSynthGranulate : NAObjectBase
 	}
 
 
-	/*void OnGUI()
-	{
-		if (bShowGUI)
-		{
-			Vector3 pos2d = Camera.main.WorldToViewportPoint(transform.position);
-			if (pos2d.z > 0)
-			{
-				DrawGUI(pos2d);
-			}
-		}
-	}
-	*/
-
-
 
 
 	//put your logic inside this function
@@ -67,6 +53,8 @@ public class NAAudioSynthGranulate : NAObjectBase
 		GUI.Box (new Rect(x,y,100,30), "Granulator");
 
 	}
+
+
 	public override void DrawExtendedGUI(Vector3 pos2d)
 	{
 		GUI.color = Color.white;

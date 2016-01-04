@@ -32,6 +32,7 @@ public class NAToolLight : NAToolBase
 		light.enabled = !light.enabled;
 	}
 
+
 	//manages the Extended control
 	public override void ExtendedControl()
 	{
@@ -56,8 +57,19 @@ public class NAToolLight : NAToolBase
 			light.color = new Color(Random.value, Random.value, Random.value);
 		if (buttonJump)
 			light.color = Color.white;
+	}
 
+	public override void DrawExtendedGUI(Vector3 pos2d)
+	{
+		//GUI.BeginGroup(
+		Light light 		= GetComponent<Light>();
+		string str = "";
+		str += "angle=" + light.spotAngle;
+		str += " range=" + light.range;
+		str += " intensity=" + light.intensity;
+		str += " color=" + light.color;
 
+		GUI.Label(new Rect(pos2d.x-200, pos2d.y-15, 400, 30), str);
 
 	}
 

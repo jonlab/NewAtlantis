@@ -38,6 +38,7 @@ public class NAToolBuilder : NAToolBase
 	{
         //Network
 		current = Network.Instantiate(prefab, transform.position+transform.forward*distance, transform.rotation, 0) as GameObject;
+		//GetComponent<NetworkView>().RPC("SpawnObject", RPCMode.AllBuffered, name, Network.AllocateViewID(), position, forward, color);
 		
 	}
 
@@ -50,5 +51,27 @@ public class NAToolBuilder : NAToolBase
 	{
 		current = null;
 	}
+
+	[RPC]
+	void ServerSpawnObject(string name, Vector3 position, Vector3 forward, Vector3 color) 
+	{
+		if (!Network.isServer)
+		{
+			return;
+		}
+		LogManager.Log ("ServerSpawnObject");
+		GetComponent<NetworkView>().RPC("SpawnObject", RPCMode.AllBuffered, name, Network.AllocateViewID(), position, forward, color);
+	}
+
+	[RPC]
+	void SpawnObject(string name, NetworkViewID viewID, Vector3 location, Vector3 forward, Vector3 color) 
+	{
+		GameObject clone = null;
+		if (name == "cube")
+		{
+			clone = GameObject.Instantiate(prefab, location, Quaternion.identity) as GameObject;
+		}
+	}
+
 
 }

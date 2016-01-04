@@ -129,7 +129,7 @@ public class NAToolSpawner : NAToolBase {
 		}
 		else
 		{
-			clone = GameObject.CreatePrimitive(PrimitiveType.Plane);
+			clone = GameObject.CreatePrimitive(PrimitiveType.Cube);
 		}
 		
 		NetworkView nView = clone.AddComponent<NetworkView>();

@@ -78,6 +78,7 @@ public class App : MonoBehaviour
 	float 				timerRefresh		= 0;
 
 	GameObject			goRootSpace = null;
+	GameObject			goRootAvatars = null;
 	bool				loading		= false;
 
 	private  FileInfo[] 	info = null;
@@ -249,6 +250,9 @@ public class App : MonoBehaviour
 		goRootSpace 	= new GameObject("root_space");
 		goRootSpace.transform.position = Vector3.zero;
 
+		goRootAvatars 	= new GameObject("root_avatars");
+		goRootAvatars.transform.position = Vector3.zero;
+
 		mainCamera 		= Camera.main;
 		selectedCamera 	= mainCamera;
 		NA.listener 	= mainCamera.GetComponent<AudioListener>();
@@ -311,9 +315,27 @@ public class App : MonoBehaviour
 
 
 
+	void DestroyNetworkAvatar(NetworkPlayer player)
+	{
+		List<GameObject> avatars = NA.GetAvatars();
+		LogManager.Log("DestroyNetworkAvatar owner:" + player);
+		foreach (GameObject a in avatars)
+		{
+			NetworkView nv = a.GetComponent<NetworkView>();
+			LogManager.Log("avatar owner:" + nv.owner);
+			if (nv.owner == player)
+			{
+				GameObject.Destroy(a);
+				NA.RemoveAvatar(a);
+				break;
+			}
+				
+		}
 
+	}
 	void CreateNetworkAvatar()
 	{
+		
 		//goAvatar = InstantiateObject(goPrefabAvatar, Vector3.zero, Quaternion.identity, Vector3.one, 0);
 
 		if (Network.isServer || Network.isClient)
@@ -1087,7 +1109,7 @@ public class App : MonoBehaviour
 		int reticule_size = 50;
 		//GUI.DrawTexture (new Rect (Screen.width/2-reticule_size/2, Screen.height/2, reticule_size, 2), texWhite);
 		//GUI.DrawTexture (new Rect (Screen.width/2, Screen.height/2-reticule_size/2, 2, reticule_size), texWhite);
-
+		*/
 		if (bDisplayAvatarNames)
 		{
 			List<GameObject> avatars = NA.GetAvatars();
@@ -1117,8 +1139,8 @@ public class App : MonoBehaviour
 			}
 		}
 
-		TransitionManager.DrawGUI();
-        */
+		//TransitionManager.DrawGUI();
+        
 
 		float loading = GetLoadingProgress();
 		if (loading != -1f && loading != 1f)
@@ -1327,17 +1349,14 @@ public class App : MonoBehaviour
 
 
 
-
-
-
-
-
 	void OnConnectedToServer() 
 	{
 		Debug.Log("Connected to server");
 		CreateNetworkAvatar();
 		PlayEvent(2);
 	}
+
+
 
 	void OnPlayerConnected(NetworkPlayer player) 
 	{
@@ -1354,9 +1373,12 @@ public class App : MonoBehaviour
 		//Called on the server whenever a player is disconnected from the server.
 		PlayEvent(9);
 		Debug.Log("Clean up after player " + player);
-		Network.RemoveRPCs(player);
-		Network.DestroyPlayerObjects(player); //destroys the player objects including avatar
+		//Network.RemoveRPCs(player);
+		//Network.DestroyPlayerObjects(player); //destroys the player objects including avatar
+		DestroyNetworkAvatar(player);
 		LogManager.LogWarning("A new player just leaved the server.");
+
+
 	}
     
 	
@@ -1412,6 +1434,12 @@ public class App : MonoBehaviour
 	}
 	
 
+
+
+
+
+
+
 	[RPC]
 	void SetColor(Color color) 
 	{
@@ -1440,12 +1468,12 @@ public class App : MonoBehaviour
 		GameObject.Destroy(go);
     }
     
-    
 
 
     [RPC]
 	void SpawnAvatar(NetworkViewID viewID, Vector3 color, string name) 
 	{
+		//appelé chez tout le monde pour créer un avatar
 		GameObject clone;
 		//clone = GameObject.CreatePrimitive(PrimitiveType.Capsule);
 		clone = GameObject.Instantiate(goPrefabAvatar, Vector3.zero, Quaternion.identity) as GameObject;
@@ -1461,7 +1489,7 @@ public class App : MonoBehaviour
         }
 		else
 		{
-			NA.player_objects.Add(clone); //this is considered as a player object
+			//NA.player_objects.Add(clone); //this is considered as a player object
 		}
 
 		MeshRenderer renderer = clone.GetComponent<MeshRenderer>();
@@ -1469,8 +1497,9 @@ public class App : MonoBehaviour
 		{
 			renderer.material.color = new Color(color.x, color.y, color.z, 0.3f);
 		}
+		clone.transform.parent = goRootAvatars.transform;
+		LogManager.Log ("New Avatar:" +  NAServer.strLogin + " owner:" + nView.owner);
 
-		LogManager.Log ("New Avatar : " +  NAServer.strLogin);
 		NA.AddAvatar(clone);
     }
 

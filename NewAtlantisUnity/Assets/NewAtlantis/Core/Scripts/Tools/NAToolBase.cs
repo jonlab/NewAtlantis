@@ -6,6 +6,7 @@ public class NAToolBase : MonoBehaviour
 	public string name = "noname";
 	public Texture2D icon = null;
 	private Texture2D white = null;
+	private bool	ExtendedGUI = true;
 	// Use this for initialization
 	void Start () 
 	{
@@ -39,6 +40,11 @@ public class NAToolBase : MonoBehaviour
 
 	}
 
+	public void SetExtendedGUI(bool b)
+	{
+		ExtendedGUI = b;
+	}
+
 	virtual public void ExtendedControl()
 	{
 		
@@ -48,11 +54,20 @@ public class NAToolBase : MonoBehaviour
 	{
 		return name;
 	}
+
+	public virtual void DrawExtendedGUI(Vector3 pos2d)
+	{
+
+	}
 	
 	void OnGUI()
 	{
 		//DrawBaseGUI(new Vector3(Screen.width/2, Screen.height-32, 0), false);
 		DrawBaseGUI();
+		if (ExtendedGUI)
+		{
+			DrawExtendedGUI(new Vector3(Screen.width/2, Screen.height-100, 0));
+		}
 	}
 
 	public void DrawBaseGUI()

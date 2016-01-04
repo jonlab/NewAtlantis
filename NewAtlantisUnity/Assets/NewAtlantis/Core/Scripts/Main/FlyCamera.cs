@@ -80,7 +80,7 @@ public class FlyCamera : MonoBehaviour {
 		{
 			timerFly += Time.deltaTime;
 
-			if (timerFly > 3f)
+			if (timerFly > 1f)
 			{
 				timerFly = 0f;
 				bGravity = !bGravity;

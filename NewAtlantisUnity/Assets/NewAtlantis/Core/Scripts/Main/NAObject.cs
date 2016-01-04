@@ -88,6 +88,7 @@ public class NAObject
 						if (o.GetType() == typeof(Material))
 						{
 							Material mat = o as Material;
+
 							//ShaderCompiler
 							mat.shader = Shader.Find(mat.shader.name); //hack to force reapply of Shader (Unity 5.3 bug)
 						}
