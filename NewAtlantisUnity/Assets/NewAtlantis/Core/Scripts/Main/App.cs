@@ -1499,7 +1499,6 @@ public class App : MonoBehaviour
 		}
 		clone.transform.parent = goRootAvatars.transform;
 		LogManager.Log ("New Avatar:" +  NAServer.strLogin + " owner:" + nView.owner);
-
 		NA.AddAvatar(clone);
     }
 
@@ -2031,6 +2030,7 @@ public class App : MonoBehaviour
 			
 			LogManager.Log("try to join " + currentHost.gameName + " at " + currentHost.ip + ":" + currentHost.port);
 			Network.Connect(currentHost);
+			//Network.Connect(
 		}
 		GUI.color = !Network.isClient ? Color.gray : Color.white;
 		if (GUILayout.Button ("Leave server", GUILayout.Width(100 )) && Network.isClient) 
@@ -2038,6 +2038,14 @@ public class App : MonoBehaviour
 			Disconnect();
 			Network.Disconnect();
         }
+		GUI.color = Color.white;
+		if (GUILayout.Button ("Join Le Cube", GUILayout.Width(200 )) && !Network.isClient) 
+		{
+
+			LogManager.Log("try to join LeCube at 217.167.7.161:7890");
+			Network.Connect("217.167.7.161", 7890);
+			//Network.Connect(
+		}
 		GUI.color = Color.white;
 
 
