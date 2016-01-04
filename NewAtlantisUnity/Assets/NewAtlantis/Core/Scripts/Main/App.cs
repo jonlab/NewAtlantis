@@ -2046,6 +2046,14 @@ public class App : MonoBehaviour
 			Network.Connect("217.167.7.161", 7890);
 			//Network.Connect(
 		}
+
+		if (GUILayout.Button ("Join Le Cube local", GUILayout.Width(200 )) && !Network.isClient) 
+		{
+
+			LogManager.Log("try to join LeCube at 192.168.230.26:7890");
+			Network.Connect("192.168.230.26", 7890);
+			//Network.Connect(
+		}
 		GUI.color = Color.white;
 
 
