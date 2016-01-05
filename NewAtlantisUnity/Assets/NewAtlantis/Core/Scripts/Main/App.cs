@@ -195,18 +195,79 @@ public class App : MonoBehaviour
 	{
 #if UNITY_WEBPLAYER
 #else
-		byte[] bytes = System.IO.File.ReadAllBytes("Bundles/Rooms.unity3d");
+		//byte[] bytes = System.IO.File.ReadAllBytes("Bundles/Rooms.unity3d");
+		//byte[] bytes = System.IO.File.ReadAllBytes("Bundles/SkyboxNight.unity3d");
+		//byte[] bytes = System.IO.File.ReadAllBytes("AssetBundles/skyboxnight.test");
+		//byte[] bytes = System.IO.File.ReadAllBytes("Bundles/bundle47.unity3d");
+
+		//byte[] bytes = System.IO.File.ReadAllBytes("AssetBundles/AssetBundles");
+		//byte[] bytes = System.IO.File.ReadAllBytes("Bundles/shader.unity3d");
+		//byte[] bytes = System.IO.File.ReadAllBytes("Bundles/skyboxnight");
+		//byte[] bytes = System.IO.File.ReadAllBytes("AssetBundles/skyboxnight");
+		//byte[] bytes = System.IO.File.ReadAllBytes("Bundles/SkyboxNightCube.unity3d");
+		//byte[] bytes = System.IO.File.ReadAllBytes("Bundles/bundleCube2.unity3d");
+		//byte[] bytes = System.IO.File.ReadAllBytes("Bundles/cube");
+		//byte[] bytes = System.IO.File.ReadAllBytes("Bundles/skyboxnew.unity3d\t");
+		byte[] bytes = System.IO.File.ReadAllBytes("Bundles/SkyboxMilkyWay.unity3d");
+
+
 		//byte[] bytes = System.IO.File.ReadAllBytes("Bundles/MagicFountain.unity3d");
 		AssetBundle b = AssetBundle.LoadFromMemory(bytes);
-		b.LoadAllAssets();
 
-		GameObject go = GameObject.Instantiate(b.mainAsset, Vector3.zero, Quaternion.identity) as GameObject;
-		NAReverbResonator[] resonators = go.GetComponentsInChildren<NAReverbResonator>();
+
+		string[] strAssets = b.GetAllAssetNames();
+
+
+		foreach (string s in strAssets)
+		{
+			LogManager.Log ("Asset = " + s);
+		}
+					
+
+
+
+
+
+
+
+		Object[] objs = b.LoadAllAssets();
+		foreach (Object o in objs)
+		{
+
+			LogManager.Log ("Object " + o.name + " type:" + o.GetType());
+
+			if (o.GetType() == typeof(Material))
+			{
+				Material mat = o as Material;
+
+				//ShaderCompiler
+
+				mat.shader = Shader.Find(mat.shader.name); //hack to force reapply of Shader (Unity 5.3 bug)
+
+				LogManager.Log("material : " + mat.shader.name);
+				LogManager.Log("material : " + mat.shader.ToString());
+
+			}
+		}
+
+		if (b.mainAsset != null)
+		{
+			GameObject go = GameObject.Instantiate(b.mainAsset, Vector3.zero, Quaternion.identity) as GameObject;
+		}
+		else
+		{
+			foreach (Object o in objs)
+			{
+				GameObject go = GameObject.Instantiate(o, Vector3.zero, Quaternion.identity) as GameObject;
+			}
+		}
+
+		/*NAReverbResonator[] resonators = go.GetComponentsInChildren<NAReverbResonator>();
 		foreach (NAReverbResonator r in resonators)
 		{
 			Debug.Log("found NAReverbResonator");
 			r.enabled = true;
-		}
+		}*/
 		b.Unload(false);
 
 #endif

@@ -18,7 +18,17 @@ public class ExportAssetBundles
 		{ 
 			// Build the resource file from the active selection. 
 			Object[] selection = Selection.GetFiltered(typeof(Object), SelectionMode.DeepAssets); 
+
+			foreach (Object o in selection)
+			{
+
+				Debug.Log ("selection " + o.name + " type:" + o.GetType());
+			}
+			//BuildPipeline.PushAssetDependencies();
+
 			BuildPipeline.BuildAssetBundle(Selection.activeObject, selection, path, BuildAssetBundleOptions.CollectDependencies | BuildAssetBundleOptions.CompleteAssets); Selection.objects = selection; 
+			//BuildPipeline.PopAssetDependencies();
+			//BuildPipeline.BuildAssetBundle(Selection.activeObject, Selection.objects, path); 
 		}
 	} 
 	/*[MenuItem("Assets/Build AssetBundle From Selection - No dependency tracking")] 
@@ -33,4 +43,10 @@ public class ExportAssetBundles
 		} 
 	} 
 	*/
+
+	[MenuItem ("Assets/Build AssetBundles")]
+	static void BuildAllAssetBundles ()
+	{
+		BuildPipeline.BuildAssetBundles ("AssetBundles", BuildAssetBundleOptions.CollectDependencies | BuildAssetBundleOptions.CompleteAssets);
+	}
 } 

@@ -24,7 +24,7 @@ public class NAAudioSynthOscillator : NAObjectBase
 	// Use this for initialization
 	void Awake () 
 	{
-		//Generate();
+		Generate();
 		
 	}
 	
@@ -60,7 +60,7 @@ public class NAAudioSynthOscillator : NAObjectBase
 			}
 			
 			audio.clip.SetData(data, 0);
-			audio.Play();
+			//audio.Play();
 		}
 		Debug.Log ("Generate Oscillator");
 
