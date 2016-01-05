@@ -35,11 +35,21 @@ public class NASyncAnimationWithAudio : MonoBehaviour {
 				b = g.pos;
 				a = g.duration;
 			}
-			float time_animation = (audioSource.time / audioSource.clip.length)*a+b;
-			Animation animation = GetComponent<Animation>();
-			foreach (AnimationState state in animation) 
+			NAAudioSynthLooper l = audioSource.GetComponent<NAAudioSynthLooper>();
+			if (l != null)
 			{
-				state.normalizedTime = time_animation;
+				b = l.pos;
+				a = l.duration;
+			}
+			float time_animation = (audioSource.time / audioSource.clip.length)*a+b;
+			//Animation animation = GetComponent<Animation>();
+			Animation[] animations = GetComponentsInChildren<Animation>();
+			foreach (Animation animation in animations) 
+			{
+				foreach (AnimationState state in animation) 
+				{
+					state.normalizedTime = time_animation;
+				}
 			}
 		}
 	}

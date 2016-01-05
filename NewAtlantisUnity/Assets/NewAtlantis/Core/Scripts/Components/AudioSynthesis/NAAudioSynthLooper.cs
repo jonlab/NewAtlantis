@@ -1,13 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class NAAudioSynthGranulate : NAObjectBase 
+public class NAAudioSynthLooper : NAObjectBase 
 {
-	//public bool 		bShowGUI = true;
-	public AudioSource 	inputAudioSource;
+    public AudioClip    audioClip;
 	public float 		pos;
 	public float		duration;
-
 
 	// Use this for initialization
 	void Start () 
@@ -89,18 +87,18 @@ public class NAAudioSynthGranulate : NAObjectBase
 	private void Generate ()
 	{
 		AudioSource audio = GetComponent<AudioSource>();
-		if (audio)
+        if (audio && audioClip)
 		{
 			//float duration = inputAudioSource.clip.channels * inputAudioSource.clip.length;
 
-			float source_duration 	= inputAudioSource.clip.length;
-			int source_samplerate 	= inputAudioSource.clip.frequency;
-			int source_channels 	= inputAudioSource.clip.channels;
+            float source_duration 	= audioClip.length;
+            int source_samplerate 	= audioClip.frequency;
+            int source_channels 	= audioClip.channels;
 
 			//get source data
-			int source_samplecount	= inputAudioSource.clip.samples;
+            int source_samplecount	= audioClip.samples;
 			float[] source_data 	= new float[source_samplecount];
-			inputAudioSource.clip.GetData(source_data, 0);
+            audioClip.GetData(source_data, 0);
 
 			float extract_pos = pos * source_duration;
 			float extract_duration = duration*source_duration;
@@ -112,7 +110,7 @@ public class NAAudioSynthGranulate : NAObjectBase
 			start = Mathf.Max(0,start);
 
 			int end = (int)((extract_pos+extract_duration/2f)*(float)source_samplerate);
-			end = Mathf.Min(inputAudioSource.clip.samples-1,end);
+			end = Mathf.Min(audioClip.samples-1,end);
 
 			extract_duration = (float)(end-start)/(float)source_samplerate;
 			Debug.Log("start=" + start + " end="+end);

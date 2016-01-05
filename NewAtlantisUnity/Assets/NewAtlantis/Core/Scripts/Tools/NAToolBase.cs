@@ -1,12 +1,29 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+
+
+public enum NAToolCategory
+{
+	Audio,
+	Object,
+	Hit,
+	Misc,
+	Physics
+
+
+}
+
+
 public class NAToolBase : MonoBehaviour
 {
-	public string name = "noname";
-	public Texture2D icon = null;
-	private Texture2D white = null;
-	private bool	ExtendedGUI = true;
+	public NAToolCategory 	category;
+	public string 			name = "noname";
+	public Texture2D 		icon = null;
+
+	private Texture2D 		white = null;
+	private bool			ExtendedGUI = true;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -84,7 +101,6 @@ public class NAToolBase : MonoBehaviour
 			GUI.color = Color.red;
 		else
 			GUI.color = Color.white;
-
 
 		GUI.DrawTexture(new Rect(pos.x-32,pos.y-32,64,64), white);
 		GUI.DrawTexture(new Rect(pos.x-32,pos.y-32,64,64), icon);

@@ -1128,6 +1128,9 @@ public class App : MonoBehaviour
 							pos2d.y = Mathf.Clamp(pos2d.y, -1,1);
 							int x = (int)(pos2d.x*Screen.width);
 							int y = (int)(Screen.height-pos2d.y*Screen.height);
+
+							x = Mathf.Clamp(x,0,Screen.width-100);
+							y = Mathf.Clamp(y,0,Screen.height-30);
 							GUI.Label (new Rect(x,y,100,30), strDisplay);
 						}
 					}
@@ -2806,6 +2809,10 @@ public class App : MonoBehaviour
 		return path+"/"+go.name;//+"/"+go.name;
 	}
 
-    
+
+	void OnFailedToConnect(NetworkConnectionError  err)
+	{
+		LogManager.LogError("Failed to connect : " + err);
+	}
     
 }
