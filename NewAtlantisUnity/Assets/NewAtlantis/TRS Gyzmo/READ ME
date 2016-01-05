@@ -1,0 +1,51 @@
+<<<<<<< HEAD
+///// TRS Gizmo Utilisation
+
+
+// Pour commencer appuyer sur espace pour activer le gizmo et sa caméra
+// Le TRS Gizmo est le parent du programme , on peut facilement l'assigner a un game object avec la fonction startTRSGizmo(GameObject o)
+// Quand on a fini de l'utiliser on appelle la fonction stopTRSGizmo
+
+// UPDATE : Prise en compte de la destruction de l'objet assigné au TRS Gizmo
+// si l'objet assigné au TRS Gizmo est detruit , la fonction stopTRSGizmo() est automatiquement appelée
+
+
+
+
+//Selection du mode : translate , rotate ou scale Mode en cliquant sur une icone de mode ( en bas du gizmo )
+//Selection d'un gizmo et drag pour l'activer
+
+
+
+//Contrôles
+
+//Clique droit : tourner autour du gizmo
+//Clique molette : tourner autour du gizmo ( sens inverse )
+//Molette : zoom
+//Si pas de molette : activer le mode noScroll et zoomer avec les touches ( A et E )
+=======
+///// TRS Gizmo Utilisation
+
+
+// Pour commencer appuyer sur espace pour activer le gizmo et sa caméra
+// Le TRS Gizmo est le parent du programme , on peut facilement l'assigner a un game object avec la fonction startTRSGizmo(GameObject o)
+// Quand on a fini de l'utiliser on appelle la fonction stopTRSGizmo
+
+// UPDATE : Prise en compte de la destruction de l'objet assigné au TRS Gizmo
+// si l'objet assigné au TRS Gizmo est detruit , la fonction stopTRSGizmo() est automatiquement appelée
+
+
+
+
+//Selection du mode : translate , rotate ou scale Mode en cliquant sur une icone de mode ( en bas du gizmo )
+//Selection d'un gizmo et drag pour l'activer
+
+
+
+//Contrôles
+
+//Clique droit : tourner autour du gizmo
+//Clique molette : tourner autour du gizmo ( sens inverse )
+//Molette : zoom
+//Si pas de molette : activer le mode noScroll et zoomer avec les touches ( A et E )
+>>>>>>> cc58b2cb32f6563ea23f0550281efd5fb4b5637f
