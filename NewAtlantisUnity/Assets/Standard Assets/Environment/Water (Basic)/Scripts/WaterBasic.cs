@@ -1,3 +1,4 @@
+
 using System;
 using UnityEngine;
 
@@ -29,4 +30,5 @@ namespace UnityStandardAssets.Water
             mat.SetVector("_WaveOffset", offsetClamped);
         }
     }
+
 }
