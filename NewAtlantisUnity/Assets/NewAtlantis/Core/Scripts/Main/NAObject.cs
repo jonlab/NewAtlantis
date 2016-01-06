@@ -80,6 +80,8 @@ public class NAObject
 					string[] strAssets = bundle.GetAllAssetNames();
 
 					//recompilation des shaders
+					/*
+#if UNITY_EDITOR
 					foreach (Object o in objs)
 					{
 						
@@ -93,6 +95,9 @@ public class NAObject
 							mat.shader = Shader.Find(mat.shader.name); //hack to force reapply of Shader (Unity 5.3 bug)
 						}
 					}
+#endif
+*/
+
 
 					/*
 					foreach (string s in strAssets)
@@ -135,6 +140,62 @@ public class NAObject
 						goChild.transform.localEulerAngles = Vector3.zero;
 						//goChild.transform.localScale = Vector3.one;
 	                }
+
+					//shader patch
+					//MeshRenderer[] renderers = 
+
+					Renderer[] renderers = go.GetComponentsInChildren<Renderer>();
+					foreach (Renderer r in renderers)
+					{
+						if (r.sharedMaterial != null)
+						{
+							//exceptions
+							if (
+								(r.sharedMaterial.name == "WaterProDaytime") ||
+								(r.sharedMaterial.name.Contains("transparentcolonne")) ||
+								(r.sharedMaterial.name == "Collider") ||
+								(r.sharedMaterial.name == "New Material 1") || //luca
+								(r.sharedMaterial.name == "CupolaMat") || //luca
+								(r.sharedMaterial.name == "Default-Particle") || //luca
+								(r.sharedMaterial.name == "tram_vert") || //oscar
+								(r.sharedMaterial.name == "transparent") || //oscar
+								(r.sharedMaterial.name == "ParticleBokeh")  //oscar
+							)
+							{
+								r.sharedMaterial.shader = Shader.Find(r.sharedMaterial.shader.name);
+							}
+						}
+					}
+
+					/*ParticleSystem[] particles = go.GetComponentsInChildren<ParticleSystem>();
+					foreach (ParticleSystem p in particles)
+					{
+						if (p..sharedMaterial != null)
+						{
+							//exceptions
+							if (
+								(r.sharedMaterial.name == "WaterProDaytime") ||
+								(r.sharedMaterial.name.Contains("transparentcolonne")) ||
+								(r.sharedMaterial.name == "Collider") ||
+								(r.sharedMaterial.name == "Default-Particle") 
+							)
+							{
+								r.sharedMaterial.shader = Shader.Find(r.sharedMaterial.shader.name);
+							}
+						}
+					}
+					*/
+
+					/*
+					Material[] materials = Object.FindObjectsOfType(typeof(Material)) as Material[];
+					foreach (Material m in materials)
+					{
+						Debug.Log("Material : " + m.name);
+
+						m.shader = Shader.Find(m.shader.name); //hack to force reapply of Shader (Unity 5.3 bug)
+					}
+					*/
+
 					//we have to scale after instantiation
 					go.transform.localScale 	= scale;
 					bundle.Unload(false); 
@@ -210,7 +271,10 @@ public class NAObject
 
 					if (Network.isServer)
 					{
-						PrepareAsServer(goChild, goChild.name);
+						if (goChild != null)
+						{
+							PrepareAsServer(goChild, goChild.name);
+						}
 					}
 					else
 					{

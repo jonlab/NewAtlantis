@@ -19,13 +19,13 @@ public class WaterSurface : MonoBehaviour {
 		{
 			//underwater
 			transform.eulerAngles = new Vector3 (180, 0, 0);
-			RenderSettings.ambientLight = new Color(0,0,0);
+			//RenderSettings.ambientLight = new Color(0,0,0);
 			RenderSettings.fog = true;
 		} 
 		else 
 		{
 			transform.eulerAngles = new Vector3 (0, 0, 0);
-			RenderSettings.ambientLight = new Color(0.2f,0.2f,0.2f);
+			//RenderSettings.ambientLight = new Color(0.2f,0.2f,0.2f);
 			RenderSettings.fog = false;
 		}
 	

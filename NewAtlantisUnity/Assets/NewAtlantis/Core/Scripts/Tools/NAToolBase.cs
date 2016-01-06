@@ -97,15 +97,25 @@ public class NAToolBase : MonoBehaviour
 		if (!white)
 			white = Resources.Load("white") as Texture2D;
 		//tool GUI
-		if (selected)
+		/*if (selected)
 			GUI.color = Color.red;
 		else
 			GUI.color = Color.white;
+		*/
+
+		if (selected)
+			GUI.color = Color.white;
+		else
+			GUI.color = new Color(1,1,1,0.1f);
+		
 
 		GUI.DrawTexture(new Rect(pos.x-32,pos.y-32,64,64), white);
+		GUI.color = Color.white;
 		GUI.DrawTexture(new Rect(pos.x-32,pos.y-32,64,64), icon);
-		GUI.color = Color.red;
-		GUI.Label(new Rect(pos.x-32,pos.y-32,64,64), name);
+		GUI.color = Color.red; //red
+		GUI.skin.label.alignment = TextAnchor.MiddleCenter;
+		GUI.Label(new Rect(pos.x-32,pos.y-64,64,64), name);
+		GUI.skin.label.alignment = TextAnchor.MiddleLeft;
 		GUI.color = Color.white;
 	}
 

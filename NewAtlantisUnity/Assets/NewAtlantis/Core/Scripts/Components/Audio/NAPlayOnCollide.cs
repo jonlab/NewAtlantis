@@ -3,38 +3,45 @@ using System.Collections;
 
 
 
-	public class NAPlayOnCollide : MonoBehaviour 
+public class NAPlayOnCollide : MonoBehaviour 
+{
+	public float VelocityThreshold = 0.5f; //m.s-1
+	//retrig ?
+	//public AnimationCurve curveVolume = new AnimationCurve(new Keyframe(0, 0), new Keyframe(1, 1));
+	public AnimationCurve curveVolume = AnimationCurve.Linear(0,0,1,1);
+
+	public bool StopOnExit;
+	public bool PitchOnStay;
+	public bool Toggle;
+
+	public GameObject target; //if null, ge take this GameObject as the target (AudioSource to play)
+	public float delay = 0f; //delay in seconds
+
+	void Start()
 	{
-		public float VelocityThreshold = 0.5f; //m.s-1
-		//retrig ?
-		//public AnimationCurve curveVolume = new AnimationCurve(new Keyframe(0, 0), new Keyframe(1, 1));
-		public AnimationCurve curveVolume = AnimationCurve.Linear(0,0,1,1);
+		if (target == null)
+			target = this.gameObject;
+	}
 
-		public bool StopOnExit;
-		public bool PitchOnStay;
-		public bool Toggle;
-
-
-		void Start()
+	void OnCollisionEnter(Collision collision) 
+	{
+		//volume is relative to relative velocity
+		//float magnitude = collision.relativeVelocity.magnitude;
+		float magnitude = curveVolume.Evaluate(collision.relativeVelocity.magnitude);
+		if (magnitude > VelocityThreshold)
 		{
-			//curveVolume = AnimationCurve.Linear(
-		}
-		void OnCollisionEnter(Collision collision) 
-		{
-			//volume is relative to relative velocity
-			//float magnitude = collision.relativeVelocity.magnitude;
-			float magnitude = curveVolume.Evaluate(collision.relativeVelocity.magnitude);
-			if (magnitude > VelocityThreshold)
+			float vol = magnitude*4f;
+			AudioSource audio = target.GetComponent<AudioSource>();
+			if (audio != null && audio.clip != null)
 			{
-				float vol = magnitude*4f;
-				AudioSource audio = GetComponent<AudioSource>();
+				ulong delaysamples = (ulong)(delay * (float)audio.clip.frequency);
 				audio.volume = vol;
 
 				if (Toggle)
 				{
 					if (!audio.isPlaying)
 					{
-						audio.Play();
+					audio.Play(delaysamples);
 					}
 					else
 					{
@@ -45,29 +52,34 @@ using System.Collections;
 				{
 					if (!audio.isPlaying)
 					{
-						audio.Play();
+					audio.Play(delaysamples);
 					}
 				}
 			}
-			//collision.contacts
 		}
-		void OnCollisionStay(Collision collision) 
-		{
-			float s = 0f;
-			if (PitchOnStay)
-			{
-				GetComponent<AudioSource>().pitch = 1f+collision.relativeVelocity.magnitude;
-			}
-		}
-
-		void OnCollisionExit(Collision collision) 
-		{
-			if (StopOnExit)
-				GetComponent<AudioSource>().Stop();
-		}
-
-
-
-
+		//collision.contacts
 	}
+	void OnCollisionStay(Collision collision) 
+	{
+		AudioSource audio = target.GetComponent<AudioSource>();
+		float s = 0f;
+		if (PitchOnStay && audio != null)
+		{
+			audio.pitch = 1f+collision.relativeVelocity.magnitude;
+		}
+	}
+
+	void OnCollisionExit(Collision collision) 
+	{
+		AudioSource audio = target.GetComponent<AudioSource>();
+		if (StopOnExit && audio != null)
+		{
+			audio.Stop();
+		}
+	}
+
+
+
+
+}
 

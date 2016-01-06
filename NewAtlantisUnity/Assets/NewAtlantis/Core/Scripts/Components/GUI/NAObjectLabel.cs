@@ -12,7 +12,7 @@ public class NAObjectLabel : MonoBehaviour
 	private Texture2D texWhite	= null;
 
 	private bool bActive 		= false;
-	private float Duration 		= 10f;
+	private float Duration 		= 30f;
 	private float timer 		= 0f;
 	
 	// Use this for initialization
@@ -43,6 +43,17 @@ public class NAObjectLabel : MonoBehaviour
 		{
 			DrawGUI();
 		}
+		else
+		{
+			Vector3 pos2d = Camera.main.WorldToViewportPoint(transform.position);
+			if (pos2d.z > 0)
+			{
+				int x = (int)(pos2d.x*Screen.width);
+				int y = (int)(Screen.height-pos2d.y*Screen.height);
+				GUI.color = Color.white;
+				GUI.Label(new Rect(x-100, y-15, 200, 30), Title + "[" + Author + "]");
+			}
+		}
 	}
 
 	void OnTriggerEnter(Collider other) 
@@ -70,9 +81,9 @@ public class NAObjectLabel : MonoBehaviour
 		GUI.color = new Color(0,0,0,0.5f);
 		GUI.DrawTexture(new Rect(0,y,Screen.width, h), texWhite);
 		GUI.color = Color.white;
-		GUI.Label(new Rect(100,y,500,30), Title);
-		GUI.Label(new Rect(100,y+30,500,30), Author + ", " + Date);
-		GUI.Label(new Rect(100,y+60,500,40), Synopsis);
-		GUI.Label(new Rect(100,y+100,500,100), Instructions);
+		GUI.Label(new Rect(100,y,600,30), Title);
+		GUI.Label(new Rect(100,y+30,600,30), Author + ", " + Date);
+		GUI.Label(new Rect(100,y+60,600,70), Synopsis);
+		GUI.Label(new Rect(100,y+130,600,70), Instructions);
 	}
 }

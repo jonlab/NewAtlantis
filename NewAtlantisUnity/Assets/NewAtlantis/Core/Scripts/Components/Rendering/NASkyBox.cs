@@ -8,6 +8,8 @@ public class NASkyBox : MonoBehaviour
 	void Start () 
 	{
 		RenderSettings.skybox = skybox;
+		//patch
+		skybox.shader = Shader.Find(skybox.shader.name);
 	
 	}
 	

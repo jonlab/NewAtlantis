@@ -1144,6 +1144,10 @@ public class App : MonoBehaviour
 
 		if (bToolPanel)
 		{
+			float inter = 64+10;
+			GUI.color = new Color(0,0,0,0.2f);
+			GUI.DrawTexture (new Rect (Screen.width/2-inter*3f-5f, Screen.height-256f-inter/2f-5f, inter*6f+10f, inter*3f+10f), texWhite);
+			GUI.color = Color.white;
 			//we draw the tools
 			int x = 0;
 			int y = 0;
@@ -1152,7 +1156,9 @@ public class App : MonoBehaviour
 			{
 				
 				bool selected = (t==ToolSelected) ? true : false;
-				Vector3 pos = new Vector3(Screen.width/2-64f*2.5f+x*64, Screen.height-256+y*64, 0);
+
+				Vector3 pos = new Vector3(Screen.width/2-inter*2.5f+x*inter, Screen.height-256+y*inter, 0);
+
 				t.DrawBaseGUI(pos, selected);
 				x++;
 				if (x > 5)
@@ -1218,9 +1224,12 @@ public class App : MonoBehaviour
 
 
 			GUI.color = Color.white;
-			string str = "loading " + NADownloader.current.name + " ... " + (int)(loading*1000f)/10f + "%";
-			GUI.Label(new Rect(Screen.width/2-150, Screen.height/2-15, 300, 30), str);
-			GUI.color = Color.white;
+			if (NADownloader.current != null)
+			{
+				string str = "loading " + NADownloader.current.name + " ... " + (int)(loading*1000f)/10f + "%";
+				GUI.Label(new Rect(Screen.width/2-150, Screen.height/2-15, 300, 30), str);
+				GUI.color = Color.white;
+			}
 
 		}
 		if (!bGUI)
@@ -1234,7 +1243,7 @@ public class App : MonoBehaviour
 		//GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
 		GUI.color = Color.white;
 		//GUI.Label(new Rect(0,0,400,30), "NewAtlantisNew Client - SAIC workshop");
-		GUI.Label(new Rect(0,0,400,30), "New Atlantis Client v0.85");
+		GUI.Label(new Rect(0,0,400,30), "New Atlantis Client v0.87");
 		GUI.Label(new Rect(Screen.width-200, 0, 200, 30), strPick);
 
 
@@ -2182,6 +2191,7 @@ public class App : MonoBehaviour
 		
 		if (GUILayout.Button ("start server with selected space", GUILayout.Width(200 )) && !Network.isServer) 
 		{
+			ResetViewerPosition();
 			TransitionManager.Start(TransitionManager.FadeIn,3f,Color.white, null);
 			tab = AppTab.None; //hide windows
 			Network.InitializeServer(32, 7890, true);
@@ -2874,6 +2884,11 @@ public class App : MonoBehaviour
 	void OnFailedToConnect(NetworkConnectionError  err)
 	{
 		LogManager.LogError("Failed to connect : " + err);
+	}
+
+	void ResetViewerPosition()
+	{
+		transform.position = new Vector3(0,2,0);
 	}
     
 }
