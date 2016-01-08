@@ -1,0 +1,633 @@
+<?xml version="1.0" ?>
+<Modern_ConcreteBuildingExt_01>
+	<Wall_D_03>
+		<MatDetailNormalPower type="float" value="1.0"/>
+		<TexTrimDiffuse parameter="_DiffuseTrimTex" type="texture" value="Metal_TrimSet_001_TrimDiffuse"/>
+		<TexNormal parameter="_BumpMap" type="texture" value="Concrete_002_Normal"/>
+		<MatBodyNormalPower type="float" value="1.0"/>
+		<TexTrimNormal parameter="_BumpTrimTex" type="texture" value="Metal_TrimSet_001_TrimNormal"/>
+		<MatName type="string" value="Wall_D_03"/>
+		<MatNormalPower type="float" value="1.0"/>
+		<MatShader type="shader" value="ZGON : Bumped Detail Spec 01"/>
+		<MatSpecColor b="0.5" g="0.5" r="0.5" type="color"/>
+		<ObjTangentFromUv2 type="bool" value="True"/>
+		<MatBodyOcclusionPower type="float" value="1.0"/>
+		<MatDetailTexColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<UvOffsetY type="float" value="0.0"/>
+		<UvOffsetX type="float" value="0.0"/>
+		<UvScaleY type="float" value="0.5"/>
+		<UvScaleX type="float" value="0.5"/>
+		<MatBodyOcclusionColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<MatShine type="float" value="0.075"/>
+		<MatDetailTexScale type="float" value="0.5"/>
+		<TexBodyNormal parameter="_BodyBumpTex" type="texture" value="Atlas_2_BodyNormal"/>
+		<MatDetailTexEnabled type="bool" value="True"/>
+		<TexDiffuse parameter="_MainTex" type="texture" value="Concrete_002_Diffuse"/>
+		<MatMainColor b="1.0" g="1.0" r="1.0" type="color"/>
+		<ObjScale type="float" value="1.0"/>
+		<MatDetailTexPower type="float" value="1.5"/>
+		<MatDetailTexOffset type="float" value="0.5"/>
+		<TexDetailNormal parameter="_BumpDetailTex" type="texture" value="Detailmap_001_DetailNormal"/>
+		<TexOcclusion parameter="_BodyOcclusionTex" type="texture" value="Atlas_2_Occlusion"/>
+	</Wall_D_03>
+	<Wall_D_02>
+		<MatDetailNormalPower type="float" value="1.0"/>
+		<TexTrimDiffuse parameter="_DiffuseTrimTex" type="texture" value="Metal_TrimSet_001_TrimDiffuse"/>
+		<TexNormal parameter="_BumpMap" type="texture" value="Concrete_002_Normal"/>
+		<MatBodyNormalPower type="float" value="1.0"/>
+		<TexTrimNormal parameter="_BumpTrimTex" type="texture" value="Metal_TrimSet_001_TrimNormal"/>
+		<MatName type="string" value="Wall_D_02"/>
+		<MatNormalPower type="float" value="1.0"/>
+		<MatShader type="shader" value="ZGON : Bumped Detail Spec 01"/>
+		<MatSpecColor b="0.5" g="0.5" r="0.5" type="color"/>
+		<ObjTangentFromUv2 type="bool" value="True"/>
+		<MatBodyOcclusionPower type="float" value="1.0"/>
+		<MatDetailTexColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<UvOffsetY type="float" value="0.5"/>
+		<UvOffsetX type="float" value="0.5"/>
+		<UvScaleY type="float" value="0.25"/>
+		<UvScaleX type="float" value="0.25"/>
+		<MatBodyOcclusionColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<MatShine type="float" value="0.075"/>
+		<MatDetailTexScale type="float" value="0.5"/>
+		<TexBodyNormal parameter="_BodyBumpTex" type="texture" value="Atlas_1_BodyNormal"/>
+		<MatDetailTexEnabled type="bool" value="True"/>
+		<TexDiffuse parameter="_MainTex" type="texture" value="Concrete_002_Diffuse"/>
+		<MatMainColor b="1.0" g="1.0" r="1.0" type="color"/>
+		<ObjScale type="float" value="1.0"/>
+		<MatDetailTexPower type="float" value="1.5"/>
+		<MatDetailTexOffset type="float" value="0.5"/>
+		<TexDetailNormal parameter="_BumpDetailTex" type="texture" value="Detailmap_001_DetailNormal"/>
+		<TexOcclusion parameter="_BodyOcclusionTex" type="texture" value="Atlas_1_Occlusion"/>
+	</Wall_D_02>
+	<Wall_D_01>
+		<MatDetailNormalPower type="float" value="1.0"/>
+		<TexTrimDiffuse parameter="_DiffuseTrimTex" type="texture" value="Metal_TrimSet_001_TrimDiffuse"/>
+		<TexNormal parameter="_BumpMap" type="texture" value="Concrete_002_Normal"/>
+		<MatBodyNormalPower type="float" value="1.0"/>
+		<TexTrimNormal parameter="_BumpTrimTex" type="texture" value="Metal_TrimSet_001_TrimNormal"/>
+		<MatName type="string" value="Wall_D_01"/>
+		<MatNormalPower type="float" value="1.0"/>
+		<MatShader type="shader" value="ZGON : Bumped Detail Spec 01"/>
+		<MatSpecColor b="0.5" g="0.5" r="0.5" type="color"/>
+		<ObjTangentFromUv2 type="bool" value="True"/>
+		<MatBodyOcclusionPower type="float" value="1.0"/>
+		<MatDetailTexColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<UvOffsetY type="float" value="0.5"/>
+		<UvOffsetX type="float" value="0.0"/>
+		<UvScaleY type="float" value="0.25"/>
+		<UvScaleX type="float" value="0.25"/>
+		<MatBodyOcclusionColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<MatShine type="float" value="0.075"/>
+		<MatDetailTexScale type="float" value="0.5"/>
+		<TexBodyNormal parameter="_BodyBumpTex" type="texture" value="Atlas_1_BodyNormal"/>
+		<MatDetailTexEnabled type="bool" value="True"/>
+		<TexDiffuse parameter="_MainTex" type="texture" value="Concrete_002_Diffuse"/>
+		<MatMainColor b="1.0" g="1.0" r="1.0" type="color"/>
+		<ObjScale type="float" value="1.0"/>
+		<MatDetailTexPower type="float" value="1.5"/>
+		<MatDetailTexOffset type="float" value="0.5"/>
+		<TexDetailNormal parameter="_BumpDetailTex" type="texture" value="Detailmap_001_DetailNormal"/>
+		<TexOcclusion parameter="_BodyOcclusionTex" type="texture" value="Atlas_1_Occlusion"/>
+	</Wall_D_01>
+	<Wall_C_03>
+		<MatDetailNormalPower type="float" value="1.0"/>
+		<TexTrimDiffuse parameter="_DiffuseTrimTex" type="texture" value="Metal_TrimSet_001_TrimDiffuse"/>
+		<TexNormal parameter="_BumpMap" type="texture" value="Concrete_002_Normal"/>
+		<MatBodyNormalPower type="float" value="1.0"/>
+		<TexTrimNormal parameter="_BumpTrimTex" type="texture" value="Metal_TrimSet_001_TrimNormal"/>
+		<MatName type="string" value="Wall_C_03"/>
+		<MatNormalPower type="float" value="1.0"/>
+		<MatShader type="shader" value="ZGON : Bumped Detail Spec 01"/>
+		<MatSpecColor b="0.5" g="0.5" r="0.5" type="color"/>
+		<ObjTangentFromUv2 type="bool" value="True"/>
+		<MatBodyOcclusionPower type="float" value="1.0"/>
+		<MatDetailTexColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<UvOffsetY type="float" value="0.5"/>
+		<UvOffsetX type="float" value="0.0"/>
+		<UvScaleY type="float" value="0.5"/>
+		<UvScaleX type="float" value="0.5"/>
+		<MatBodyOcclusionColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<MatShine type="float" value="0.075"/>
+		<MatDetailTexScale type="float" value="0.5"/>
+		<TexBodyNormal parameter="_BodyBumpTex" type="texture" value="Atlas_2_BodyNormal"/>
+		<MatDetailTexEnabled type="bool" value="True"/>
+		<TexDiffuse parameter="_MainTex" type="texture" value="Concrete_002_Diffuse"/>
+		<MatMainColor b="1.0" g="1.0" r="1.0" type="color"/>
+		<ObjScale type="float" value="1.0"/>
+		<MatDetailTexPower type="float" value="1.5"/>
+		<MatDetailTexOffset type="float" value="0.5"/>
+		<TexDetailNormal parameter="_BumpDetailTex" type="texture" value="Detailmap_001_DetailNormal"/>
+		<TexOcclusion parameter="_BodyOcclusionTex" type="texture" value="Atlas_2_Occlusion"/>
+	</Wall_C_03>
+	<Wall_C_02>
+		<MatDetailNormalPower type="float" value="1.0"/>
+		<TexTrimDiffuse parameter="_DiffuseTrimTex" type="texture" value="Metal_TrimSet_001_TrimDiffuse"/>
+		<TexNormal parameter="_BumpMap" type="texture" value="Concrete_002_Normal"/>
+		<MatBodyNormalPower type="float" value="1.0"/>
+		<TexTrimNormal parameter="_BumpTrimTex" type="texture" value="Metal_TrimSet_001_TrimNormal"/>
+		<MatName type="string" value="Wall_C_02"/>
+		<MatNormalPower type="float" value="1.0"/>
+		<MatShader type="shader" value="ZGON : Bumped Detail Spec 01"/>
+		<MatSpecColor b="0.5" g="0.5" r="0.5" type="color"/>
+		<ObjTangentFromUv2 type="bool" value="True"/>
+		<MatBodyOcclusionPower type="float" value="1.0"/>
+		<MatDetailTexColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<UvOffsetY type="float" value="0.5"/>
+		<UvOffsetX type="float" value="0.75"/>
+		<UvScaleY type="float" value="0.25"/>
+		<UvScaleX type="float" value="0.25"/>
+		<MatBodyOcclusionColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<MatShine type="float" value="0.075"/>
+		<MatDetailTexScale type="float" value="0.5"/>
+		<TexBodyNormal parameter="_BodyBumpTex" type="texture" value="Atlas_1_BodyNormal"/>
+		<MatDetailTexEnabled type="bool" value="True"/>
+		<TexDiffuse parameter="_MainTex" type="texture" value="Concrete_002_Diffuse"/>
+		<MatMainColor b="1.0" g="1.0" r="1.0" type="color"/>
+		<ObjScale type="float" value="1.0"/>
+		<MatDetailTexPower type="float" value="1.5"/>
+		<MatDetailTexOffset type="float" value="0.5"/>
+		<TexDetailNormal parameter="_BumpDetailTex" type="texture" value="Detailmap_001_DetailNormal"/>
+		<TexOcclusion parameter="_BodyOcclusionTex" type="texture" value="Atlas_1_Occlusion"/>
+	</Wall_C_02>
+	<Wall_C_01>
+		<MatDetailNormalPower type="float" value="1.0"/>
+		<TexTrimDiffuse parameter="_DiffuseTrimTex" type="texture" value="Metal_TrimSet_001_TrimDiffuse"/>
+		<TexNormal parameter="_BumpMap" type="texture" value="Concrete_002_Normal"/>
+		<MatBodyNormalPower type="float" value="1.0"/>
+		<TexTrimNormal parameter="_BumpTrimTex" type="texture" value="Metal_TrimSet_001_TrimNormal"/>
+		<MatName type="string" value="Wall_C_01"/>
+		<MatNormalPower type="float" value="1.0"/>
+		<MatShader type="shader" value="ZGON : Bumped Detail Spec 01"/>
+		<MatSpecColor b="0.5" g="0.5" r="0.5" type="color"/>
+		<ObjTangentFromUv2 type="bool" value="True"/>
+		<MatBodyOcclusionPower type="float" value="1.0"/>
+		<MatDetailTexColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<UvOffsetY type="float" value="0.75"/>
+		<UvOffsetX type="float" value="0.5"/>
+		<UvScaleY type="float" value="0.25"/>
+		<UvScaleX type="float" value="0.25"/>
+		<MatBodyOcclusionColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<MatShine type="float" value="0.075"/>
+		<MatDetailTexScale type="float" value="0.5"/>
+		<TexBodyNormal parameter="_BodyBumpTex" type="texture" value="Atlas_1_BodyNormal"/>
+		<MatDetailTexEnabled type="bool" value="True"/>
+		<TexDiffuse parameter="_MainTex" type="texture" value="Concrete_002_Diffuse"/>
+		<MatMainColor b="1.0" g="1.0" r="1.0" type="color"/>
+		<ObjScale type="float" value="1.0"/>
+		<MatDetailTexPower type="float" value="1.5"/>
+		<MatDetailTexOffset type="float" value="0.5"/>
+		<TexDetailNormal parameter="_BumpDetailTex" type="texture" value="Detailmap_001_DetailNormal"/>
+		<TexOcclusion parameter="_BodyOcclusionTex" type="texture" value="Atlas_1_Occlusion"/>
+	</Wall_C_01>
+	<Wall_B_03>
+		<MatDetailNormalPower type="float" value="1.0"/>
+		<TexTrimDiffuse parameter="_DiffuseTrimTex" type="texture" value="Metal_TrimSet_001_TrimDiffuse"/>
+		<TexNormal parameter="_BumpMap" type="texture" value="Concrete_002_Normal"/>
+		<MatBodyNormalPower type="float" value="1.0"/>
+		<TexTrimNormal parameter="_BumpTrimTex" type="texture" value="Metal_TrimSet_001_TrimNormal"/>
+		<MatName type="string" value="Wall_B_03"/>
+		<MatNormalPower type="float" value="1.0"/>
+		<MatShader type="shader" value="ZGON : Bumped Detail Spec 01"/>
+		<MatSpecColor b="0.5" g="0.5" r="0.5" type="color"/>
+		<ObjTangentFromUv2 type="bool" value="True"/>
+		<MatBodyOcclusionPower type="float" value="1.0"/>
+		<MatDetailTexColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<UvOffsetY type="float" value="0.0"/>
+		<UvOffsetX type="float" value="0.75"/>
+		<UvScaleY type="float" value="0.25"/>
+		<UvScaleX type="float" value="0.25"/>
+		<MatBodyOcclusionColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<MatShine type="float" value="0.075"/>
+		<MatDetailTexScale type="float" value="0.5"/>
+		<TexBodyNormal parameter="_BodyBumpTex" type="texture" value="Atlas_1_BodyNormal"/>
+		<MatDetailTexEnabled type="bool" value="True"/>
+		<TexDiffuse parameter="_MainTex" type="texture" value="Concrete_002_Diffuse"/>
+		<MatMainColor b="1.0" g="1.0" r="1.0" type="color"/>
+		<ObjScale type="float" value="1.0"/>
+		<MatDetailTexPower type="float" value="1.5"/>
+		<MatDetailTexOffset type="float" value="0.5"/>
+		<TexDetailNormal parameter="_BumpDetailTex" type="texture" value="Detailmap_001_DetailNormal"/>
+		<TexOcclusion parameter="_BodyOcclusionTex" type="texture" value="Atlas_1_Occlusion"/>
+	</Wall_B_03>
+	<Wall_B_02>
+		<MatDetailNormalPower type="float" value="1.0"/>
+		<TexTrimDiffuse parameter="_DiffuseTrimTex" type="texture" value="Metal_TrimSet_001_TrimDiffuse"/>
+		<TexNormal parameter="_BumpMap" type="texture" value="Concrete_002_Normal"/>
+		<MatBodyNormalPower type="float" value="1.0"/>
+		<TexTrimNormal parameter="_BumpTrimTex" type="texture" value="Metal_TrimSet_001_TrimNormal"/>
+		<MatName type="string" value="Wall_B_02"/>
+		<MatNormalPower type="float" value="1.0"/>
+		<MatShader type="shader" value="ZGON : Bumped Detail Spec 01"/>
+		<MatSpecColor b="0.5" g="0.5" r="0.5" type="color"/>
+		<ObjTangentFromUv2 type="bool" value="True"/>
+		<MatBodyOcclusionPower type="float" value="1.0"/>
+		<MatDetailTexColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<UvOffsetY type="float" value="0.25"/>
+		<UvOffsetX type="float" value="0.5"/>
+		<UvScaleY type="float" value="0.25"/>
+		<UvScaleX type="float" value="0.25"/>
+		<MatBodyOcclusionColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<MatShine type="float" value="0.075"/>
+		<MatDetailTexScale type="float" value="0.5"/>
+		<TexBodyNormal parameter="_BodyBumpTex" type="texture" value="Atlas_1_BodyNormal"/>
+		<MatDetailTexEnabled type="bool" value="True"/>
+		<TexDiffuse parameter="_MainTex" type="texture" value="Concrete_002_Diffuse"/>
+		<MatMainColor b="1.0" g="1.0" r="1.0" type="color"/>
+		<ObjScale type="float" value="1.0"/>
+		<MatDetailTexPower type="float" value="1.5"/>
+		<MatDetailTexOffset type="float" value="0.5"/>
+		<TexDetailNormal parameter="_BumpDetailTex" type="texture" value="Detailmap_001_DetailNormal"/>
+		<TexOcclusion parameter="_BodyOcclusionTex" type="texture" value="Atlas_1_Occlusion"/>
+	</Wall_B_02>
+	<Wall_B_01>
+		<MatDetailNormalPower type="float" value="1.0"/>
+		<TexTrimDiffuse parameter="_DiffuseTrimTex" type="texture" value="Metal_TrimSet_001_TrimDiffuse"/>
+		<TexNormal parameter="_BumpMap" type="texture" value="Concrete_002_Normal"/>
+		<MatBodyNormalPower type="float" value="1.0"/>
+		<TexTrimNormal parameter="_BumpTrimTex" type="texture" value="Metal_TrimSet_001_TrimNormal"/>
+		<MatName type="string" value="Wall_B_01"/>
+		<MatNormalPower type="float" value="1.0"/>
+		<MatShader type="shader" value="ZGON : Bumped Detail Spec 01"/>
+		<MatSpecColor b="0.5" g="0.5" r="0.5" type="color"/>
+		<ObjTangentFromUv2 type="bool" value="True"/>
+		<MatBodyOcclusionPower type="float" value="1.0"/>
+		<MatDetailTexColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<UvOffsetY type="float" value="0.0"/>
+		<UvOffsetX type="float" value="0.25"/>
+		<UvScaleY type="float" value="0.25"/>
+		<UvScaleX type="float" value="0.25"/>
+		<MatBodyOcclusionColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<MatShine type="float" value="0.075"/>
+		<MatDetailTexScale type="float" value="0.5"/>
+		<TexBodyNormal parameter="_BodyBumpTex" type="texture" value="Atlas_1_BodyNormal"/>
+		<MatDetailTexEnabled type="bool" value="True"/>
+		<TexDiffuse parameter="_MainTex" type="texture" value="Concrete_002_Diffuse"/>
+		<MatMainColor b="1.0" g="1.0" r="1.0" type="color"/>
+		<ObjScale type="float" value="1.0"/>
+		<MatDetailTexPower type="float" value="1.5"/>
+		<MatDetailTexOffset type="float" value="0.5"/>
+		<TexDetailNormal parameter="_BumpDetailTex" type="texture" value="Detailmap_001_DetailNormal"/>
+		<TexOcclusion parameter="_BodyOcclusionTex" type="texture" value="Atlas_1_Occlusion"/>
+	</Wall_B_01>
+	<Wall_A_Post_02>
+		<MatDetailNormalPower type="float" value="1.0"/>
+		<TexTrimDiffuse parameter="_DiffuseTrimTex" type="texture" value="Metal_TrimSet_001_TrimDiffuse"/>
+		<TexNormal parameter="_BumpMap" type="texture" value="Concrete_002_Normal"/>
+		<MatBodyNormalPower type="float" value="1.0"/>
+		<TexTrimNormal parameter="_BumpTrimTex" type="texture" value="Metal_TrimSet_001_TrimNormal"/>
+		<MatName type="string" value="Wall_A_Post_02"/>
+		<MatNormalPower type="float" value="1.0"/>
+		<MatShader type="shader" value="ZGON : Bumped Detail Spec 01"/>
+		<MatSpecColor b="0.5" g="0.5" r="0.5" type="color"/>
+		<ObjTangentFromUv2 type="bool" value="True"/>
+		<MatBodyOcclusionPower type="float" value="1.0"/>
+		<MatDetailTexColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<UvOffsetY type="float" value="0.25"/>
+		<UvOffsetX type="float" value="0.75"/>
+		<UvScaleY type="float" value="0.25"/>
+		<UvScaleX type="float" value="0.25"/>
+		<MatBodyOcclusionColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<MatShine type="float" value="0.075"/>
+		<MatDetailTexScale type="float" value="0.5"/>
+		<TexBodyNormal parameter="_BodyBumpTex" type="texture" value="Atlas_1_BodyNormal"/>
+		<MatDetailTexEnabled type="bool" value="True"/>
+		<TexDiffuse parameter="_MainTex" type="texture" value="Concrete_002_Diffuse"/>
+		<MatMainColor b="1.0" g="1.0" r="1.0" type="color"/>
+		<ObjScale type="float" value="1.0"/>
+		<MatDetailTexPower type="float" value="1.5"/>
+		<MatDetailTexOffset type="float" value="0.5"/>
+		<TexDetailNormal parameter="_BumpDetailTex" type="texture" value="Detailmap_001_DetailNormal"/>
+		<TexOcclusion parameter="_BodyOcclusionTex" type="texture" value="Atlas_1_Occlusion"/>
+	</Wall_A_Post_02>
+	<Wall_A_Post_01>
+		<MatDetailNormalPower type="float" value="1.0"/>
+		<TexTrimDiffuse parameter="_DiffuseTrimTex" type="texture" value="Metal_TrimSet_001_TrimDiffuse"/>
+		<TexNormal parameter="_BumpMap" type="texture" value="Concrete_002_Normal"/>
+		<MatBodyNormalPower type="float" value="1.0"/>
+		<TexTrimNormal parameter="_BumpTrimTex" type="texture" value="Metal_TrimSet_001_TrimNormal"/>
+		<MatName type="string" value="Wall_A_Post_01"/>
+		<MatNormalPower type="float" value="1.0"/>
+		<MatShader type="shader" value="ZGON : Bumped Detail Spec 01"/>
+		<MatSpecColor b="0.5" g="0.5" r="0.5" type="color"/>
+		<ObjTangentFromUv2 type="bool" value="True"/>
+		<MatBodyOcclusionPower type="float" value="1.0"/>
+		<MatDetailTexColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<UvOffsetY type="float" value="0.0"/>
+		<UvOffsetX type="float" value="0.0"/>
+		<UvScaleY type="float" value="0.25"/>
+		<UvScaleX type="float" value="0.25"/>
+		<MatBodyOcclusionColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<MatShine type="float" value="0.075"/>
+		<MatDetailTexScale type="float" value="0.5"/>
+		<TexBodyNormal parameter="_BodyBumpTex" type="texture" value="Atlas_1_BodyNormal"/>
+		<MatDetailTexEnabled type="bool" value="True"/>
+		<TexDiffuse parameter="_MainTex" type="texture" value="Concrete_002_Diffuse"/>
+		<MatMainColor b="1.0" g="1.0" r="1.0" type="color"/>
+		<ObjScale type="float" value="1.0"/>
+		<MatDetailTexPower type="float" value="1.5"/>
+		<MatDetailTexOffset type="float" value="0.5"/>
+		<TexDetailNormal parameter="_BumpDetailTex" type="texture" value="Detailmap_001_DetailNormal"/>
+		<TexOcclusion parameter="_BodyOcclusionTex" type="texture" value="Atlas_1_Occlusion"/>
+	</Wall_A_Post_01>
+	<Wall_A_04>
+		<MatDetailNormalPower type="float" value="1.0"/>
+		<TexTrimDiffuse parameter="_DiffuseTrimTex" type="texture" value="Metal_TrimSet_001_TrimDiffuse"/>
+		<TexNormal parameter="_BumpMap" type="texture" value="Concrete_002_Normal"/>
+		<MatBodyNormalPower type="float" value="1.0"/>
+		<TexTrimNormal parameter="_BumpTrimTex" type="texture" value="Metal_TrimSet_001_TrimNormal"/>
+		<MatName type="string" value="Wall_A_04"/>
+		<MatNormalPower type="float" value="1.0"/>
+		<MatShader type="shader" value="ZGON : Bumped Detail Spec 01"/>
+		<MatSpecColor b="0.5" g="0.5" r="0.5" type="color"/>
+		<ObjTangentFromUv2 type="bool" value="True"/>
+		<MatBodyOcclusionPower type="float" value="1.0"/>
+		<MatDetailTexColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<UvOffsetY type="float" value="0.25"/>
+		<UvOffsetX type="float" value="0.0"/>
+		<UvScaleY type="float" value="0.25"/>
+		<UvScaleX type="float" value="0.25"/>
+		<MatBodyOcclusionColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<MatShine type="float" value="0.075"/>
+		<MatDetailTexScale type="float" value="0.5"/>
+		<TexBodyNormal parameter="_BodyBumpTex" type="texture" value="Atlas_1_BodyNormal"/>
+		<MatDetailTexEnabled type="bool" value="True"/>
+		<TexDiffuse parameter="_MainTex" type="texture" value="Concrete_002_Diffuse"/>
+		<MatMainColor b="1.0" g="1.0" r="1.0" type="color"/>
+		<ObjScale type="float" value="1.0"/>
+		<MatDetailTexPower type="float" value="1.5"/>
+		<MatDetailTexOffset type="float" value="0.5"/>
+		<TexDetailNormal parameter="_BumpDetailTex" type="texture" value="Detailmap_001_DetailNormal"/>
+		<TexOcclusion parameter="_BodyOcclusionTex" type="texture" value="Atlas_1_Occlusion"/>
+	</Wall_A_04>
+	<Wall_A_03>
+		<MatDetailNormalPower type="float" value="1.0"/>
+		<TexTrimDiffuse parameter="_DiffuseTrimTex" type="texture" value="Metal_TrimSet_001_TrimDiffuse"/>
+		<TexNormal parameter="_BumpMap" type="texture" value="Concrete_002_Normal"/>
+		<MatBodyNormalPower type="float" value="1.0"/>
+		<TexTrimNormal parameter="_BumpTrimTex" type="texture" value="Metal_TrimSet_001_TrimNormal"/>
+		<MatName type="string" value="Wall_A_03"/>
+		<MatNormalPower type="float" value="1.0"/>
+		<MatShader type="shader" value="ZGON : Bumped Detail Spec 01"/>
+		<MatSpecColor b="0.5" g="0.5" r="0.5" type="color"/>
+		<ObjTangentFromUv2 type="bool" value="True"/>
+		<MatBodyOcclusionPower type="float" value="1.0"/>
+		<MatDetailTexColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<UvOffsetY type="float" value="0.75"/>
+		<UvOffsetX type="float" value="0.0"/>
+		<UvScaleY type="float" value="0.25"/>
+		<UvScaleX type="float" value="0.25"/>
+		<MatBodyOcclusionColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<MatShine type="float" value="0.075"/>
+		<MatDetailTexScale type="float" value="0.5"/>
+		<TexBodyNormal parameter="_BodyBumpTex" type="texture" value="Atlas_1_BodyNormal"/>
+		<MatDetailTexEnabled type="bool" value="True"/>
+		<TexDiffuse parameter="_MainTex" type="texture" value="Concrete_002_Diffuse"/>
+		<MatMainColor b="1.0" g="1.0" r="1.0" type="color"/>
+		<ObjScale type="float" value="1.0"/>
+		<MatDetailTexPower type="float" value="1.5"/>
+		<MatDetailTexOffset type="float" value="0.5"/>
+		<TexDetailNormal parameter="_BumpDetailTex" type="texture" value="Detailmap_001_DetailNormal"/>
+		<TexOcclusion parameter="_BodyOcclusionTex" type="texture" value="Atlas_1_Occlusion"/>
+	</Wall_A_03>
+	<Wall_A_02>
+		<MatDetailNormalPower type="float" value="1.0"/>
+		<TexTrimDiffuse parameter="_DiffuseTrimTex" type="texture" value="Metal_TrimSet_001_TrimDiffuse"/>
+		<TexNormal parameter="_BumpMap" type="texture" value="Concrete_002_Normal"/>
+		<MatBodyNormalPower type="float" value="1.0"/>
+		<TexTrimNormal parameter="_BumpTrimTex" type="texture" value="Metal_TrimSet_001_TrimNormal"/>
+		<MatName type="string" value="Wall_A_02"/>
+		<MatNormalPower type="float" value="1.0"/>
+		<MatShader type="shader" value="ZGON : Bumped Detail Spec 01"/>
+		<MatSpecColor b="0.5" g="0.5" r="0.5" type="color"/>
+		<ObjTangentFromUv2 type="bool" value="True"/>
+		<MatBodyOcclusionPower type="float" value="1.0"/>
+		<MatDetailTexColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<UvOffsetY type="float" value="0.75"/>
+		<UvOffsetX type="float" value="0.25"/>
+		<UvScaleY type="float" value="0.25"/>
+		<UvScaleX type="float" value="0.25"/>
+		<MatBodyOcclusionColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<MatShine type="float" value="0.075"/>
+		<MatDetailTexScale type="float" value="0.5"/>
+		<TexBodyNormal parameter="_BodyBumpTex" type="texture" value="Atlas_1_BodyNormal"/>
+		<MatDetailTexEnabled type="bool" value="True"/>
+		<TexDiffuse parameter="_MainTex" type="texture" value="Concrete_002_Diffuse"/>
+		<MatMainColor b="1.0" g="1.0" r="1.0" type="color"/>
+		<ObjScale type="float" value="1.0"/>
+		<MatDetailTexPower type="float" value="1.5"/>
+		<MatDetailTexOffset type="float" value="0.5"/>
+		<TexDetailNormal parameter="_BumpDetailTex" type="texture" value="Detailmap_001_DetailNormal"/>
+		<TexOcclusion parameter="_BodyOcclusionTex" type="texture" value="Atlas_1_Occlusion"/>
+	</Wall_A_02>
+	<Wall_A_01>
+		<MatDetailNormalPower type="float" value="1.0"/>
+		<TexTrimDiffuse parameter="_DiffuseTrimTex" type="texture" value="Metal_TrimSet_001_TrimDiffuse"/>
+		<TexNormal parameter="_BumpMap" type="texture" value="Concrete_002_Normal"/>
+		<MatBodyNormalPower type="float" value="1.0"/>
+		<TexTrimNormal parameter="_BumpTrimTex" type="texture" value="Metal_TrimSet_001_TrimNormal"/>
+		<MatName type="string" value="Wall_A_01"/>
+		<MatNormalPower type="float" value="1.0"/>
+		<MatShader type="shader" value="ZGON : Bumped Detail Spec 01"/>
+		<MatSpecColor b="0.5" g="0.5" r="0.5" type="color"/>
+		<ObjTangentFromUv2 type="bool" value="True"/>
+		<MatBodyOcclusionPower type="float" value="1.0"/>
+		<MatDetailTexColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<UvOffsetY type="float" value="0.5"/>
+		<UvOffsetX type="float" value="0.25"/>
+		<UvScaleY type="float" value="0.25"/>
+		<UvScaleX type="float" value="0.25"/>
+		<MatBodyOcclusionColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<MatShine type="float" value="0.075"/>
+		<MatDetailTexScale type="float" value="0.5"/>
+		<TexBodyNormal parameter="_BodyBumpTex" type="texture" value="Atlas_1_BodyNormal"/>
+		<MatDetailTexEnabled type="bool" value="True"/>
+		<TexDiffuse parameter="_MainTex" type="texture" value="Concrete_002_Diffuse"/>
+		<MatMainColor b="1.0" g="1.0" r="1.0" type="color"/>
+		<ObjScale type="float" value="1.0"/>
+		<MatDetailTexPower type="float" value="1.5"/>
+		<MatDetailTexOffset type="float" value="0.5"/>
+		<TexDetailNormal parameter="_BumpDetailTex" type="texture" value="Detailmap_001_DetailNormal"/>
+		<TexOcclusion parameter="_BodyOcclusionTex" type="texture" value="Atlas_1_Occlusion"/>
+	</Wall_A_01>
+	<Ibar_02>
+		<MatDetailNormalPower type="float" value="1.0"/>
+		<TexTrimDiffuse parameter="_DiffuseTrimTex" type="texture" value="Metal_TrimSet_001_TrimDiffuse"/>
+		<TexNormal parameter="_BumpMap" type="texture" value="Concrete_002_Normal"/>
+		<MatBodyNormalPower type="float" value="1.0"/>
+		<TexTrimNormal parameter="_BumpTrimTex" type="texture" value="Metal_TrimSet_001_TrimNormal"/>
+		<MatName type="string" value="Ibar_02"/>
+		<MatNormalPower type="float" value="1.0"/>
+		<MatShader type="shader" value="ZGON : Bumped Detail Spec 01"/>
+		<MatSpecColor b="0.5" g="0.5" r="0.5" type="color"/>
+		<ObjTangentFromUv2 type="bool" value="True"/>
+		<MatBodyOcclusionPower type="float" value="1.0"/>
+		<MatDetailTexColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<UvOffsetY type="float" value="0.25"/>
+		<UvOffsetX type="float" value="0.25"/>
+		<UvScaleY type="float" value="0.25"/>
+		<UvScaleX type="float" value="0.25"/>
+		<MatBodyOcclusionColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<MatShine type="float" value="0.075"/>
+		<MatDetailTexScale type="float" value="0.5"/>
+		<TexBodyNormal parameter="_BodyBumpTex" type="texture" value="Atlas_1_BodyNormal"/>
+		<MatDetailTexEnabled type="bool" value="True"/>
+		<TexDiffuse parameter="_MainTex" type="texture" value="Concrete_002_Diffuse"/>
+		<MatMainColor b="1.0" g="1.0" r="1.0" type="color"/>
+		<ObjScale type="float" value="1.0"/>
+		<MatDetailTexPower type="float" value="1.5"/>
+		<MatDetailTexOffset type="float" value="0.5"/>
+		<TexDetailNormal parameter="_BumpDetailTex" type="texture" value="Detailmap_001_DetailNormal"/>
+		<TexOcclusion parameter="_BodyOcclusionTex" type="texture" value="Atlas_1_Occlusion"/>
+	</Ibar_02>
+	<Ibar_01>
+		<MatDetailNormalPower type="float" value="1.0"/>
+		<TexTrimDiffuse parameter="_DiffuseTrimTex" type="texture" value="Metal_TrimSet_001_TrimDiffuse"/>
+		<TexNormal parameter="_BumpMap" type="texture" value="Concrete_002_Normal"/>
+		<MatBodyNormalPower type="float" value="1.0"/>
+		<TexTrimNormal parameter="_BumpTrimTex" type="texture" value="Metal_TrimSet_001_TrimNormal"/>
+		<MatName type="string" value="Ibar_01"/>
+		<MatNormalPower type="float" value="1.0"/>
+		<MatShader type="shader" value="ZGON : Bumped Detail Spec 01"/>
+		<MatSpecColor b="0.5" g="0.5" r="0.5" type="color"/>
+		<ObjTangentFromUv2 type="bool" value="True"/>
+		<MatBodyOcclusionPower type="float" value="1.0"/>
+		<MatDetailTexColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<UvOffsetY type="float" value="0.0"/>
+		<UvOffsetX type="float" value="0.5"/>
+		<UvScaleY type="float" value="0.25"/>
+		<UvScaleX type="float" value="0.25"/>
+		<MatBodyOcclusionColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<MatShine type="float" value="0.075"/>
+		<MatDetailTexScale type="float" value="0.5"/>
+		<TexBodyNormal parameter="_BodyBumpTex" type="texture" value="Atlas_1_BodyNormal"/>
+		<MatDetailTexEnabled type="bool" value="True"/>
+		<TexDiffuse parameter="_MainTex" type="texture" value="Concrete_002_Diffuse"/>
+		<MatMainColor b="1.0" g="1.0" r="1.0" type="color"/>
+		<ObjScale type="float" value="1.0"/>
+		<MatDetailTexPower type="float" value="1.5"/>
+		<MatDetailTexOffset type="float" value="0.5"/>
+		<TexDetailNormal parameter="_BumpDetailTex" type="texture" value="Detailmap_001_DetailNormal"/>
+		<TexOcclusion parameter="_BodyOcclusionTex" type="texture" value="Atlas_1_Occlusion"/>
+	</Ibar_01>
+	<Floor_A_04>
+		<MatDetailNormalPower type="float" value="1.0"/>
+		<TexTrimDiffuse parameter="_DiffuseTrimTex" type="texture" value="Metal_TrimSet_001_TrimDiffuse"/>
+		<TexNormal parameter="_BumpMap" type="texture" value="Concrete_002_Normal"/>
+		<MatBodyNormalPower type="float" value="1.0"/>
+		<TexTrimNormal parameter="_BumpTrimTex" type="texture" value="Metal_TrimSet_001_TrimNormal"/>
+		<MatName type="string" value="Floor_A_04"/>
+		<MatNormalPower type="float" value="1.0"/>
+		<MatShader type="shader" value="ZGON : Bumped Detail Spec 01"/>
+		<MatSpecColor b="0.5" g="0.5" r="0.5" type="color"/>
+		<ObjTangentFromUv2 type="bool" value="True"/>
+		<MatBodyOcclusionPower type="float" value="1.0"/>
+		<MatDetailTexColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<UvOffsetY type="float" value="0.75"/>
+		<UvOffsetX type="float" value="0.75"/>
+		<UvScaleY type="float" value="0.25"/>
+		<UvScaleX type="float" value="0.25"/>
+		<MatBodyOcclusionColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<MatShine type="float" value="0.075"/>
+		<MatDetailTexScale type="float" value="0.5"/>
+		<TexBodyNormal parameter="_BodyBumpTex" type="texture" value="Atlas_1_BodyNormal"/>
+		<MatDetailTexEnabled type="bool" value="True"/>
+		<TexDiffuse parameter="_MainTex" type="texture" value="Concrete_002_Diffuse"/>
+		<MatMainColor b="1.0" g="1.0" r="1.0" type="color"/>
+		<ObjScale type="float" value="1.0"/>
+		<MatDetailTexPower type="float" value="1.5"/>
+		<MatDetailTexOffset type="float" value="0.5"/>
+		<TexDetailNormal parameter="_BumpDetailTex" type="texture" value="Detailmap_001_DetailNormal"/>
+		<TexOcclusion parameter="_BodyOcclusionTex" type="texture" value="Atlas_1_Occlusion"/>
+	</Floor_A_04>
+	<Floor_A_03>
+		<MatDetailNormalPower type="float" value="1.0"/>
+		<TexTrimDiffuse parameter="_DiffuseTrimTex" type="texture" value="Metal_TrimSet_001_TrimDiffuse"/>
+		<TexNormal parameter="_BumpMap" type="texture" value="Concrete_002_Normal"/>
+		<MatBodyNormalPower type="float" value="1.0"/>
+		<TexTrimNormal parameter="_BumpTrimTex" type="texture" value="Metal_TrimSet_001_TrimNormal"/>
+		<MatName type="string" value="Floor_A_03"/>
+		<MatNormalPower type="float" value="1.0"/>
+		<MatShader type="shader" value="ZGON : Bumped Detail Spec 01"/>
+		<MatSpecColor b="0.5" g="0.5" r="0.5" type="color"/>
+		<ObjTangentFromUv2 type="bool" value="True"/>
+		<MatBodyOcclusionPower type="float" value="1.0"/>
+		<MatDetailTexColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<UvOffsetY type="float" value="0.75"/>
+		<UvOffsetX type="float" value="0.75"/>
+		<UvScaleY type="float" value="0.25"/>
+		<UvScaleX type="float" value="0.25"/>
+		<MatBodyOcclusionColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<MatShine type="float" value="0.075"/>
+		<MatDetailTexScale type="float" value="0.5"/>
+		<TexBodyNormal parameter="_BodyBumpTex" type="texture" value="Atlas_1_BodyNormal"/>
+		<MatDetailTexEnabled type="bool" value="True"/>
+		<TexDiffuse parameter="_MainTex" type="texture" value="Concrete_002_Diffuse"/>
+		<MatMainColor b="1.0" g="1.0" r="1.0" type="color"/>
+		<ObjScale type="float" value="1.0"/>
+		<MatDetailTexPower type="float" value="1.5"/>
+		<MatDetailTexOffset type="float" value="0.5"/>
+		<TexDetailNormal parameter="_BumpDetailTex" type="texture" value="Detailmap_001_DetailNormal"/>
+		<TexOcclusion parameter="_BodyOcclusionTex" type="texture" value="Atlas_1_Occlusion"/>
+	</Floor_A_03>
+	<Floor_A_02>
+		<MatDetailNormalPower type="float" value="1.0"/>
+		<TexTrimDiffuse parameter="_DiffuseTrimTex" type="texture" value="Metal_TrimSet_001_TrimDiffuse"/>
+		<TexNormal parameter="_BumpMap" type="texture" value="Concrete_002_Normal"/>
+		<MatBodyNormalPower type="float" value="1.0"/>
+		<TexTrimNormal parameter="_BumpTrimTex" type="texture" value="Metal_TrimSet_001_TrimNormal"/>
+		<MatName type="string" value="Floor_A_02"/>
+		<MatNormalPower type="float" value="1.0"/>
+		<MatShader type="shader" value="ZGON : Bumped Detail Spec 01"/>
+		<MatSpecColor b="0.5" g="0.5" r="0.5" type="color"/>
+		<ObjTangentFromUv2 type="bool" value="True"/>
+		<MatBodyOcclusionPower type="float" value="1.0"/>
+		<MatDetailTexColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<UvOffsetY type="float" value="0.75"/>
+		<UvOffsetX type="float" value="0.75"/>
+		<UvScaleY type="float" value="0.25"/>
+		<UvScaleX type="float" value="0.25"/>
+		<MatBodyOcclusionColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<MatShine type="float" value="0.075"/>
+		<MatDetailTexScale type="float" value="0.5"/>
+		<TexBodyNormal parameter="_BodyBumpTex" type="texture" value="Atlas_1_BodyNormal"/>
+		<MatDetailTexEnabled type="bool" value="True"/>
+		<TexDiffuse parameter="_MainTex" type="texture" value="Concrete_002_Diffuse"/>
+		<MatMainColor b="1.0" g="1.0" r="1.0" type="color"/>
+		<ObjScale type="float" value="1.0"/>
+		<MatDetailTexPower type="float" value="1.5"/>
+		<MatDetailTexOffset type="float" value="0.5"/>
+		<TexDetailNormal parameter="_BumpDetailTex" type="texture" value="Detailmap_001_DetailNormal"/>
+		<TexOcclusion parameter="_BodyOcclusionTex" type="texture" value="Atlas_1_Occlusion"/>
+	</Floor_A_02>
+	<Floor_A_01>
+		<MatDetailNormalPower type="float" value="1.0"/>
+		<TexTrimDiffuse parameter="_DiffuseTrimTex" type="texture" value="Metal_TrimSet_001_TrimDiffuse"/>
+		<TexNormal parameter="_BumpMap" type="texture" value="Concrete_002_Normal"/>
+		<MatBodyNormalPower type="float" value="1.0"/>
+		<TexTrimNormal parameter="_BumpTrimTex" type="texture" value="Metal_TrimSet_001_TrimNormal"/>
+		<MatName type="string" value="Floor_A_01"/>
+		<MatNormalPower type="float" value="1.0"/>
+		<MatShader type="shader" value="ZGON : Bumped Detail Spec 01"/>
+		<MatSpecColor b="0.5" g="0.5" r="0.5" type="color"/>
+		<ObjTangentFromUv2 type="bool" value="True"/>
+		<MatBodyOcclusionPower type="float" value="1.0"/>
+		<MatDetailTexColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<UvOffsetY type="float" value="0.5"/>
+		<UvOffsetX type="float" value="0.5"/>
+		<UvScaleY type="float" value="0.5"/>
+		<UvScaleX type="float" value="0.5"/>
+		<MatBodyOcclusionColor b="0.0" g="0.0" r="0.0" type="color"/>
+		<MatShine type="float" value="0.075"/>
+		<MatDetailTexScale type="float" value="0.5"/>
+		<TexBodyNormal parameter="_BodyBumpTex" type="texture" value="Atlas_2_BodyNormal"/>
+		<MatDetailTexEnabled type="bool" value="True"/>
+		<TexDiffuse parameter="_MainTex" type="texture" value="Concrete_002_Diffuse"/>
+		<MatMainColor b="1.0" g="1.0" r="1.0" type="color"/>
+		<ObjScale type="float" value="1.0"/>
+		<MatDetailTexPower type="float" value="1.5"/>
+		<MatDetailTexOffset type="float" value="0.5"/>
+		<TexDetailNormal parameter="_BumpDetailTex" type="texture" value="Detailmap_001_DetailNormal"/>
+		<TexOcclusion parameter="_BodyOcclusionTex" type="texture" value="Atlas_2_Occlusion"/>
+	</Floor_A_01>
+</Modern_ConcreteBuildingExt_01>
