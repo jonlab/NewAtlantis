@@ -12,6 +12,10 @@ public class ScaleCamera : MonoBehaviour {
 
 	public float minimalDistance = 4.5f;
 
+    public float distance ;
+    public GameObject gizmo;
+
+
 	// Use this for initialization
 	void Start () {
 	
@@ -34,7 +38,10 @@ public class ScaleCamera : MonoBehaviour {
 
 		}
 
-		if(scroll > 0 && Vector3.Distance (myCamera.transform.position,focusPoint.transform.position) <= minimalDistance)scroll = 0;
+        float scaleGizmo = Vector3.Distance(myCamera.transform.position, focusPoint.transform.position) / 8.8f;
+        gizmo.transform.localScale = new Vector3(scaleGizmo, scaleGizmo, scaleGizmo);
+
+        if (scroll > 0 && Vector3.Distance (myCamera.transform.position,focusPoint.transform.position) <= minimalDistance)scroll = 0;
 
 	
 			Vector3 cameraPos = myCamera.transform.position;
