@@ -14,6 +14,7 @@ public static class NA
 	public static Space CurrentSpace = null;
 	public static Space PreviousSpace = null;
 
+	public static Font[] fonts = new Font[4];
 
 	public static GameObject Instantiate(Object prefab, Vector3 position, Quaternion rotation)
 	{
@@ -245,6 +246,151 @@ public static class NA
 	public static void PlayPhysics()
 	{
 		Time.timeScale = 1;
+	}
+
+	public static Font GetFont(int level)
+	{
+		return fonts[level];
+	}
+
+	public static void PatchAllMaterials(GameObject root)
+	{
+		
+		Renderer[] renderers = root.GetComponentsInChildren<Renderer>();
+		foreach (Renderer r in renderers)
+		{
+			//hack to reaffect the shader
+			//r.sharedMaterial.shader = Shader.Find(r.sharedMaterial.shader.name);
+			//r.material.shader = Shader.Find(r.material.shader.name);
+			foreach (Material m in r.sharedMaterials)
+			{
+				Shader s = Shader.Find(m.shader.name);
+				if (s != null)
+				{
+					m.shader = s;
+				}
+				else
+				{
+					LogManager.LogError("can't find shader error : " + m.shader.name);
+				}
+			}
+			/*foreach (Material m in r.materials)
+			{
+				m.shader = Shader.Find(m.shader.name);
+			}*/
+		}
+
+	}
+	public static void PatchMaterials(GameObject root)
+	{
+		try
+		{
+			Renderer[] renderers = root.GetComponentsInChildren<Renderer>();
+			foreach (Renderer r in renderers)
+			{
+				if (r.sharedMaterial != null)
+				{
+					if (
+						(r.sharedMaterial.shader.name == "Standard") ||
+						(r.sharedMaterial.shader.name == "Diffuse") ||
+						 (r.sharedMaterial.shader.name == "Specular") ||
+						(r.sharedMaterial.shader.name == "FX/Water") ||
+						(r.sharedMaterial.shader.name.Contains("Custom")) ||
+						(r.sharedMaterial.shader.name.Contains("Particles")) ||
+							(r.sharedMaterial.shader.name.Contains("Legacy"))
+					)
+					{
+						//hack to reaffect the shader
+						foreach (Material m in r.sharedMaterials)
+						{
+							m.shader = Shader.Find(m.shader.name);
+						}
+					}
+
+				}
+			}
+
+					/*//exceptions
+					if (
+						(r.sharedMaterial.name == "WaterProDaytime") ||
+						(r.sharedMaterial.name.Contains("transparentcolonne")) ||
+						(r.sharedMaterial.name == "Collider") ||
+						(r.sharedMaterial.name == "New Material 1") || //luca
+						(r.sharedMaterial.name == "CupolaMat") || //luca
+						(r.sharedMaterial.name == "Default-Particle") || //luca
+						(r.sharedMaterial.name == "tram_vert") || //oscar
+						(r.sharedMaterial.name == "transparent") || //oscar
+						(r.sharedMaterial.name == "ParticleBokeh") ||  //oscar
+						(r.sharedMaterial.name == "material-nuages") || //juliette
+						(r.sharedMaterial.name == "quadrillage_1") ||  //marion
+						(r.sharedMaterial.name == "quadrillage_2") ||  //marion
+						(r.sharedMaterial.name == "quadrillage_3") ||  //marion
+						(r.sharedMaterial.name == "quadrillage_4") ||  //marion
+						(r.sharedMaterial.name == "DEGRADE1") ||  //marion
+						(r.sharedMaterial.name == "0") ||  //marion
+						//234
+						(r.sharedMaterial.name == "DEGRADE5")   //marion
+
+					)
+					{
+						//r.sharedMaterial.shader = Shader.Find(r.sharedMaterial.shader.name);
+						r.sharedMaterial.shader = Shader.Find("Legacy Shaders/Transparent/Diffuse");
+					}
+				}
+
+				//r.material.shader = Shader.Find(r.material.shader.name);
+				//r.material.SetFloat("", 0);
+				//r.material.CopyPropertiesFromMaterial(r.material);
+				//r.material = Material.Instantiate(r.material);
+				//r.sharedMaterial = Material.Instantiate(r.sharedMaterial);
+				//Shader.WarmupAllShaders();
+				//r.material.shader = r.material.shader;
+				//r.material.shader = Shader.Instantiate(r.material.shader);
+				//r.sharedMaterial.shader.
+				//r.sharedMaterial.
+				//r.sharedMaterial.shader = Shader.Find("Transparent/Diffuse");
+				//r.sharedMaterial.shader.maximumLOD = r.sharedMaterial.shader.maximumLOD+1;
+				//r.sharedMaterial.
+				//r.sharedMaterial.SetPass(0);
+
+
+			}
+
+
+
+			/*ParticleSystem[] particles = root.GetComponentsInChildren<ParticleSystem>();
+						foreach (ParticleSystem p in particles)
+						{
+							if (p.sharedMaterial != null)
+							{
+								//exceptions
+								if (
+									(r.sharedMaterial.name == "WaterProDaytime") ||
+									(r.sharedMaterial.name.Contains("transparentcolonne")) ||
+									(r.sharedMaterial.name == "Collider") ||
+									(r.sharedMaterial.name == "Default-Particle") 
+								)
+								{
+									r.sharedMaterial.shader = Shader.Find(r.sharedMaterial.shader.name);
+								}
+							}
+						}
+				*/		
+
+			/*
+			Material[] materials = Object.FindObjectsOfType(typeof(Material)) as Material[];
+			foreach (Material m in materials)
+			{
+				Debug.Log("Material : " + m.name);
+
+				m.shader = Shader.Find(m.shader.name); //hack to force reapply of Shader (Unity 5.3 bug)
+			}
+			*/
+		}
+		catch (System.Exception e)
+		{
+			LogManager.LogError("Patch materials error");
+		}
 	}
 
 }

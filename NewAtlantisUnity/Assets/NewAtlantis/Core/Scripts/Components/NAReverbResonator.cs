@@ -46,7 +46,7 @@ public class NAReverbResonator : MonoBehaviour
 	void OnTriggerEnter(Collider collider)
 	{
 		//Debug.Log ("OnTriggerEnter " + collider.gameObject.name);
-		LogManager.Log ("OnTriggerEnter " + collider.gameObject.name);
+		//LogManager.Log ("OnTriggerEnter " + collider.gameObject.name);
 		//activate effect
 		NAReverbEffector e = collider.gameObject.GetComponent<NAReverbEffector> ();
 		if (e)
@@ -56,7 +56,7 @@ public class NAReverbResonator : MonoBehaviour
 	void OnTriggerExit(Collider collider)
 	{
 		//Debug.Log ("OnTriggerExit " + collider.gameObject.name);
-		LogManager.Log ("OnTriggerExit " + collider.gameObject.name);
+		//LogManager.Log ("OnTriggerExit " + collider.gameObject.name);
 		//unactivate effect
 		NAReverbEffector e = collider.gameObject.GetComponent<NAReverbEffector> ();
 		if (e)

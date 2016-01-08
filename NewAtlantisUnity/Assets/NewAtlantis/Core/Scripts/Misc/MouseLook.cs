@@ -48,8 +48,8 @@ public class MouseLook : MonoBehaviour {
 		float JoySensitivityY = 1f;
 		float jx = NAInput.GetAxis(NAControl.ViewHorizontal);
 		float jy = NAInput.GetAxis(NAControl.ViewVertical);
-		float rotationJX = transform.localEulerAngles.y + jx*jx*jx * JoySensitivityX;
-		rotationY += jy*jy*jy * JoySensitivityY * -1f;
+		float rotationJX = transform.localEulerAngles.y + jx * JoySensitivityX;
+		rotationY += jy * JoySensitivityY * -1f;
 		rotationY = Mathf.Clamp (rotationY, minimumY, maximumY);
 		transform.localEulerAngles = new Vector3(-rotationY, rotationJX, 0);
 

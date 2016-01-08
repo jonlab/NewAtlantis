@@ -1,0 +1,14 @@
+Use the left analog stick (or arrow keys) to MOVE around. You can move forward, backward and sidewards.
+Use the right analog stick (or drag with the mouse) to LOOK around.
+Press the X button (or space key) to JUMP. You can press several times to jump higher !
+Hold the X button while moving to RUN.
+Hold the X button without moving to go to FLY mode.
+Hold the X button again to return to the WALK mode.
+Press the SQUARE button to use the current TOOL. Some tools have also special behaviour when you maintain and release the button.
+Press the TRIANGLE button to switch CAMERA. You can switch betweeen several camera modes : First person, Third person, top camera...
+Press the CIRCLE button to toggle the GUI.
+Hold the L1 button to see the interactive objects around you. You can come closer and when you hold the L1 button, you can interact with the objects with the buttons and analog sticks.
+Use the DPAD to select another TOOL. Select the tool with the SQUARE button.
+With the SCREENSHOT tool you can take pictures of what you see on screen. The files are saved just beside the New Atlantis app.
+With the GPS tool you can see where you are in the current Space.
+With the SPARK tool you can play a short spark sound to test the Space ACOUSTICS.

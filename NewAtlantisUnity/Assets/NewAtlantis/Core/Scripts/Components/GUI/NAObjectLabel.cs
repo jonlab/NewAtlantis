@@ -76,14 +76,20 @@ public class NAObjectLabel : MonoBehaviour
 
 	void DrawGUI()
 	{
-		float h = 200;
+		Font bak = GUI.skin.font;
+		float h = 250;
 		float y = Screen.height-h;
 		GUI.color = new Color(0,0,0,0.5f);
 		GUI.DrawTexture(new Rect(0,y,Screen.width, h), texWhite);
 		GUI.color = Color.white;
-		GUI.Label(new Rect(100,y,600,30), Title);
-		GUI.Label(new Rect(100,y+30,600,30), Author + ", " + Date);
-		GUI.Label(new Rect(100,y+60,600,70), Synopsis);
-		GUI.Label(new Rect(100,y+130,600,70), Instructions);
+		float w = Screen.width-80;
+		GUI.skin.font = NA.GetFont(2);
+		GUI.Label(new Rect(40,y,w,30), Title);
+		GUI.skin.font = NA.GetFont(1);
+		GUI.Label(new Rect(40,y+30,w,30), Author + ", " + Date);
+		GUI.Label(new Rect(40,y+70,w,100), Synopsis);
+		GUI.Label(new Rect(40,y+170,w,80), Instructions);
+
+		GUI.skin.font = bak;
 	}
 }
