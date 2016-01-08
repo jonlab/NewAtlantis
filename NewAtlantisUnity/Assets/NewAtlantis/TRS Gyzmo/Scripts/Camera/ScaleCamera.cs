@@ -52,7 +52,6 @@ public class ScaleCamera : MonoBehaviour {
 			trs.stopTRSGizmo();
 			print ("The Point Object was destroyed , so we stop the TRS Gizmo process");
 
-
 			return;
 		}
 

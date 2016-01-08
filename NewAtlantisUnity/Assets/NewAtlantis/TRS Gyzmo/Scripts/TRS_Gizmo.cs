@@ -11,6 +11,8 @@ public class TRS_Gizmo : MonoBehaviour {
 	GyzmoTransformScript gizmoScript;
 	bool active = false;
 
+    public GameObject viewerCamera;
+
 	//public GameObject gizmoLight ; 
 
 
@@ -69,6 +71,8 @@ public class TRS_Gizmo : MonoBehaviour {
 
 		active = true; //JT
 
+        gizmoCamera.transform.position = viewerCamera.transform.position;
+        gizmoCamera.transform.rotation = viewerCamera.transform.rotation;
 
 	}
 

@@ -158,13 +158,14 @@ public class SelectorScript : MonoBehaviour {
 
 		if (Input.GetMouseButtonUp (0) && trs.isActive() ) {
 
+            //UPDATE CAMERA POSTION AFTER TRANSLATION
 
 			saveRotation = point.transform.rotation;
 		
 			if(selected!=null){
-				myCamera.transform.Translate(currentTranslation);
+			//	myCamera.transform.Translate(currentTranslation);
 				currentTranslation = new Vector3(0,0,0);
-				myCamera.transform.LookAt(point.transform.position);
+				//myCamera.transform.LookAt(point.transform.position);
 
 				unselect();
 
