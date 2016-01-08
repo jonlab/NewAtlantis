@@ -355,14 +355,46 @@ public class App : MonoBehaviour
 		//LogManager.Log ("Network connection tests result=" + status.ToString());
 		NA.PausePhysics();
 
-		#if UNITY_WEBPLAYER
+#if UNITY_WEBPLAYER
 		LogManager.LogError("You are in Web Player build settings !");
-		#endif
-	}
+#endif
+
+
+        /*
+
+        // DESACTIVE CAR IMPOSSIBLE DE PARAMETRER L'INPUT MANAGER VIA DU SCRIPT
+        // Alex
+
+        string[] spl = SystemInfo.operatingSystem.Split(' ');
+        string os = spl[0];
+
+
+        //  Debug.LogError(spl[0]);
+
+        if (os == "Windows")
+        {
+
+           // Input.GetAxis("DPadX").
+        }
+
+        if (os == "Mac")
+        {
+
+          //  Debug.LogError(spl[0]);
+        }
+
+        if (os == "Linux")
+        {
+
+            //  Debug.LogError(spl[0]);
+        }
+*/
+
+    }
 
 
 
-	void Init()
+    void Init()
 	{
 		//tools = GetComponents<NAToolBase>();
 		tools = GetComponentsInChildren<NAToolBase>();
