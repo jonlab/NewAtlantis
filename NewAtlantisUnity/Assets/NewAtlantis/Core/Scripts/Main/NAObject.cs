@@ -79,26 +79,6 @@ public class NAObject
 					Debug.Log ("Asset Bundle Objects count = " + objs.Length);
 					string[] strAssets = bundle.GetAllAssetNames();
 
-					//recompilation des shaders
-					/*
-#if UNITY_EDITOR
-					foreach (Object o in objs)
-					{
-						
-						Debug.Log ("Object " + o.name + " type:" + o.GetType());
-
-						if (o.GetType() == typeof(Material))
-						{
-							Material mat = o as Material;
-
-							//ShaderCompiler
-							mat.shader = Shader.Find(mat.shader.name); //hack to force reapply of Shader (Unity 5.3 bug)
-						}
-					}
-#endif
-*/
-
-
 					/*
 					foreach (string s in strAssets)
 					{
@@ -140,62 +120,44 @@ public class NAObject
 						goChild.transform.localEulerAngles = Vector3.zero;
 						//goChild.transform.localScale = Vector3.one;
 	                }
+					//NA.PatchMaterials(go); //crashes on 5.3.1
+					//if (!name.Contains("elevation"))
+					//{
+					//NA.PatchAllMaterials(go);
+					//}
 
-					//shader patch
-					//MeshRenderer[] renderers = 
-
-					Renderer[] renderers = go.GetComponentsInChildren<Renderer>();
-					foreach (Renderer r in renderers)
+					NAObjectLabel lbl = go.GetComponentInChildren<NAObjectLabel>();
+					if (lbl)
 					{
-						if (r.sharedMaterial != null)
+						Renderer lblr = lbl.gameObject.GetComponent<Renderer>();
+						if (lblr != null)
 						{
-							//exceptions
-							if (
-								(r.sharedMaterial.name == "WaterProDaytime") ||
-								(r.sharedMaterial.name.Contains("transparentcolonne")) ||
-								(r.sharedMaterial.name == "Collider") ||
-								(r.sharedMaterial.name == "New Material 1") || //luca
-								(r.sharedMaterial.name == "CupolaMat") || //luca
-								(r.sharedMaterial.name == "Default-Particle") || //luca
-								(r.sharedMaterial.name == "tram_vert") || //oscar
-								(r.sharedMaterial.name == "transparent") || //oscar
-								(r.sharedMaterial.name == "ParticleBokeh")  //oscar
-							)
-							{
-								r.sharedMaterial.shader = Shader.Find(r.sharedMaterial.shader.name);
-							}
+							lblr.enabled = false;
 						}
-					}
-
-					/*ParticleSystem[] particles = go.GetComponentsInChildren<ParticleSystem>();
-					foreach (ParticleSystem p in particles)
-					{
-						if (p..sharedMaterial != null)
+						//fix du collider
+						Collider col = lbl.gameObject.GetComponent<Collider>();
+						if (col != null)
 						{
-							//exceptions
-							if (
-								(r.sharedMaterial.name == "WaterProDaytime") ||
-								(r.sharedMaterial.name.Contains("transparentcolonne")) ||
-								(r.sharedMaterial.name == "Collider") ||
-								(r.sharedMaterial.name == "Default-Particle") 
-							)
-							{
-								r.sharedMaterial.shader = Shader.Find(r.sharedMaterial.shader.name);
-							}
+							col.isTrigger = true;
 						}
-					}
-					*/
 
-					/*
-					Material[] materials = Object.FindObjectsOfType(typeof(Material)) as Material[];
-					foreach (Material m in materials)
+					}
+					Light[] 		lights = go.GetComponentsInChildren<Light>();
+					Transform[]	 	gameobjects = go.GetComponentsInChildren<Transform>();
+					AudioListener[] listeners = go.GetComponentsInChildren<AudioListener>();
+
+					//exceptions
+					if (name.Contains("maki") || name.Contains("SYN"))
 					{
-						Debug.Log("Material : " + m.name);
+						//unactivate lights
+						foreach (Light l in lights)
+						{
+							l.enabled = false;
+							
+						}
 
-						m.shader = Shader.Find(m.shader.name); //hack to force reapply of Shader (Unity 5.3 bug)
+						
 					}
-					*/
-
 					//we have to scale after instantiation
 					go.transform.localScale 	= scale;
 					bundle.Unload(false); 
@@ -223,30 +185,20 @@ public class NAObject
 		            goGizmo.SetActive(false);
 		            */
 		            
-					//AudioSource[] sources = AudioSource.FindObjectsOfType(typeof(AudioSource)) as AudioSource[];
 					sources = go.GetComponentsInChildren<AudioSource>();
 					//audio sources have to be augmented with specific NA behaviour
-					Debug.Log ("Sources count = " + sources.Length);
 					foreach (AudioSource s in sources)
 					{
-						NA.DecorateAudioSource(s);
+						//NA.DecorateAudioSource(s);
+						s.spatialBlend = 1f;
 						//s.rolloffMode = AudioRolloffMode.Linear;
 					}
 
-					//unactivate all loaded directional lights
-					Light[] lights = go.GetComponentsInChildren<Light>();
-					/*foreach (Light l in lights)
-		            {
-						if (l.type == LightType.Directional)
-							l.enabled = false;
-					}
-					*/
-
-					AudioListener al = go.GetComponent<AudioListener> ();
-					if (al != null)
+					foreach (AudioListener al in listeners)
+					{
 						al.enabled = false;
-
-
+					}
+					LogManager.LogWarning (name + " - objects:" + gameobjects.Length + " sources:" + sources.Length + " lights:"+ lights.Length);
 					//ESPACES RESONANTS
 					/*
 					NAReverbResonator[] resonators = NAReverbResonator.FindObjectsOfType(typeof(NAReverbResonator)) as NAReverbResonator[];

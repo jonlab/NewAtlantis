@@ -4,8 +4,8 @@ using System.Collections;
 public class FlyCamera : MonoBehaviour {
 
 	Vector3 previousmouseposition;
-	public bool bPhysics = true;
-	public bool bGravity = true;
+	private bool bPhysics = true;
+	private bool bGravity = false;
 
 	public float timerFly = 0;
 	// Use this for initialization
@@ -17,11 +17,11 @@ public class FlyCamera : MonoBehaviour {
 
 	void OnCollisionEnter(Collision collision) 
 	{
-		if (!bGravity)
+		/*if (!bGravity)
 		{
 			bGravity = true;
 			LogManager.LogWarning("you are now in walk mode");
-		}
+		}*/
 	}
 
 

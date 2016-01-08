@@ -59,6 +59,12 @@ public class App : MonoBehaviour
 	public GameObject goPrefabSphere; 
 	public GameObject goPrefabAvatar; 
 
+	public Font font;
+
+	public Font font0;
+	public Font font1;
+	public Font font2;
+	public Font font3;
 	
 	/*
 	WWW www = null;
@@ -70,6 +76,8 @@ public class App : MonoBehaviour
 	XPathNavigator  	xpn			= null;
 	XmlNamespaceManager xnm 		= null;
 	Texture2D			texWhite 	= null;
+	Texture2D			texSoundHouses 	= null;
+
 	Camera 				mainCamera 	= null;
 	Camera 				selectedCamera = null;
 	public bool	 		bGUI 		= true;
@@ -277,10 +285,28 @@ public class App : MonoBehaviour
     // Use this for initialization
     void Start () 
 	{
+		/*font0 = Font.Instantiate(font);
+		font1 = Font.Instantiate(font);
+		font2 = Font.Instantiate(font);
+		font3 = Font.Instantiate(font);
+		*/
+		//font0.
+
+		//Font.
+		//font0.
+		/*font0.fontSize = 14;
+		font1.fontSize = 20;
+		font2.fontSize = 24;
+		font3.fontSize = 36;
+		*/
+		NA.fonts[0] = font0;
+		NA.fonts[1] = font1;
+		NA.fonts[2] = font2;
+		NA.fonts[3] = font3;
 		//TestAB();
         goGizmo = GameObject.Find("TRS Gizmo");
         trs = goGizmo.GetComponent<TRS_Gizmo>();
-
+		//QualitySettings.
 
         Debug.Log ("IP="+MasterServer.ipAddress);
 		//AssetBundlePreviewGenerator.Test("Bundles/grass_ground.unity3d");
@@ -316,9 +342,11 @@ public class App : MonoBehaviour
 
 		mainCamera 		= Camera.main;
 		selectedCamera 	= mainCamera;
-		NA.listener 	= mainCamera.GetComponent<AudioListener>();
+		//NA.listener 	= mainCamera.GetComponent<AudioListener>();
+		NA.listener 	= GetComponent<AudioListener>();
 		cameras.Add (Camera.main.gameObject);
 		texWhite 		= Resources.Load ("white") as Texture2D;
+		texSoundHouses 		= Resources.Load ("bacon_soundhouses1") as Texture2D;
 		goMainLight 	= GameObject.Find ("MainLightViewer");
 		ChatManager.Log("system", "welcome to New Atlantis", 0);
 		NAToolBase[] _tools = GetComponents<NAToolBase>();
@@ -434,15 +462,15 @@ public class App : MonoBehaviour
 					cameras.Add (c.gameObject);
 				}
 				c.enabled = false;
-				AudioListener listener = c.GetComponent<AudioListener>();
+				/*AudioListener listener = c.GetComponent<AudioListener>();
 				if (listener != null)
 				{
 					listener.enabled = false;
-				}
+				}*/
 			}
 		}
 
-		AudioListener[] listeners = AudioListener.FindObjectsOfType (typeof(AudioListener)) as AudioListener[];
+		/*AudioListener[] listeners = AudioListener.FindObjectsOfType (typeof(AudioListener)) as AudioListener[];
 		foreach (AudioListener al in listeners)
 		{
 			if (al.gameObject.GetComponent<Camera>() != selectedCamera)
@@ -450,6 +478,7 @@ public class App : MonoBehaviour
 				al.enabled = false;
 			}
 		}
+		*/
 	}
 
 
@@ -502,6 +531,16 @@ public class App : MonoBehaviour
 		NAInput.Process();
 		timerGC+=Time.deltaTime;
 
+
+		if (Input.GetKeyDown(KeyCode.R))
+		{
+			Renderer[] renderers = goRootSpace.GetComponentsInChildren<Renderer>();
+
+			foreach (Renderer r in renderers)
+			{
+				r.sharedMaterial.shader = Shader.Find(r.sharedMaterial.shader.name);
+			}
+		}
 		/*timerRefresh+=Time.deltaTime;
 		if (timerRefresh > 5f && state != AppState.Asset)
 		{
@@ -1135,7 +1174,7 @@ public class App : MonoBehaviour
 
     void OnGUI()
     {
-
+		GUI.skin.font = font;
 		if (Screen.height < 768)
 		{
 			float scale = (float)Screen.height / 768f;
@@ -1243,7 +1282,7 @@ public class App : MonoBehaviour
 		//GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
 		GUI.color = Color.white;
 		//GUI.Label(new Rect(0,0,400,30), "NewAtlantisNew Client - SAIC workshop");
-		GUI.Label(new Rect(0,0,400,30), "New Atlantis Client v0.87");
+		GUI.Label(new Rect(0,0,400,30), "New Atlantis Client v0.88");
 		GUI.Label(new Rect(Screen.width-200, 0, 200, 30), strPick);
 
 
@@ -1331,6 +1370,14 @@ public class App : MonoBehaviour
 			}
 			tabx += 80;
 		}
+
+
+		if (GUI.Button(new Rect(tabx+80, 0, 200, 30), "Fix all pink materials"))
+		{
+			NA.PatchAllMaterials(goRootSpace);
+		}
+
+
 
         
         //to do : list of objects ?
@@ -2553,6 +2600,10 @@ public class App : MonoBehaviour
 		GUILayout.Label("Welcome to the New Atlantis. New Atlantis is a shared (multi-user) online virtual world dedicated to audio experimentation and practice. Unlike most online worlds where image is the primary concern, in New Atlantis sound comes first.");
 		GUILayout.EndHorizontal();
 
+		/*GUILayout.BeginHorizontal();
+		GUILayout.Label(texSoundHouses, GUILayout.ExpandWidth(true));//GUILayout.Width(100));
+		GUILayout.EndHorizontal();
+		*/
 		GUILayout.BeginHorizontal();
 		GUILayout.Label("Login", GUILayout.Width(100));
 		NAServer.strLogin = GUILayout.TextField (NAServer.strLogin);
@@ -2663,6 +2714,11 @@ public class App : MonoBehaviour
 
 			GUILayout.Label(""+o.GetAudioSourcesCount(), GUILayout.Width(100));
 			GUILayout.Label(o.file, GUILayout.Width(300));
+			if (GUILayout.Button ("fix materials", GUILayout.Width(150)))
+			{
+				NA.PatchMaterials(o.go);
+			}
+
 			GUILayout.EndHorizontal();
 
 		}
@@ -2793,17 +2849,18 @@ public class App : MonoBehaviour
 		}
 		GUILayout.EndHorizontal();
 
-		GUI.color = bPushObjects ? Color.red : Color.white;
+		/*GUI.color = bPushObjects ? Color.red : Color.white;
 		GUILayout.BeginHorizontal();
 		if (GUILayout.Button ("push objects on click"))
 		{
 			bPushObjects = !bPushObjects;
 		}
 		GUILayout.EndHorizontal();
+		*/
 
 		GUILayout.BeginHorizontal();
 		GUILayout.Label("master vol", GUILayout.Width(100));
-		AudioListener.volume = GUILayout.HorizontalSlider(AudioListener.volume, 0, 5);
+		AudioListener.volume = GUILayout.HorizontalSlider(AudioListener.volume, 0, 2);
 		GUILayout.EndHorizontal();
 
 		GUI.DragWindow();
