@@ -31,7 +31,9 @@ public class NAToolSonar : NAToolBase
 	{
 		Debug.Log ("NAToolSonar action");
 		Active = !Active;
+
 		sonarObject.transform.localScale = Vector3.zero;
-		sonarObject.transform.localPosition = Vector3.zero;
+		//sonarObject.transform.localPosition = Vector3.zero;
+		sonarObject.transform.position = transform.position;
 	}
 }

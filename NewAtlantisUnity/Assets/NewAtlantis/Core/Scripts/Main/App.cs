@@ -601,57 +601,64 @@ public class App : MonoBehaviour
         }
         */
 
+		bool l1 = NAInput.GetControl(NAControl.PreviousTool);
+		bool r1 = NAInput.GetControl(NAControl.NextTool);
+
+			
 		float padx = NAInput.GetAxis(NAControl.PadHorizontal);
 		float pady = NAInput.GetAxis(NAControl.PadVertical);
-		if ((padx != 0 || pady != 0) && !bToolPanel)
+		if (!r1 && !l1)
 		{
-			bToolPanel = true;
-		}
-		else
-		{
-			int ny = current_tool/6;
-			int nx = current_tool-ny*6;
-			int linecount = tools.Length/6;
-			int lastline = tools.Length-linecount*6;
-			if (lastline>0)
-				linecount++;
-			//Debug.Log("nx=" + nx + " ny=" + ny);
-			if (padx > 0 && NAInput.PadHorizontalPressed)
+			if ((padx != 0 || pady != 0) && !bToolPanel)
 			{
-				//RIGHT
-				nx = (nx+1)%6;
-				//current_tool = (current_tool + 1)%tools.Length;
-				current_tool = ny*6+nx;
-				current_tool = Mathf.Min(current_tool, tools.Length-1);
-				SetCurrentTool(tools[current_tool]);
+				bToolPanel = true;
 			}
-			else if (padx < 0 && NAInput.PadHorizontalPressed)
+			else
 			{
-				//LEFT
-				nx = (nx+6-1)%6;
+				int ny = current_tool/6;
+				int nx = current_tool-ny*6;
+				int linecount = tools.Length/6;
+				int lastline = tools.Length-linecount*6;
+				if (lastline>0)
+					linecount++;
+				//Debug.Log("nx=" + nx + " ny=" + ny);
+				if (padx > 0 && NAInput.PadHorizontalPressed)
+				{
+					//RIGHT
+					nx = (nx+1)%6;
+					//current_tool = (current_tool + 1)%tools.Length;
+					current_tool = ny*6+nx;
+					current_tool = Mathf.Min(current_tool, tools.Length-1);
+					SetCurrentTool(tools[current_tool]);
+				}
+				else if (padx < 0 && NAInput.PadHorizontalPressed)
+				{
+					//LEFT
+					nx = (nx+6-1)%6;
 
-				//current_tool = (current_tool + tools.Length-1)%tools.Length;
-				current_tool = ny*6+nx;
-				SetCurrentTool(tools[current_tool]);
-				
-			}
+					//current_tool = (current_tool + tools.Length-1)%tools.Length;
+					current_tool = ny*6+nx;
+					SetCurrentTool(tools[current_tool]);
+					
+				}
 
-			if (pady > 0 && NAInput.PadVerticalPressed)
-			{
-				//DOWN
-				ny = (ny+1) % linecount;
-				//current_tool = (current_tool + 6)%tools.Length;
-				current_tool = ny*6+nx;
-				SetCurrentTool(tools[current_tool]);
-			}
-			else if (pady < 0 && NAInput.PadVerticalPressed)
-			{
-				//UP
-				ny = (ny+linecount-1) % linecount;
-				//current_tool = (current_tool + tools.Length-6)%tools.Length;
-				current_tool = ny*6+nx;
-				SetCurrentTool(tools[current_tool]);
+				if (pady > 0 && NAInput.PadVerticalPressed)
+				{
+					//DOWN
+					ny = (ny+1) % linecount;
+					//current_tool = (current_tool + 6)%tools.Length;
+					current_tool = ny*6+nx;
+					SetCurrentTool(tools[current_tool]);
+				}
+				else if (pady < 0 && NAInput.PadVerticalPressed)
+				{
+					//UP
+					ny = (ny+linecount-1) % linecount;
+					//current_tool = (current_tool + tools.Length-6)%tools.Length;
+					current_tool = ny*6+nx;
+					SetCurrentTool(tools[current_tool]);
 
+				}
 			}
 		}
 
@@ -759,7 +766,7 @@ public class App : MonoBehaviour
 			if (NAInput.GetControlDown(NAControl.Menu))
 			{
 				bGUI = !bGUI;
-				Cursor.visible = bGUI;
+				//Cursor.visible = bGUI;
 			}
 		}
 
@@ -1181,6 +1188,14 @@ public class App : MonoBehaviour
 			GUI.matrix = Matrix4x4.Scale(Vector3.one * scale);
 		}
 
+		//gestion du panel à la souris avec un dummy button
+		if (GUI.Button(new Rect(Screen.width/2-32,Screen.height-64,64,64), "", new GUIStyle()))
+		{
+			bToolPanel = !bToolPanel;
+		}
+		
+
+
 		if (bToolPanel)
 		{
 			float inter = 64+10;
@@ -1198,7 +1213,20 @@ public class App : MonoBehaviour
 
 				Vector3 pos = new Vector3(Screen.width/2-inter*2.5f+x*inter, Screen.height-256+y*inter, 0);
 
-				t.DrawBaseGUI(pos, selected);
+				bool bClicked = t.DrawBaseGUI(pos, selected);
+
+				if (bClicked)
+				{
+					//change tool
+					for (int i=0;i<tools.Length;++i)
+					{
+						if (t == tools[i])
+						{
+							current_tool = i;
+							SetCurrentTool(tools[current_tool]);
+						}
+					}
+				}
 				x++;
 				if (x > 5)
 				{
@@ -1282,9 +1310,10 @@ public class App : MonoBehaviour
 		//GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
 		GUI.color = Color.white;
 		//GUI.Label(new Rect(0,0,400,30), "NewAtlantisNew Client - SAIC workshop");
-		GUI.Label(new Rect(0,0,400,30), "New Atlantis Client v0.88");
+		GUI.Label(new Rect(0,0,100,30), "New Atlantis v0.89");
 		GUI.Label(new Rect(Screen.width-200, 0, 200, 30), strPick);
 
+		DrawChronometer();
 
 
 
@@ -1372,7 +1401,7 @@ public class App : MonoBehaviour
 		}
 
 
-		if (GUI.Button(new Rect(tabx+80, 0, 200, 30), "Fix all pink materials"))
+		if (GUI.Button(new Rect(tabx+80, 0, 200, 30), "Fix all materials"))
 		{
 			NA.PatchAllMaterials(goRootSpace);
 		}
@@ -2716,8 +2745,8 @@ public class App : MonoBehaviour
 			GUILayout.Label(o.file, GUILayout.Width(300));
 			if (GUILayout.Button ("fix materials", GUILayout.Width(150)))
 			{
-				NA.PatchMaterials(o.go);
-			}
+				NA.PatchAllMaterials(o.go);
+			}	
 
 			GUILayout.EndHorizontal();
 
@@ -2948,4 +2977,30 @@ public class App : MonoBehaviour
 		transform.position = new Vector3(0,2,0);
 	}
     
+	void DrawChronometer()
+	{
+
+
+		Font bak = GUI.skin.font;
+
+
+
+		//current time display
+		float time = Time.time;
+
+		int minutes = (int)(time/60f);
+		int seconds = (int)(time-minutes*60f);
+		GUI.skin.font = NA.GetFont(2);
+		string strTime = "";
+		if (minutes<10)
+			strTime+="0";
+		strTime+=minutes;
+		strTime+=":";
+		if (seconds<10)
+			strTime+="0";
+		strTime+=seconds;
+
+		GUI.Label(new Rect(120,0,200,30), strTime);
+		GUI.skin.font = bak;
+	}
 }

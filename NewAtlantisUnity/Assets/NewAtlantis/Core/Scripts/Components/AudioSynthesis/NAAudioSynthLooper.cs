@@ -10,6 +10,10 @@ public class NAAudioSynthLooper : NAObjectBase
 	// Use this for initialization
 	void Start () 
 	{
+		
+		//auto generate
+		Randomize();
+		Generate();
 	}
 	
 
@@ -46,7 +50,7 @@ public class NAAudioSynthLooper : NAObjectBase
 		string strDisplay = name;
 		int x = (int)(pos2d.x*Screen.width);
 		int y = (int)(Screen.height-pos2d.y*Screen.height);
-		GUI.Box (new Rect(x,y,100,30), "Granulator");
+		GUI.Box (new Rect(x,y,100,30), "Looper");
 
 	}
 

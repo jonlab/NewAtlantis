@@ -120,12 +120,30 @@ public class NAAudioSynthOscillator : NAObjectBase
 		bool buttonCamera 	= NAInput.GetControlDown(NAControl.Camera);
 		bool buttonMenu 	= NAInput.GetControlDown(NAControl.Menu);
 
+		frequency += x1;
+		duration += y1;
+
+		duration = Mathf.Clamp(duration, 0.1f, 10);
+
+
 		if (buttonCamera)
 		{
 			Generate();
 			Play();
-			
 		}
+
+		float padx = NAInput.GetAxis(NAControl.PadHorizontal);
+		float pady = NAInput.GetAxis(NAControl.PadVertical);
+
+
+		if (NAInput.PadHorizontalPressed && padx > 0)
+		{
+			waveform = waveform++;
+		}
+		else if (NAInput.PadHorizontalPressed && padx < 0)
+			{
+				waveform = waveform--;
+			}
 	}
 	/*
 	void OnGUI()

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class NAAudioSynthFM : MonoBehaviour 
+public class NAAudioSynthFM : NAObjectBase 
 {
 	private int 		samplerate 			= 44100;
 	public float 		duration 			= 10f;

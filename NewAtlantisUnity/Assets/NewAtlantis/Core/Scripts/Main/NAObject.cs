@@ -45,6 +45,12 @@ public class NAObject
 		NetworkView nView 			= go.AddComponent<NetworkView>();
 		nView.viewID 				= this.NetworkViewId;
 		NetworkSync nSync 			= go.AddComponent<NetworkSync>();
+
+		//if (name.Contains("Coffee") || name.Contains("Radio") || name.Contains("Object"))
+		{
+			LogManager.Log("add " + name + " to the instanciables.");
+			NA.instanciables.Add(this);
+		}
 	}
 
 	public void Download()
@@ -123,7 +129,7 @@ public class NAObject
 					//NA.PatchMaterials(go); //crashes on 5.3.1
 					//if (!name.Contains("elevation"))
 					//{
-					//NA.PatchAllMaterials(go);
+					NA.PatchAllMaterials(go);
 					//}
 
 					NAObjectLabel lbl = go.GetComponentInChildren<NAObjectLabel>();
@@ -142,6 +148,17 @@ public class NAObject
 						}
 
 					}
+
+
+					/*Terrain terrain = go.GetComponentInChildren<Terrain>();
+					foreach (TreePrototype tp in terrain.terrainData.treePrototypes)
+					{
+						NA.PatchAllMaterials(tp.prefab);
+						//Renderer tr = tp.prefab.GetComponent<Renderer>();
+						//tr.material.shader = Shader.Find(tr.material.shader.name);
+					}
+					*/
+
 					Light[] 		lights = go.GetComponentsInChildren<Light>();
 					Transform[]	 	gameobjects = go.GetComponentsInChildren<Transform>();
 					AudioListener[] listeners = go.GetComponentsInChildren<AudioListener>();
@@ -162,6 +179,7 @@ public class NAObject
 					go.transform.localScale 	= scale;
 					bundle.Unload(false); 
 
+					go.AddComponent<NAViewerOptim>();
 					/*goGizmo = new GameObject("object_gizmo");
 					goGizmo.transform.parent = go.transform;
 					goGizmo.transform.localPosition = Vector3.zero;

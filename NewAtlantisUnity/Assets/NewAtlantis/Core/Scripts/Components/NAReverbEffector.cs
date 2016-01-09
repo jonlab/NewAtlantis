@@ -10,6 +10,26 @@ public class NAReverbEffector : MonoBehaviour
 	void Start () 
 	{
 		//EnableAudioReverbFilter (false);
+
+		AudioReverbFilter arf = gameObject.GetComponent<AudioReverbFilter>();
+		if (arf == null)
+		{
+			arf = gameObject.AddComponent<AudioReverbFilter>();
+		}
+
+		Rigidbody rb = gameObject.GetComponent<Rigidbody>();
+		if (rb == null)
+		{
+			rb = gameObject.AddComponent<Rigidbody>();
+			rb.isKinematic = true;
+		}
+
+		Collider c = gameObject.GetComponent<Collider>();
+		if (c == null)
+		{
+			c = gameObject.AddComponent<SphereCollider>();
+			c.isTrigger = true;
+		}
 	
 	}
 	

@@ -10,11 +10,11 @@ public static class NA
 	public static App app = null;
 	public static List<GameObject>	player_objects = new List<GameObject>();
 	public static GameObject goAvatar = null;
-
 	public static Space CurrentSpace = null;
 	public static Space PreviousSpace = null;
-
 	public static Font[] fonts = new Font[4];
+
+	public static List<NAObject>	instanciables = new List<NAObject>();
 
 	public static GameObject Instantiate(Object prefab, Vector3 position, Quaternion rotation)
 	{
@@ -391,6 +391,95 @@ public static class NA
 		{
 			LogManager.LogError("Patch materials error");
 		}
+	}
+
+
+
+	public static Texture2D GeneratePreviewPNG(GameObject model, int width, int height)
+	{
+		//RenderSettings.ambientLight = Color.white;
+		//we will use the layer 12 to render selectively
+		Vector3 pos = Vector3.zero;
+		List<GameObject> temp = new List<GameObject>();
+		GameObject go = GameObject.Instantiate(model) as GameObject;
+
+		Transform[] transforms = go.GetComponentsInChildren<Transform>();
+		float maxsize = 0;
+		foreach (Transform t in transforms)
+		{
+			Renderer r = t.GetComponent<Renderer>();
+			if (r != null)
+			{
+				if (r.bounds.extents.x > maxsize)
+					maxsize = r.bounds.extents.x;
+				if (r.bounds.extents.y > maxsize)
+					maxsize = r.bounds.extents.y;
+				if (r.bounds.extents.z > maxsize)
+					maxsize = r.bounds.extents.z;
+			}
+			t.gameObject.layer = 12;
+		}
+
+		//go.layer = 12;
+		pos = go.transform.position;
+		temp.Add (go);
+
+		//camera
+		GameObject goCamera = new GameObject();
+		Camera cam = goCamera.AddComponent<Camera>();
+
+		//cam position 
+		//goCamera.transform.position = pos+Vector3.forward*10+Vector3.up*5; //FIXME
+		goCamera.transform.position = pos+Vector3.forward*maxsize+Vector3.up*maxsize/2f+Vector3.right*maxsize/2f;
+		goCamera.transform.LookAt(pos);
+		goCamera.layer = 12;
+
+		//light
+		GameObject goLight = new GameObject();
+		Light light = goCamera.AddComponent<Light>();
+		light.type = LightType.Directional;
+		light.intensity = 1;
+		goLight.layer = 12;
+
+
+		Texture2D screenShot = null;
+		RenderTexture rt  = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
+		//Render Camera
+		RenderTexture.active = rt;
+		cam.targetTexture = rt;
+		Rect rectBak = cam.rect;
+		cam.rect = new Rect(0,0,1,1);
+		cam.clearFlags = CameraClearFlags.Color;
+		cam.backgroundColor = Color.black;
+		cam.cullingMask = 1<<12;
+		cam.Render();
+		cam.rect = rectBak;
+		//currentCamera.GetComponent<GUILayer>();
+		//Create the blank texture container
+		if (screenShot == null)
+		{
+			screenShot = new Texture2D(width, height, TextureFormat.ARGB32, false);
+		}
+		//Assign rt as the main render texture, so everything is drawn at the higher resolution
+		RenderTexture.active = rt;
+		//Read the current render into the texture container, screenShot
+		screenShot.ReadPixels(new Rect(0, 0, width, height), 0, 0, false);
+		screenShot.Apply();
+
+
+		//destroy 
+
+		RenderTexture.active = null;
+		cam.targetTexture = null;
+		RenderTexture.Destroy(rt);
+		GameObject.DestroyImmediate(goCamera);
+		GameObject.DestroyImmediate(goLight);
+		foreach (GameObject g in temp)
+		{
+			GameObject.DestroyImmediate(g);
+		}
+
+		return screenShot;
 	}
 
 }

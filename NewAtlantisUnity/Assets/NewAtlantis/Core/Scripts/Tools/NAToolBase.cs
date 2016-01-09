@@ -83,7 +83,8 @@ public class NAToolBase : MonoBehaviour
 		DrawBaseGUI();
 		if (ExtendedGUI)
 		{
-			DrawExtendedGUI(new Vector3(Screen.width/2, Screen.height-100, 0));
+			GUI.skin.label.alignment = TextAnchor.MiddleCenter;
+			DrawExtendedGUI(new Vector3(Screen.width/2, Screen.height-80, 0));
 		}
 	}
 
@@ -92,7 +93,7 @@ public class NAToolBase : MonoBehaviour
 		DrawBaseGUI(new Vector3(Screen.width/2, Screen.height-32, 0), false);
 	}
 
-	public void DrawBaseGUI(Vector3 pos, bool selected)
+	public bool DrawBaseGUI(Vector3 pos, bool selected)
 	{
 		if (!white)
 			white = Resources.Load("white") as Texture2D;
@@ -111,12 +112,17 @@ public class NAToolBase : MonoBehaviour
 
 		GUI.DrawTexture(new Rect(pos.x-32,pos.y-32,64,64), white);
 		GUI.color = Color.white;
-		GUI.DrawTexture(new Rect(pos.x-32,pos.y-32,64,64), icon);
+
+		//GUI.DrawTexture(new Rect(pos.x-32,pos.y-32,64,64), icon);
+
+		bool bClicked = GUI.Button(new Rect(pos.x-32,pos.y-32,64,64), icon, new GUIStyle());
 		GUI.color = Color.red; //red
 		GUI.skin.label.alignment = TextAnchor.MiddleCenter;
 		GUI.Label(new Rect(pos.x-32,pos.y-64,64,64), name);
 		GUI.skin.label.alignment = TextAnchor.MiddleLeft;
 		GUI.color = Color.white;
+
+		return bClicked;
 	}
 
 }

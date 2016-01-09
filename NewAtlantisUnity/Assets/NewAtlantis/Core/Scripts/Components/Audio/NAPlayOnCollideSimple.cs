@@ -26,7 +26,7 @@ public class NAPlayOnCollideSimple : MonoBehaviour {
 
 	void OnCollisionEnter(Collision e){
 
-		print ("colliding"+e.gameObject);
+		//print ("colliding"+e.gameObject);
 		aud.Play ();
 
 	}
