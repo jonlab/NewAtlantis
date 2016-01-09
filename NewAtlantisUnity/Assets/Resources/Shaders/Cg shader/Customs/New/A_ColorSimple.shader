@@ -1,4 +1,4 @@
-﻿Shader "Custom/A" {
+﻿Shader "Custom/A-Color" {
 	Properties{
 		//NO PROPERTIES
 		_MovePos("MovePos",Vector) = (1.0,1.0,1.0,1.0)

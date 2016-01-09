@@ -267,8 +267,9 @@ public static class NA
 				Shader s = Shader.Find(m.shader.name);
 				if (s != null)
 				{
-					m.shader = s;
-				}
+			         m.shader = s;
+                 //   LogManager.LogError("Shader name : " + m.shader.name);
+                }
 				else
 				{
 					LogManager.LogError("can't find shader error : " + m.shader.name);

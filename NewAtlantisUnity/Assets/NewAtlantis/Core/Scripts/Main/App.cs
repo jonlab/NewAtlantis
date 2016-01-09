@@ -482,7 +482,7 @@ public class App : MonoBehaviour
 			bool bIgnore = false;
 			if (c.transform.parent)
 			{
-				if (c.transform.parent.name == "TRS Gizmo" || c.transform.name == "Depth Camera" || c.transform.name == "AvatarEditorCamera")
+				if (c.transform.parent.name == "TRS Gizmo" || c.transform.name == "Depth Camera" || c.transform.name == "AvatarEditorCamera" || c.transform.tag == "ActiveCamera")
 				{
 					bIgnore = true; //patch pour éviter que la caméra Gizmo soit désactivée
 				}
