@@ -580,29 +580,10 @@ public class App : MonoBehaviour
 				strPick += "AudioSource";
 			}
 		}
+			
 
-
-
-
-
-
-		//Previous tool
-		/*if (NAInput.GetControlDown(NAControl.PreviousTool))
-		{
-			current_tool = (current_tool + tools.Length-1)%tools.Length;
-			SetCurrentTool(tools[current_tool]);
-		}
-
-		//Next tool
-		if (NAInput.GetControlDown(NAControl.NextTool))
-		{
-			current_tool = (current_tool + 1)%tools.Length;
-			SetCurrentTool(tools[current_tool]);
-        }
-        */
-
-		bool l1 = NAInput.GetControl(NAControl.PreviousTool);
-		bool r1 = NAInput.GetControl(NAControl.NextTool);
+		bool l1 = NAInput.GetControl(NAControl.PreviousTool) || Input.GetKey(KeyCode.LeftShift);
+		bool r1 = NAInput.GetControl(NAControl.NextTool) || Input.GetKey(KeyCode.RightShift);
 
 			
 		float padx = NAInput.GetAxis(NAControl.PadHorizontal);
@@ -665,7 +646,7 @@ public class App : MonoBehaviour
 		//on scanne les objects interactifs de la scene
 		NAObjectBase[] interactive_objects = GameObject.FindObjectsOfType(typeof(NAObjectBase)) as NAObjectBase[];
 		NAObjectBase closest = null;
-		if (NAInput.GetControl(NAControl.PreviousTool))
+		if (l1)
 		{
 			//recherche du plus proche
 
@@ -703,14 +684,14 @@ public class App : MonoBehaviour
 				o.SetGUI(false);
 			}
 		}
-		if (NAInput.GetControl(NAControl.NextTool)) //Extended tool mode
+		if (r1) //Extended tool mode
 		{
 			NAToolBase t = tools[current_tool];
 			//extended control if R1 is maintained
 			t.ExtendedControl();
 		}
 
-		else if (NAInput.GetControl(NAControl.PreviousTool))
+		else if (l1)
 		{
 			
 		}
@@ -1195,6 +1176,8 @@ public class App : MonoBehaviour
 		}
 		
 
+		bool l1 = NAInput.GetControl(NAControl.PreviousTool) || Input.GetKey(KeyCode.LeftShift);
+		bool r1 = NAInput.GetControl(NAControl.NextTool) || Input.GetKey(KeyCode.RightShift);
 
 		if (bToolPanel)
 		{
@@ -1334,12 +1317,12 @@ public class App : MonoBehaviour
 		*/
 
 		string strInteractionMode = "normal - R1:extended tool - L1:object interaction";
-		if (NAInput.GetControl(NAControl.NextTool))
+		if (r1)
 		{
 			strInteractionMode = "extended tool";
 		}
 			
-		else if (NAInput.GetControl(NAControl.PreviousTool))
+		else if (l1)
 		{
 			strInteractionMode = "object interaction";
 		}
