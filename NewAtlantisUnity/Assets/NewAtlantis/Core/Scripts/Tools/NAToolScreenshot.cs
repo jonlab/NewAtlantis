@@ -12,7 +12,7 @@ public class NAToolScreenshot : NAToolBase {
 	{
 		//take a screenshot and store it on disk
 		System.DateTime now = System.DateTime.Now;
-		TakeScreenshot(Camera.main, 1920,1080, "screen_" + now.Year+"_"+now.Month+"_"+now.Day+"_"+now.Hour+"_"+now.Minute+"_"+now.Second+".jpg");
+		TakeScreenshot(Camera.main, 3840,2160, "screen_" + now.Year+"_"+now.Month+"_"+now.Day+"_"+now.Hour+"_"+now.Minute+"_"+now.Second+".jpg");
 		TransitionManager.Start(TransitionManager.FadeIn,1f,Color.white, null);
 	}
 
