@@ -12,9 +12,17 @@ public class ScaleCamera : MonoBehaviour {
 
 	public float minimalDistance = 4.5f;
 
+   public float cameraDistance = 0;
+
+
+    GyzmoTransformScript gyzmoTransform;
 	// Use this for initialization
 	void Start () {
-	
+
+        GameObject gyzmo = transform.parent.Find("Gyzmo").gameObject;
+        gyzmoTransform = gyzmo.GetComponent<GyzmoTransformScript>();
+
+
 	}
 
 	public void SetFocusPoint(GameObject o){
@@ -34,7 +42,21 @@ public class ScaleCamera : MonoBehaviour {
 
 		}
 
-		if(scroll > 0 && Vector3.Distance (myCamera.transform.position,focusPoint.transform.position) <= minimalDistance)scroll = 0;
+        float distance = Vector3.Distance(myCamera.transform.position, focusPoint.transform.position);
+
+        GameObject gizmo = transform.parent.Find("Gyzmo").gameObject;
+        float scale = distance / 5.5f;
+        if (scale < 1) scale = 1;
+        cameraDistance = scale;
+
+        gizmo.transform.localScale = new Vector3(scale, scale, scale);
+
+        gyzmoTransform.NormalizeScaling(scale);
+       
+
+
+        if (scroll > 0 && Vector3.Distance (myCamera.transform.position,focusPoint.transform.position) <= minimalDistance)scroll = 0;
+
 
 	
 			Vector3 cameraPos = myCamera.transform.position;
@@ -60,4 +82,10 @@ public class ScaleCamera : MonoBehaviour {
 		//}
 
 	}
+
+    public float returnDistance()
+    {
+
+        return cameraDistance;
+    }
 }

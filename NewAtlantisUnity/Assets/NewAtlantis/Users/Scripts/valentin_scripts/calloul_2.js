@@ -8,9 +8,8 @@ function OnTriggerStay(other : Collider) {
 	}
 }
 
-    function OnTriggerExit(other : Collider) {
-        if(other.attachedRigidbody) {
-            target.doorClear = true;
-        }
-
-    }
+function OnTriggerExit(other : Collider) {
+	if(other.attachedRigidbody) {
+		target.doorClear = true;
+	}
+}
