@@ -8,6 +8,7 @@ public static class NA
 {
 	private static List<GameObject> listAvatars = new List<GameObject>();
 	public static App app = null;
+	public static NANetwork network = null;
 	public static List<GameObject>	player_objects = new List<GameObject>();
 	public static GameObject goAvatar = null;
 	public static Space CurrentSpace = null;

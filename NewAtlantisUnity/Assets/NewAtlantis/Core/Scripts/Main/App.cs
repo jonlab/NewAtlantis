@@ -50,7 +50,7 @@ public class App : MonoBehaviour
 {
 	AppState state = AppState.Login;
 
-	List<NAObject> listObjects = new List<NAObject>();
+	public List<NAObject> listObjects = new List<NAObject>();
 	string strSpace = "";
 	NAObject currentSelection = null;
 	NAObject currentLocal = null;
@@ -85,8 +85,8 @@ public class App : MonoBehaviour
 	float 				timerGC		= 0;
 	float 				timerRefresh		= 0;
 
-	GameObject			goRootSpace = null;
-	GameObject			goRootAvatars = null;
+	public GameObject			goRootSpace = null;
+	public GameObject			goRootAvatars = null;
 	bool				loading		= false;
 
 	private  FileInfo[] 	info = null;
@@ -159,6 +159,9 @@ public class App : MonoBehaviour
 	Rect mGuiWinRectAsset 		= new Rect(Screen.width/2-200, Screen.height/2-200, 400, 400);
 	Rect mGuiWinRectLobby 		= new Rect(Screen.width/2-WindowSize.x/2, Screen.height/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
 	Rect mGuiWinRectUser 		= new Rect(Screen.width/2-WindowSize.x/2, Screen.height/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
+
+	Rect mGuiWinRectWindows 		= new Rect(Screen.width/2-WindowSize.x/2, Screen.height/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
+
 	private Vector2 scrollPos 	= Vector2.zero;
 	private Vector2 scrollPosMySpaces 		= Vector2.zero;
 	private Vector2 scrollPosSharedSpaces 	= Vector2.zero;
@@ -325,6 +328,7 @@ public class App : MonoBehaviour
 
 		//AssetBundlePreviewGenerator.Test("Bundles/sea.unity3d");
 		NA.app 			= this;
+		NA.network 		= GetComponent<NANetwork>();
 		TransitionManager.Init();
 		TransitionManager.Start(TransitionManager.FadeIn,3f,Color.black, null);
 		Init();
@@ -1096,29 +1100,7 @@ public class App : MonoBehaviour
 	}
 
 
-	[RPC]
-	void Refresh()
-	{
-		NAServer.Get();
-	}
 
-
-	[RPC]
-	void LoadObject(string _name, NetworkViewID _viewID, Vector3 _pos, Vector3 _angles, Vector3 _scale, string _filename, string _id) 
-	{
-		//on regarde si l'object n'existe pas déjà
-		foreach (NAObject o in listObjects) 
-        {
-			if (o.id == _id)
-				return;
-		}
-		Debug.Log ("RPC LoadObject " + _name + " " + _filename);
-		// créer un objet vide pour la synchro, puis ajouter l'objet téléchargé en child
-		NAObject n = new NAObject (goRootSpace, _name, _pos, _angles, _scale, _filename, _viewID);
-		n.id = _id;
-		listObjects.Add(n);
-		n.Download();
-	}
 
 
 
@@ -1195,6 +1177,7 @@ public class App : MonoBehaviour
     void OnGUI()
     {
 		GUI.skin.font = font;
+		GUI.skin.label.alignment = TextAnchor.MiddleLeft;
 		if (Screen.height < 768)
 		{
 			float scale = (float)Screen.height / 768f;
@@ -1298,6 +1281,9 @@ public class App : MonoBehaviour
 		if (loading != -1f && loading != 1f)
 		{
 
+			GUI.color = new Color(0,0,0,0.5f);
+			GUI.DrawTexture (new Rect (Screen.width/2-350, Screen.height/2-100, 700, 120), texWhite);
+
 			GUI.color = Color.red;
 			GUI.DrawTexture (new Rect (Screen.width/2-300, Screen.height/2-50, 600, 20), texWhite);
 
@@ -1325,7 +1311,7 @@ public class App : MonoBehaviour
 		//GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
 		GUI.color = Color.white;
 		//GUI.Label(new Rect(0,0,400,30), "NewAtlantisNew Client - SAIC workshop");
-		GUI.Label(new Rect(0,0,100,30), "New Atlantis v0.89");
+		GUI.Label(new Rect(0,0,100,30), "New Atlantis v0.90");
 		GUI.Label(new Rect(Screen.width-200, 0, 200, 30), strPick);
 
 		DrawChronometer();
@@ -1431,25 +1417,25 @@ public class App : MonoBehaviour
 		switch (tab)
 		{
 		case AppTab.Chat:
-			mGuiWinRectChat 	= GUI.Window(1, mGuiWinRectChat, WindowFunctionChat, "Chat");
+			mGuiWinRectChat 	= GUI.Window(1, mGuiWinRectWindows, WindowFunctionChat, "Chat");
 			break;
 		case AppTab.About:
-			mGuiWinRectAbout 	= GUI.Window(7, mGuiWinRectAbout, WindowFunctionAbout, "About");
+			mGuiWinRectAbout 	= GUI.Window(7, mGuiWinRectWindows, WindowFunctionAbout, "About");
 			break;
 		case AppTab.Options:
-			mGuiWinRectOptions 	= GUI.Window(6, mGuiWinRectOptions, WindowFunctionOptions, "Options");
+			mGuiWinRectOptions 	= GUI.Window(6, mGuiWinRectWindows, WindowFunctionOptions, "Options");
 			break;
 		case AppTab.Space:
-			mGuiWinRectSpaces 	= GUI.Window(8, mGuiWinRectSpaces, WindowFunctionSpaces, "Space");
+			mGuiWinRectSpaces 	= GUI.Window(8, mGuiWinRectWindows, WindowFunctionSpaces, "Space");
 			break;
 		case AppTab.Scene:
-			mGuiWinRectScene = GUI.Window(3, mGuiWinRectScene, WindowFunctionScene, "Scene");
+			mGuiWinRectScene = GUI.Window(3, mGuiWinRectWindows, WindowFunctionScene, "Scene");
 			break;
 		case AppTab.Lobby:
-			GUI.Window(2, mGuiWinRectLobby, WindowFunctionLobby, "Lobby");
+			GUI.Window(2, mGuiWinRectWindows, WindowFunctionLobby, "Lobby");
 			break;
 		case AppTab.User:
-			GUI.Window(10, mGuiWinRectUser, WindowFunctionUser, "MyNA");
+			GUI.Window(10, mGuiWinRectWindows, WindowFunctionUser, "MyNA");
 			break;
 		}
 
@@ -1604,77 +1590,6 @@ public class App : MonoBehaviour
 
 
 
-	[RPC]
-	void SetColor(Color color) 
-	{
-		gameObject.GetComponent<MeshRenderer>().material.color = color;
-    }
-    
-    [RPC]
-	void Chat(string _name, string _message) 
-	{
-		ChatManager.Log(_name, _message, 0);
-		LogManager.LogWarning(_name + " : " + _message);
-	}
-
-
-
-	[RPC]
-	void DestroyObject(NetworkViewID viewID)
-	{
-		NetworkView nv = NetworkView.Find (viewID);
-		GameObject go = nv.gameObject;
-		lock(NA.player_objects)
-		{
-			Debug.Log ("removing " + viewID);
-			NA.player_objects.Remove(go);
-		}
-		GameObject.Destroy(go);
-    }
-    
-
-
-    [RPC]
-	void SpawnAvatar(NetworkViewID viewID, Vector3 color, string name) 
-	{
-		//appelé chez tout le monde pour créer un avatar
-		GameObject clone;
-		//clone = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-		clone = GameObject.Instantiate(goPrefabAvatar, Vector3.zero, Quaternion.identity) as GameObject;
-
-		clone.name = name;
-		Collider.Destroy(clone.GetComponent<Collider>());
-		NetworkView nView = clone.AddComponent<NetworkView>();
-		nView.viewID = viewID;
-
-        if (nView.owner == Network.player)
-        {
-			NA.goAvatar = clone;
-        }
-		else
-		{
-			//NA.player_objects.Add(clone); //this is considered as a player object
-		}
-
-		MeshRenderer renderer = clone.GetComponent<MeshRenderer>();
-		if (renderer != null)
-		{
-			renderer.material.color = new Color(color.x, color.y, color.z, 0.3f);
-		}
-		clone.transform.parent = goRootAvatars.transform;
-		LogManager.Log ("New Avatar:" +  NAServer.strLogin + " owner:" + nView.owner);
-		NA.AddAvatar(clone);
-    }
-
-
-
-
-    
-    [RPC]
-	void ConnectToSpace(string _space) 
-	{
-		Connect(_space);
-	}
 
 
 
@@ -1709,7 +1624,7 @@ public class App : MonoBehaviour
 		GUILayout.BeginHorizontal();
 		GUILayout.Label ("Chat : ");
 		GUILayout.EndHorizontal();
-		int maxcount = 12;
+		int maxcount = 20;
 		int start = ChatManager.GetStart(maxcount);
 		int end = ChatManager.GetEnd();
 		for (int i=start;i<=end;++i)
@@ -1729,9 +1644,9 @@ public class App : MonoBehaviour
 		}
 
 		GUILayout.BeginHorizontal();
-		GUILayout.Label(strName, GUILayout.Width(80));
-		strCurrentChatMessage = GUILayout.TextArea(strCurrentChatMessage, GUILayout.Width(120));
-		if (GUILayout.Button("send", GUILayout.Width(80)))
+		GUILayout.Label(strName, GUILayout.Width(100));
+		strCurrentChatMessage = GUILayout.TextArea(strCurrentChatMessage, GUILayout.Width(200));
+		if (GUILayout.Button("send", GUILayout.Width(100)))
 		{
 			NetworkChat(strCurrentChatMessage);
 			strCurrentChatMessage = "";
@@ -1998,11 +1913,11 @@ public class App : MonoBehaviour
 					strSpace = space.name;
 					NA.CurrentSpace = space;
 					Debug.Log ("Current Space id = " + NA.CurrentSpace.id);
-					if (Network.isServer)
+					/*if (Network.isServer)
 					{
 						GoToSpace(space);
 						ConnectToSpace(strSpace);
-					}
+					}*/
 					//Connect(space);
 				}
 				GUILayout.Label(space.type, GUILayout.Width(100));
@@ -2270,7 +2185,7 @@ public class App : MonoBehaviour
 		//if (GUILayout.Button ("start server at " + Network.player.ipAddress)) 
 		if (GUILayout.Button ("run standalone", GUILayout.Width(120 ))) 
 		{
-			ConnectToSpace(strSpace);
+			//ConnectToSpace(strSpace); //removed
 		}
 		if (GUILayout.Button ("stop standalone", GUILayout.Width(120 ))) 
 		{
@@ -2877,7 +2792,7 @@ public class App : MonoBehaviour
 	{
 		GUI.color = Color.white;
 
-		GUI.color = NAAudioSource.bDisplayAudioSourceName ? Color.red : Color.white;
+		/*GUI.color = NAAudioSource.bDisplayAudioSourceName ? Color.red : Color.white;
 		GUILayout.BeginHorizontal();
 		if (GUILayout.Button ("Display AudioSource names"))
 		{
@@ -2892,7 +2807,7 @@ public class App : MonoBehaviour
 			NA.bAugmentAudioSources = !NA.bAugmentAudioSources;
 		}
 		GUILayout.EndHorizontal();
-
+		*/
 		/*GUI.color = bPushObjects ? Color.red : Color.white;
 		GUILayout.BeginHorizontal();
 		if (GUILayout.Button ("push objects on click"))
@@ -2905,6 +2820,8 @@ public class App : MonoBehaviour
 		GUILayout.BeginHorizontal();
 		GUILayout.Label("master vol", GUILayout.Width(100));
 		AudioListener.volume = GUILayout.HorizontalSlider(AudioListener.volume, 0, 2);
+		float db = (20*Mathf.Log10(AudioListener.volume));
+		GUILayout.Label(""+db + " dB", GUILayout.Width(100));
 		GUILayout.EndHorizontal();
 
 		GUI.DragWindow();

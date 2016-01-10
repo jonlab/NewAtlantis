@@ -32,11 +32,12 @@ public class NAToolCloner : NAToolBase {
 		Vector3 pos = transform.position+transform.forward*distance;
 		if (Network.isServer)
 		{
-			ServerCloneObject(objectName, pos, worldforce, new Vector3(1,0,0)/*colorAvatar*/);
+			NA.network.ServerCloneObject(objectName, pos, worldforce, new Vector3(1,0,0));
 		}
 		else
 		{
 			//we send to the server
+			LogManager.Log("Send RPC ServerCloneObject");
 			GetComponent<NetworkView>().RPC("ServerCloneObject", RPCMode.Server, objectName, pos, worldforce, new Vector3(1,0,0)/*colorAvatar*/);
 		}
 	}
@@ -106,64 +107,6 @@ public class NAToolCloner : NAToolBase {
 	}
 
 	
-	[RPC]
-	void ServerCloneObject(string name, Vector3 position, Vector3 forward, Vector3 color) 
-	{
-		if (!Network.isServer)
-		{
-			return;
-		}
-		LogManager.Log ("ServerCloneObject");
-		GetComponent<NetworkView>().RPC("CloneObject", RPCMode.AllBuffered, name, Network.AllocateViewID(), position, forward, color);
-	}
-	
-	[RPC]
-	void CloneObject(string name, NetworkViewID viewID, Vector3 location, Vector3 forward, Vector3 color) 
-	{
-		GameObject clone = null;
-		GameObject model = null;
-		foreach (NAObject o in NA.instanciables)
-		{
-			if (o.name == name)
-			{
-				model = o.go;
-			}
-		}
-		clone = GameObject.Instantiate(model, Vector3.zero, Quaternion.identity) as GameObject;
-		LogManager.LogWarning("clone " + name);
 
-		//remove previous network view
-		NetworkView nViewOriginal = clone.GetComponent<NetworkView>();
-		if (nViewOriginal)
-		{
-			NetworkView.Destroy(nViewOriginal);
-		}
-
-		NetworkView nView = clone.AddComponent<NetworkView>();
-		nView.viewID = viewID;
-		
-		clone.transform.position = location;
-		
-		MeshRenderer renderer = clone.GetComponent<MeshRenderer>();
-		if (renderer != null)
-		{
-			renderer.material.color = new Color(color.x, color.y, color.z);
-		}
-		//clone.transform.forward = transform.rotation * Vector3.Normalize(forward) ;
-		//Rigidbody rb = clone.AddComponent<Rigidbody>();
-		if (NA.isServer() || NA.isStandalone())
-		{
-			/*Rigidbody rb = clone.AddComponent<Rigidbody>();
-			rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
-			rb.AddForce(forward*200f);
-			*/
-		}
-		else
-		{
-			//client, we need the RB for local collisions but in kinematic mode only
-			//rb.isKinematic = true;
-		}
-		NA.player_objects.Add(clone);
-	}
 
 }

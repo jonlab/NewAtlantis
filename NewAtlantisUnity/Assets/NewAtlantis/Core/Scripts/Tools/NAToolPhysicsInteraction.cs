@@ -104,4 +104,17 @@ public class NAToolPhysicsInteraction : NAToolBase {
 		current = null;
 
 	}
+
+
+
+	//network implementation
+	/*
+	[RPC] 
+	void ServerPhysicsInteractionAction(string name, Vector3 position, Vector3 forward, Vector3 color) 
+	{
+		
+	}
+	*/
+
+
 }

@@ -51,6 +51,12 @@ public class NASyncAnimationWithAudio : MonoBehaviour {
 					state.normalizedTime = time_animation;
 				}
 			}
+
+			Animator[] animators = GetComponentsInChildren<Animator>();
+			foreach (Animator animator in animators) 
+			{
+				//animator.
+			}
 		}
 	}
 }

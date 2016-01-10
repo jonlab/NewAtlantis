@@ -135,11 +135,12 @@ public class NAObject
 					NAObjectLabel lbl = go.GetComponentInChildren<NAObjectLabel>();
 					if (lbl)
 					{
-						Renderer lblr = lbl.gameObject.GetComponent<Renderer>();
+						/*Renderer lblr = lbl.gameObject.GetComponent<Renderer>();
 						if (lblr != null)
 						{
 							lblr.enabled = false;
 						}
+						*/
 						//fix du collider
 						Collider col = lbl.gameObject.GetComponent<Collider>();
 						if (col != null)
