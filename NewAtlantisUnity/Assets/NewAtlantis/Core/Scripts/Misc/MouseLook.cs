@@ -32,7 +32,23 @@ public class MouseLook : MonoBehaviour {
 
 	void Update ()
 	{
-		if (NAInput.GetControl(NAControl.NextTool) || NAInput.GetControl(NAControl.PreviousTool))
+
+        Transform trsGyzmo = GameObject.Find("TRS Gizmo").gameObject.transform;
+
+        
+
+        GameObject gizmoCamera = trsGyzmo.Find("Main Camera").gameObject;
+
+        if(gizmoCamera!= null)
+        {
+            if (gizmoCamera.active == true) return;
+
+
+        }
+
+
+
+        if (NAInput.GetControl(NAControl.NextTool) || NAInput.GetControl(NAControl.PreviousTool))
 		{
 			return;
 		}
