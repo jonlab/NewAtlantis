@@ -111,7 +111,9 @@ public class SelectorScript : MonoBehaviour {
 					//orwardDirection*=-1;
 				}
                 float distanceScale = scaleCamera.returnDistance() / 2;
-			
+                // distanceScale = Mathf.Clamp(distanceScale, 1, 6);
+                distanceScale = 1;
+
 				if(dimensionType == 0)TranslateObject(rightDirection * distanceScale);
 				if(dimensionType == 1)TranslateObject(upDirection * distanceScale);
 				if(dimensionType == 2)TranslateObject(-forwardDirection * distanceScale);

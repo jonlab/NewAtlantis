@@ -77,3 +77,4 @@ function fire() {
 	var aim : Vector3 = transform.up;
 	coll.GetComponent(Rigidbody).AddForce(aim * 30, ForceMode.VelocityChange);
 }
+

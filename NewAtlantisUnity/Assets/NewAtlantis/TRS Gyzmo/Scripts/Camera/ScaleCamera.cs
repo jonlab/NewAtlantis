@@ -12,7 +12,7 @@ public class ScaleCamera : MonoBehaviour {
 
 	public float minimalDistance = 4.5f;
 
-    float cameraDistance = 0;
+   public float cameraDistance = 0;
 
 
     GyzmoTransformScript gyzmoTransform;
@@ -46,6 +46,7 @@ public class ScaleCamera : MonoBehaviour {
 
         GameObject gizmo = transform.parent.Find("Gyzmo").gameObject;
         float scale = distance / 5.5f;
+        if (scale < 1) scale = 1;
         cameraDistance = scale;
 
         gizmo.transform.localScale = new Vector3(scale, scale, scale);

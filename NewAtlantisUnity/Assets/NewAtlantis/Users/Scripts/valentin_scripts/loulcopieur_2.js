@@ -6,4 +6,5 @@ function OnTriggerStay() {
 	target.cswitch = false;
 }
 function OnTriggerExit() {
-    target.cswitch = true; }
+	target.cswitch = true;
+}
