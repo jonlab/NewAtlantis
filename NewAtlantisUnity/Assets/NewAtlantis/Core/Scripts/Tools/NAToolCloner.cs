@@ -29,14 +29,15 @@ public class NAToolCloner : NAToolBase {
 		//int r = (int)(Random.value * (NA.instanciables.Count));
 		objectName = NA.instanciables[current].name;
 		Vector3 worldforce = transform.rotation * localForce;
+		Vector3 pos = transform.position+transform.forward*distance;
 		if (Network.isServer)
 		{
-			ServerCloneObject(objectName, transform.position+transform.forward*distance, worldforce, new Vector3(1,0,0)/*colorAvatar*/);
+			ServerCloneObject(objectName, pos, worldforce, new Vector3(1,0,0)/*colorAvatar*/);
 		}
 		else
 		{
 			//we send to the server
-			GetComponent<NetworkView>().RPC("ServerCloneObject", RPCMode.Server, objectName, transform.position+transform.forward*distance, worldforce, new Vector3(1,0,0)/*colorAvatar*/);
+			GetComponent<NetworkView>().RPC("ServerCloneObject", RPCMode.Server, objectName, pos, worldforce, new Vector3(1,0,0)/*colorAvatar*/);
 		}
 	}
 
@@ -96,7 +97,10 @@ public class NAToolCloner : NAToolBase {
 	}
 	public override void DrawExtendedGUI(Vector3 pos2d)
 	{
-		GUI.DrawTexture(new Rect(pos2d.x-32, pos2d.y-64, 64, 64), preview);
+		if (preview != null)
+		{
+			GUI.DrawTexture(new Rect(pos2d.x-32, pos2d.y-64, 64, 64), preview);
+		}
 		GUI.Label(new Rect(pos2d.x-200, pos2d.y-15, 400, 30), NA.instanciables[current].name);
 
 	}
@@ -127,6 +131,14 @@ public class NAToolCloner : NAToolBase {
 		}
 		clone = GameObject.Instantiate(model, Vector3.zero, Quaternion.identity) as GameObject;
 		LogManager.LogWarning("clone " + name);
+
+		//remove previous network view
+		NetworkView nViewOriginal = clone.GetComponent<NetworkView>();
+		if (nViewOriginal)
+		{
+			NetworkView.Destroy(nViewOriginal);
+		}
+
 		NetworkView nView = clone.AddComponent<NetworkView>();
 		nView.viewID = viewID;
 		

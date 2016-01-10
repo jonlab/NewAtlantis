@@ -236,6 +236,8 @@ public class NAObject
 		            */
 
 		            
+					//jonathan : removed on 1/9/2016
+					/*
 					NetworkSync nSync 		= go.GetComponent<NetworkSync>();
 					nSync.Prepare(); //client and server (for now, just stops all AudioSources)
 
@@ -250,6 +252,7 @@ public class NAObject
 					{
 						nSync.AttachNetworkViews();
 					}
+					*/
 				}
 			}
 		}
