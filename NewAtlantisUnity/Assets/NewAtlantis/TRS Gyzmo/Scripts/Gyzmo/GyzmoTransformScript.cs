@@ -23,6 +23,8 @@ public class GyzmoTransformScript : MonoBehaviour {
 
 	Quaternion initXrotation, initYrotation, initZrotation;
 
+    
+
 	// Use this for initialization
 	void Start () {
 	
@@ -122,13 +124,19 @@ public class GyzmoTransformScript : MonoBehaviour {
 		transform.FindChild ("Modes").gameObject.SetActive (true);
 		transform.FindChild ("Selector").gameObject.SetActive (true);
 
+      //  if (parentNode != null) Destroy(parentNode);
+
+   
 
 		//METTRE LES GYZMOS DE ROTATION EN ENFANT DU POINT
 		gyzmos [3].transform.parent = point.transform;
-		gyzmos [4].transform.parent = point.transform;
-		gyzmos [5].transform.parent = point.transform;
+        gyzmos [4].transform.parent = point.transform;
+        gyzmos [5].transform.parent = point.transform;
 
-		Quaternion qua = o.transform.rotation;
+        //  parentNode.transform.parent = point.transform;
+
+
+        Quaternion qua = o.transform.rotation;
 		//gyzmos [3].transform.rotation *= Quaternion.Euler (qua.eulerAngles);
 		gyzmos [4].transform.rotation *= Quaternion.Euler (qua.eulerAngles);
 		gyzmos [5].transform.rotation = gyzmos [4].transform.rotation ;
@@ -137,31 +145,56 @@ public class GyzmoTransformScript : MonoBehaviour {
 		gyzmos[3].transform.Rotate (new Vector3(0,0,90));
 
 
+        NormalizeScaling();
+        /*
+       for(int i = 3; i <= 5; i++)
+        {
+            NormalizeScaling normalizeScaling = gyzmos[i].GetComponent<NormalizeScaling>();
+            normalizeScaling.NormalizeScale();
+        }*/
 	}
 
-	public void endGizmoAttachement(){
+    public void endGizmoAttachement()
+    {
 
-		// RECUPERER LES ROTATIONS VALUES DANS LE GIZMO
+        // RECUPERER LES ROTATIONS VALUES DANS LE GIZMO
 
-		// DESACTIVER TOUS LES ENFANTS DU GIZMO
+        // DESACTIVER TOUS LES ENFANTS DU GIZMO
 
-		gyzmos [3].transform.parent = transform;
-		gyzmos [4].transform.parent = transform;
-		gyzmos [5].transform.parent = transform;
-
-
-		for(int i = 0 ; i < transform.childCount;i++){
-			transform.GetChild(i).gameObject.SetActive(false);
-
-		}
+        gyzmos[3].transform.parent = transform;
+        gyzmos[4].transform.parent = transform;
+        gyzmos[5].transform.parent = transform;
 
 
-	}
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            transform.GetChild(i).gameObject.SetActive(false);
 
+        }
 
+    }
 
+    public void NormalizeScaling()
+    {
+        for (int i = 3; i <= 5; i++)
+        {
+            NormalizeScaling normalizeScaling = gyzmos[i].GetComponent<NormalizeScaling>();
+            normalizeScaling.NormalizeScale();
+        }
 
-	void setActive(int[] valuesToActive){
+    }
+
+    public void NormalizeScaling(float ratio)
+    {
+        for (int i = 3; i <= 5; i++)
+        {
+            NormalizeScaling normalizeScaling = gyzmos[i].GetComponent<NormalizeScaling>();
+            normalizeScaling.NormalizeScale(ratio);
+        }
+
+    }
+
+    void setActive(int[] valuesToActive){
 
 		for (int i = 0; i < gyzmos.Length; i++)	gyzmos[i].SetActive(false);
 		for (int i = 0; i < valuesToActive.Length; i++) gyzmos[valuesToActive[i]].SetActive(true);
@@ -192,6 +225,7 @@ public class GyzmoTransformScript : MonoBehaviour {
 
 		return a;
 	}
+
 
 
 }

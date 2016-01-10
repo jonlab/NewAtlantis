@@ -33,8 +33,11 @@ public class SelectorScript : MonoBehaviour {
 	Quaternion saveRotation;
 
 	TRS_Gizmo trs;
+    ScaleCamera scaleCamera;
 
-	public void setPoint(GameObject o){
+    int modeValue;
+
+    public void setPoint(GameObject o){
 		point = o;
 	}
 
@@ -43,6 +46,8 @@ public class SelectorScript : MonoBehaviour {
 		saveRotation = transform.rotation;
 		trs = (TRS_Gizmo)transform.parent.transform.parent.GetComponent (typeof(TRS_Gizmo));
 
+        GameObject gizmoCamera = transform.parent.transform.parent.Find("Main Camera").gameObject;
+        scaleCamera = gizmoCamera.GetComponent<ScaleCamera>();
 
 	}
 
@@ -92,7 +97,7 @@ public class SelectorScript : MonoBehaviour {
 			if(dimensionType == 2)gapValue = getXgap();
 
 			GetMode mode = (GetMode)selected.GetComponent(typeof(GetMode));
-			int modeValue = mode.returnMode();
+			modeValue = mode.returnMode();
 
 			//TRANSLATE MODE
 			if(modeValue == 0){
@@ -105,11 +110,11 @@ public class SelectorScript : MonoBehaviour {
 					rightDirection*=-1;
 					//orwardDirection*=-1;
 				}
-
+                float distanceScale = scaleCamera.returnDistance() / 2;
 			
-				if(dimensionType == 0)TranslateObject(rightDirection);
-				if(dimensionType == 1)TranslateObject(upDirection);
-				if(dimensionType == 2)TranslateObject(-forwardDirection);
+				if(dimensionType == 0)TranslateObject(rightDirection * distanceScale);
+				if(dimensionType == 1)TranslateObject(upDirection * distanceScale);
+				if(dimensionType == 2)TranslateObject(-forwardDirection * distanceScale);
 
 
 			}
@@ -161,10 +166,18 @@ public class SelectorScript : MonoBehaviour {
 
 			saveRotation = point.transform.rotation;
 		
+            if(modeValue == 2)
+            {
+                GyzmoTransformScript gyzmo = trs.returnGyzmoTransform();
+                //trs
+                gyzmo.NormalizeScaling();
+            }
+
+
 			if(selected!=null){
-				myCamera.transform.Translate(currentTranslation);
-				currentTranslation = new Vector3(0,0,0);
-				myCamera.transform.LookAt(point.transform.position);
+				//myCamera.transform.Translate(currentTranslation);
+			currentTranslation = new Vector3(0,0,0);
+			//	myCamera.transform.LookAt(point.transform.position);
 
 				unselect();
 
