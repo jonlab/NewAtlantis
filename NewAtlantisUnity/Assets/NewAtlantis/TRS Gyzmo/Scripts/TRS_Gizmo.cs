@@ -3,6 +3,7 @@ using System.Collections;
 
 public class TRS_Gizmo : MonoBehaviour {
 
+////////
 	public GameObject gizmoCamera;
 	public GameObject gizmoChild;
 
