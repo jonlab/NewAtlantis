@@ -30,7 +30,7 @@ public class NAToolSpawner : NAToolBase {
 		Vector3 worldforce = transform.rotation * localForce;
 		if (Network.isServer)
 		{
-			ServerSpawnObject(objectName, transform.position+transform.forward*distance, worldforce, new Vector3(1,0,0)/*colorAvatar*/);
+			ServerSpawnObject(objectName, transform.position+transform.forward*distance, worldforce, NA.colorAvatar);
 		}
 		else
 		{
@@ -90,22 +90,30 @@ public class NAToolSpawner : NAToolBase {
 	void SpawnObject(string name, NetworkViewID viewID, Vector3 location, Vector3 forward, Vector3 color) 
 	{
 		GameObject clone = null;
-		if (name == "cube")
+		/*if (name == "cube")
 		{
 			clone = GameObject.Instantiate(goPrefabCubeSimple, Vector3.zero, Quaternion.identity) as GameObject;
 			//clone = GameObject.CreatePrimitive(PrimitiveType.Cube);
 		}
-		else if (name == "sphere")
+		else */
+		if (name == "sphere")
 		{
 			clone = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-			clone.transform.localScale = Vector3.one*0.2f;
+			clone.transform.localScale = Vector3.one*1f;
 			AudioSource audio = clone.AddComponent<AudioSource>();
-			audio.spatialBlend = 1.0f;
+			clone.AddComponent<NAPhysicsAudioSource>();
+			clone.AddComponent<NAReverbEffector>();
 			NAAudioSynthFM fm = clone.AddComponent<NAAudioSynthFM>();
+			PhysicMaterial m = new PhysicMaterial();
+			m.bounciness = 1f;
+			m.bounceCombine = PhysicMaterialCombine.Maximum;
+			Collider c = clone.GetComponent<Collider>();
+			c.material = m;
+
 			fm.duration = 1f;
-			fm.CarrierFrequency = 20f+Random.value*4000f;
-			fm.ModulatorFrequency = Random.value*40f;
-			fm.ModulationAmount = Random.value*0.2f;
+			fm.CarrierFrequency = 20f+Random.value*1000f;
+			fm.ModulatorFrequency = Random.value*10f;
+			fm.ModulationAmount = Random.value*0.3f;
 			clone.AddComponent<NAPlayOnCollide>();
 			audio.playOnAwake = false;
 			fm.Compute();
@@ -119,24 +127,23 @@ public class NAToolSpawner : NAToolBase {
 			clone = GameObject.CreatePrimitive(PrimitiveType.Cube);
 			clone.transform.position = location;
 			clone.transform.localScale = new Vector3(1f,0.4f, 0.6f);
-			clone.GetComponent<Renderer>().material.color = Color.red;
 			AudioSource src = clone.AddComponent<AudioSource>();
 			src.playOnAwake = false;
-			//clone.AddComponent<NAPlayOnCollide>();
+			clone.AddComponent<NAPlayOnCollide>();
 			clone.AddComponent<NAAudioRecorder>();
-			NA.DecorateAudioSource(src);
-			clone.AddComponent<NetworkSync>();
+			NA.DecorateAudioSource(src); //FIXME
+			clone.AddComponent<NetworkSync>(); //FIXME
 		}
 		else
 		{
-			clone = GameObject.CreatePrimitive(PrimitiveType.Cube);
+			//cas général
+			clone = GameObject.Instantiate(goPrefabCubeSimple, Vector3.zero, Quaternion.identity) as GameObject;
+			//clone = GameObject.CreatePrimitive(PrimitiveType.Cube);
 		}
 		
 		NetworkView nView = clone.AddComponent<NetworkView>();
 		nView.viewID = viewID;
-		
 		clone.transform.position = location;
-		
 		MeshRenderer renderer = clone.GetComponent<MeshRenderer>();
 		if (renderer != null)
 		{
@@ -149,6 +156,7 @@ public class NAToolSpawner : NAToolBase {
 			Rigidbody rb = clone.AddComponent<Rigidbody>();
 			rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
 			rb.AddForce(forward*200f);
+
 		}
 		else
 		{

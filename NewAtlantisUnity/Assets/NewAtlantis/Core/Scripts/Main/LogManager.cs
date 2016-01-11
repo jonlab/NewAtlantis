@@ -12,7 +12,7 @@ public class LogManager : MonoBehaviour
 	public static bool bGUI = false;
 	public static Texture2D texWhite = null;
 	public static List<LogEntry> logs = new List<LogEntry>();
-
+	private static LogEntry lastError = null;
 	public static float timer = 0f;
 	// Use this for initialization
 	void Start () 
@@ -30,6 +30,11 @@ public class LogManager : MonoBehaviour
 			bGUI = !bGUI;
 		}
 	
+	}
+
+	public static LogEntry GetLastError()
+	{
+		return lastError;
 	}
 
 	void OnGUI()
@@ -114,5 +119,6 @@ public class LogManager : MonoBehaviour
 		e.str = str;
         logs.Add (e);
 		timer = 0f;
+		lastError = e;
     }
 }

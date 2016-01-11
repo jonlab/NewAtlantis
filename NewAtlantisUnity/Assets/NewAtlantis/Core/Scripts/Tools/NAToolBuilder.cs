@@ -44,7 +44,10 @@ public class NAToolBuilder : NAToolBase
 
 	public override void Maintain() 
 	{
-		current.transform.position = transform.position+transform.forward*distance;
+		if (current != null)
+		{
+			current.transform.position = transform.position+transform.forward*distance;
+		}
 	}
 
 	public override void Release() 

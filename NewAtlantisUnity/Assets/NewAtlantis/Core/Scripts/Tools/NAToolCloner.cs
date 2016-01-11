@@ -26,6 +26,8 @@ public class NAToolCloner : NAToolBase {
 
 	public override void Action() 
 	{
+		if (NA.instanciables.Count == 0)
+			return;
 		//int r = (int)(Random.value * (NA.instanciables.Count));
 		objectName = NA.instanciables[current].name;
 		Vector3 worldforce = transform.rotation * localForce;
@@ -60,6 +62,8 @@ public class NAToolCloner : NAToolBase {
 	//manages the Extended control
 	public override void ExtendedControl()
 	{
+		if (NA.instanciables.Count == 0)
+			return;
 		float x1 = NAInput.GetAxis(NAControl.MoveHorizontal);
 
 		float padx = NAInput.GetAxis(NAControl.PadHorizontal);
@@ -75,6 +79,7 @@ public class NAToolCloner : NAToolBase {
 		}
 		else if (NAInput.PadHorizontalPressed && padx < 0)
 		{
+			
 			current--;
 			if (current < 0)
 				current = current+NA.instanciables.Count;
@@ -84,6 +89,8 @@ public class NAToolCloner : NAToolBase {
 
 	private void Preview()
 	{
+		if (NA.instanciables.Count == 0)
+			return;
 		string strName = NA.instanciables[current].name;
 		GameObject model = null;
 		foreach (NAObject o in NA.instanciables)
@@ -98,6 +105,8 @@ public class NAToolCloner : NAToolBase {
 	}
 	public override void DrawExtendedGUI(Vector3 pos2d)
 	{
+		if (NA.instanciables.Count == 0)
+			return;
 		if (preview != null)
 		{
 			GUI.DrawTexture(new Rect(pos2d.x-32, pos2d.y-64, 64, 64), preview);
