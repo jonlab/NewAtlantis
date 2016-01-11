@@ -55,7 +55,9 @@ public class NASyncAnimationWithAudio : MonoBehaviour {
 			Animator[] animators = GetComponentsInChildren<Animator>();
 			foreach (Animator animator in animators) 
 			{
-				//animator.
+				//Debug.Log("change time : " + time_animation);
+				//animator.playbackTime = 0;
+				animator.ForceStateNormalizedTime(time_animation);
 			}
 		}
 	}

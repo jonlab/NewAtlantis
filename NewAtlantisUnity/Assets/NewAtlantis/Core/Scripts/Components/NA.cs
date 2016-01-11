@@ -486,4 +486,14 @@ public static class NA
 		return screenShot;
 	}
 
+	public static GameObject PickObject(Ray ray, out RaycastHit hit)
+	{
+		if (Physics.Raycast(ray, out hit))
+		{
+			return hit.collider.gameObject;
+		}
+		hit = new RaycastHit();
+		return null;
+	}
+
 }

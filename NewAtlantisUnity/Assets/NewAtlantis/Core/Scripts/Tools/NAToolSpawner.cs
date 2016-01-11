@@ -28,14 +28,24 @@ public class NAToolSpawner : NAToolBase {
 	public override void Action() 
 	{
 		Vector3 worldforce = transform.rotation * localForce;
+		Vector3 position = transform.position+transform.forward*distance;
+		//test
+		RaycastHit hit;
+		GameObject go = NA.PickObject(new Ray(transform.position, transform.forward), out hit);
+		if (go != null)
+		{
+			position = hit.point;
+			//worldforce = Vector3.zero;
+		}
+
 		if (Network.isServer)
 		{
-			ServerSpawnObject(objectName, transform.position+transform.forward*distance, worldforce, NA.colorAvatar);
+			ServerSpawnObject(objectName, position, worldforce, NA.colorAvatar);
 		}
 		else
 		{
 			//we send to the server
-			GetComponent<NetworkView>().RPC("ServerSpawnObject", RPCMode.Server, objectName, transform.position+transform.forward*distance, worldforce, new Vector3(1,0,0)/*colorAvatar*/);
+			GetComponent<NetworkView>().RPC("ServerSpawnObject", RPCMode.Server, objectName, position, worldforce, new Vector3(1,0,0)/*colorAvatar*/);
 		}
 	}
 
