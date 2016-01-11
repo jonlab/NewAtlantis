@@ -42,6 +42,8 @@ public class ScaleCamera : MonoBehaviour {
 
 		}
 
+        if (focusPoint == null) return;
+
         float distance = Vector3.Distance(myCamera.transform.position, focusPoint.transform.position);
 
         GameObject gizmo = transform.parent.Find("Gyzmo").gameObject;

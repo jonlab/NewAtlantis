@@ -33,14 +33,15 @@ public class MouseLook : MonoBehaviour {
 	void Update ()
 	{
 
-        Transform trsGyzmo = GameObject.Find("TRS Gizmo").gameObject.transform;
+        GameObject trsGyzmo = GameObject.Find("TRS Gizmo");
 
         
 
-        GameObject gizmoCamera = trsGyzmo.Find("Main Camera").gameObject;
-
-        if(gizmoCamera!= null)
+      
+        if(trsGyzmo!= null)
         {
+            GameObject gizmoCamera = trsGyzmo.transform.Find("Main Camera").gameObject;
+
             if (gizmoCamera.active == true) return;
 
 

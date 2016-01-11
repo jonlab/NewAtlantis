@@ -62,8 +62,12 @@ public class SelectorScript : MonoBehaviour {
 	}
 	// Update is called once per frame
 	void Update () {
-	
 
+        if (point == null)
+        {
+            trs.stopTRSGizmo();
+            return;
+        }
 
 		if (selected != null && Input.GetMouseButton (0)) {
 
@@ -111,8 +115,8 @@ public class SelectorScript : MonoBehaviour {
 					//orwardDirection*=-1;
 				}
                 float distanceScale = scaleCamera.returnDistance() / 2;
-                // distanceScale = Mathf.Clamp(distanceScale, 1, 6);
-                distanceScale = 1;
+                 distanceScale = Mathf.Clamp(distanceScale, 1, 4);
+                //distanceScale = 1;
 
 				if(dimensionType == 0)TranslateObject(rightDirection * distanceScale);
 				if(dimensionType == 1)TranslateObject(upDirection * distanceScale);
