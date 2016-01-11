@@ -62,8 +62,12 @@ public class SelectorScript : MonoBehaviour {
 	}
 	// Update is called once per frame
 	void Update () {
-	
 
+        if (point == null)
+        {
+            trs.stopTRSGizmo();
+            return;
+        }
 
 		if (selected != null && Input.GetMouseButton (0)) {
 
