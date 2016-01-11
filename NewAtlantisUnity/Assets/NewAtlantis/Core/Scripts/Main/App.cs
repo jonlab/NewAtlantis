@@ -65,6 +65,8 @@ public class App : MonoBehaviour
 	public Font font1;
 	public Font font2;
 	public Font font3;
+
+	LogEntry lastError = null;
 	
 	/*
 	WWW www = null;
@@ -95,7 +97,7 @@ public class App : MonoBehaviour
 	//List<GameObject>	player_objects = new List<GameObject>();
 
 
-	Vector3				colorAvatar = Vector3.zero;
+	//Vector3				colorAvatar = Vector3.zero;
 	string				strPick = "";
 
 
@@ -288,20 +290,7 @@ public class App : MonoBehaviour
     // Use this for initialization
     void Start () 
 	{
-		/*font0 = Font.Instantiate(font);
-		font1 = Font.Instantiate(font);
-		font2 = Font.Instantiate(font);
-		font3 = Font.Instantiate(font);
-		*/
-		//font0.
-
-		//Font.
-		//font0.
-		/*font0.fontSize = 14;
-		font1.fontSize = 20;
-		font2.fontSize = 24;
-		font3.fontSize = 36;
-		*/
+		
 		NA.fonts[0] = font0;
 		NA.fonts[1] = font1;
 		NA.fonts[2] = font2;
@@ -316,16 +305,12 @@ public class App : MonoBehaviour
 		//AssetBundlePreviewGenerator.Test("Bundles/CubeRouge.unity3d");
 		//AssetBundlePreviewGenerator.Test("Bundles/Lobby.unity3d");
 		//AssetBundlePreviewGenerator.Test("Bundles/sea.unity3d");
-
 		//AssetBundlePreviewGenerator.Test("Bundles/object_566998620efb62.87109271.unity3d");
 		//AssetBundlePreviewGenerator.Test("Bundles/object_56699e44b6b8d2.24800951.unity3d");
-
-
 		//AssetBundlePreviewGenerator.Test("Bundles/object_5669cdf72da595.13058200.unity3d");
 		//AssetBundlePreviewGenerator.Test("Bundles/object_5669cde3e8d6c2.73707730.unity3d");
 		//AssetBundlePreviewGenerator.Test("Bundles/object_5669cdf72da595.13058200.unity3d");
 		//AssetBundlePreviewGenerator.Test("Bundles/object_5669cb9c015478.93079789.unity3d");
-
 		//AssetBundlePreviewGenerator.Test("Bundles/sea.unity3d");
 		NA.app 			= this;
 		NA.network 		= GetComponent<NANetwork>();
@@ -334,7 +319,7 @@ public class App : MonoBehaviour
 		Init();
 		NAServer.strLogin 		= PlayerPrefs.GetString("login");
 		NAServer.strPassword 	= PlayerPrefs.GetString("pwd");
-		colorAvatar 	= new Vector3(Random.value, Random.value, Random.value);
+		NA.colorAvatar 	= new Vector3(Random.value, Random.value, Random.value);
 		GameObject.DontDestroyOnLoad(gameObject);
 		refreshHostList();
 		//root of Space objects - must be at the origin
@@ -360,7 +345,7 @@ public class App : MonoBehaviour
 		NA.PausePhysics();
 
 #if UNITY_WEBPLAYER
-		LogManager.LogError("You are in Web Player build settings !");
+		LogManager.LogError("You are in Web Player build settings ! You will not be able to upload files from your computer. Please change your build settings to standalone in File->Build Settings.");
 #endif
 
 
@@ -467,7 +452,7 @@ public class App : MonoBehaviour
 		{
 			//in all cases the current app keeps the avatar
 			//goAvatar = Network.Instantiate(goPrefabAvatar, Vector3.zero, Quaternion.identity, 0) as GameObject;
-			GetComponent<NetworkView>().RPC("SpawnAvatar", RPCMode.AllBuffered, Network.AllocateViewID(), colorAvatar, NAServer.strLogin);
+			GetComponent<NetworkView>().RPC("SpawnAvatar", RPCMode.AllBuffered, Network.AllocateViewID(), NA.colorAvatar, NAServer.strLogin);
 		}
 		else
 		{
@@ -752,25 +737,28 @@ public class App : MonoBehaviour
 
 					t.Action();
 				}
+				if (NAInput.GetControlDown(NAControl.Action))
+				{
+					t.Press();
+				}
+				else if (NAInput.GetControl(NAControl.Action))
+				{
+					t.Maintain();
+				}
+				else if (NAInput.GetControlUp(NAControl.Action))
+				{
+					t.Release();
+				}
 
 
+
+
+
+
+
 			}
 
-			if (NAInput.GetControlDown(NAControl.Action))
-			{
-				NAToolBase t = tools[current_tool];
-				t.Press();
-			}
-			else if (NAInput.GetControl(NAControl.Action))
-			{
-				NAToolBase t = tools[current_tool];
-				t.Maintain();
-			}
-			else if (NAInput.GetControlUp(NAControl.Action))
-			{
-				NAToolBase t = tools[current_tool];
-				t.Release();
-			}
+
 
 			//camera change
 			if (NAInput.GetControlDown(NAControl.Camera))
@@ -817,11 +805,11 @@ public class App : MonoBehaviour
 			GetComponent<NetworkView>().RPC("ServerSpawnObject", RPCMode.AllBuffered, "cube", gameObject.transform.position+selectedCamera.transform.forward, selectedCamera.transform.forward, colorAvatar);
         }
 		*/
-		if (Input.GetKeyDown(KeyCode.T))// || Input.GetButtonDown("Fire3"))
+		/*if (Input.GetKeyDown(KeyCode.T))// || Input.GetButtonDown("Fire3"))
 		{
 			GetComponent<NetworkView>().RPC("ServerSpawnObject", RPCMode.AllBuffered, "trunk", gameObject.transform.position+selectedCamera.transform.forward, selectedCamera.transform.forward, colorAvatar);
 		}
-
+		*/
 		UnactivateCameras (); //FIXME
 
 		/*
@@ -1300,6 +1288,31 @@ public class App : MonoBehaviour
 			}
 
 		}
+
+		/*if (lastError == null)
+		{
+			lastError = LogManager.GetLastError();
+		}
+		*/
+		LogEntry currentError = LogManager.GetLastError();
+		if (currentError != null && currentError != lastError)
+		{
+			GUI.skin.label.alignment= TextAnchor.UpperCenter;
+			GUI.color = new Color(0,0,0,0.5f);
+			GUI.DrawTexture (new Rect (Screen.width/2-200, Screen.height/2-100, 400, 140), texWhite);
+			GUI.color = Color.white;
+			GUI.Label(new Rect(Screen.width/2-150, Screen.height/2-100, 300, 100), currentError.str);
+
+			if (GUI.Button(new Rect(Screen.width/2-50, Screen.height/2, 100, 30), "OK"))
+			{
+				lastError = currentError;
+			}
+			GUI.skin.label.alignment= TextAnchor.UpperLeft;
+			return;
+
+		}
+
+
 		if (!bGUI)
 		{
 			return;
@@ -1401,7 +1414,7 @@ public class App : MonoBehaviour
 			tabx += 80;
 		}
 
-
+		GUI.color = Color.white;
 		if (GUI.Button(new Rect(tabx+80, 0, 200, 30), "Fix all materials"))
 		{
 			NA.PatchAllMaterials(goRootSpace);
@@ -1537,7 +1550,10 @@ public class App : MonoBehaviour
 
     void OnDisconnectedFromServer(NetworkDisconnection info) 
 	{
-		LogManager.LogWarning("You have been disconnected from the server.");
+		LogManager.LogError("You have been disconnected from the server.");
+		Disconnect();
+		refreshHostList();
+
 		//Called on client during disconnection from server, but also on the server when the connection has disconnected.
 		PlayEvent(10);
 		if (Network.isServer)
@@ -2096,9 +2112,6 @@ public class App : MonoBehaviour
 			{
 				GUILayout.Label( "No servers running, you can start one below !" );
 			}
-			
-
-
 		}
 		GUILayout.EndScrollView();
 		GUI.color = Color.white;
@@ -2109,6 +2122,7 @@ public class App : MonoBehaviour
 			
 			LogManager.Log("try to join " + currentHost.gameName + " at " + currentHost.ip + ":" + currentHost.port);
 			Network.Connect(currentHost);
+			tab = AppTab.None; //hide windows
 			//Network.Connect(
 		}
 		GUI.color = !Network.isClient ? Color.gray : Color.white;
@@ -2763,24 +2777,47 @@ public class App : MonoBehaviour
 		GUILayout.BeginHorizontal();
 		GUILayout.TextArea("New Atlantis is a shared (multi-user) online virtual world dedicated to audio experimentation and practice. Unlike most online worlds where image is the primary concern, in New Atlantis sound comes first.");
 		GUILayout.EndHorizontal();
+
 		GUILayout.BeginHorizontal();
-		GUILayout.Label("Mouse drag : look");
+		GUILayout.Label("Left analog / Arrow keys : move forward/backward/sidewards");
 		GUILayout.EndHorizontal();
+
 		GUILayout.BeginHorizontal();
-		GUILayout.Label("Arrow keys : move");
+		GUILayout.Label("Right analog / Mouse with left drag : View (look at)");
 		GUILayout.EndHorizontal();
+
 		GUILayout.BeginHorizontal();
-		GUILayout.Label("Space : clap");
+		GUILayout.Label("Cross Button / Space : Jump / fly mode / walk mode / run");
 		GUILayout.EndHorizontal();
+
 		GUILayout.BeginHorizontal();
-		GUILayout.Label("Return : Throw cube");
+		GUILayout.Label("Square Button / Return : Action");
 		GUILayout.EndHorizontal();
+
 		GUILayout.BeginHorizontal();
-		GUILayout.Label("T : Create trunk");
+		GUILayout.Label("Triangle Button / C : Change camera");
 		GUILayout.EndHorizontal();
+
 		GUILayout.BeginHorizontal();
-		GUILayout.Label("S : Create sphere");
+		GUILayout.Label("Circle Button / M : Toggle GUI");
 		GUILayout.EndHorizontal();
+
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("DPAD / mouse clic on tool : Select current tool");
+		GUILayout.EndHorizontal();
+
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("L1 : Interact with interactive objects");
+		GUILayout.EndHorizontal();
+
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("R1 : Current tool extended controls");
+		GUILayout.EndHorizontal();
+
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("L : Toggle Log on/off");
+		GUILayout.EndHorizontal();
+
 		GUILayout.BeginHorizontal();
 		GUILayout.Label("P : Put selection at mouse pos");
 		GUILayout.EndHorizontal();

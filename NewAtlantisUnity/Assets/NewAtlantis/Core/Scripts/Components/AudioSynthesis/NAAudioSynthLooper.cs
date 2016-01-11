@@ -61,7 +61,7 @@ public class NAAudioSynthLooper : NAObjectBase
 		string strDisplay = name;
 		int x = (int)(pos2d.x*Screen.width);
 		int y = (int)(Screen.height-pos2d.y*Screen.height);
-		GUI.Box (new Rect(x,y,200,100), "Granulator");
+		GUI.Box (new Rect(x,y,200,100), "Looper");
 		GUI.Label(new Rect(x,y+30,50,20), "pos");
 		GUI.Label(new Rect(x,y+60,50,20), "duration");
 		pos = GUI.HorizontalSlider(new Rect(x+50,y+30,150,20), pos, 0f, 1f);

@@ -25,6 +25,8 @@ public class NAPlayOnCollide : MonoBehaviour
 
 	void OnCollisionEnter(Collision collision) 
 	{
+		if (NA.isClient())
+			return;
 		//volume is relative to relative velocity
 		//float magnitude = collision.relativeVelocity.magnitude;
 		float magnitude = curveVolume.Evaluate(collision.relativeVelocity.magnitude);
@@ -61,6 +63,8 @@ public class NAPlayOnCollide : MonoBehaviour
 	}
 	void OnCollisionStay(Collision collision) 
 	{
+		if (NA.isClient())
+			return;
 		AudioSource audio = target.GetComponent<AudioSource>();
 		float s = 0f;
 		if (PitchOnStay && audio != null)
@@ -71,6 +75,8 @@ public class NAPlayOnCollide : MonoBehaviour
 
 	void OnCollisionExit(Collision collision) 
 	{
+		if (NA.isClient())
+			return;
 		AudioSource audio = target.GetComponent<AudioSource>();
 		if (StopOnExit && audio != null)
 		{

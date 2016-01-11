@@ -15,6 +15,8 @@ public static class NA
 	public static Space PreviousSpace = null;
 	public static Font[] fonts = new Font[4];
 
+	public static Vector3 colorAvatar;
+
 	public static List<NAObject>	instanciables = new List<NAObject>();
 
 	public static GameObject Instantiate(Object prefab, Vector3 position, Quaternion rotation)
@@ -273,7 +275,7 @@ public static class NA
                 }
 				else
 				{
-					LogManager.LogError("can't find shader error : " + m.shader.name);
+					LogManager.LogWarning("can't find shader : " + m.shader.name);
 				}
 			}
 			/*foreach (Material m in r.materials)

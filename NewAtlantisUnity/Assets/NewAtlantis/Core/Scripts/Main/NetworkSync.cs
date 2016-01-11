@@ -211,15 +211,18 @@ public class NetworkSync : MonoBehaviour
 	[RPC]
 	void AttachNetworkView(string path, NetworkViewID viewID)
 	{
+		LogManager.Log("received AttachNetworkView " + path + " id=" + viewID);
 		//FIXME : when duplicate objects (duplicate path), return the first one
 		GameObject goChild = GameObject.Find(path);
 		if (goChild)
 		{
 			NetworkView nView 		= goChild.AddComponent<NetworkView>();
 			nView.viewID 			= viewID;
+
 		}
 		else
 		{
+			LogManager.LogWarning("Can't find GameObject " + path);
 			//Debug.Log("Can't find GameObject " + path);
 			//postpone attachment (client is not ready)
 			try
@@ -228,7 +231,7 @@ public class NetworkSync : MonoBehaviour
 			}
 			catch (System.Exception e)
 			{
-				Debug.LogError("Exception : network view on object " + path + " ID=" + viewID);
+				LogManager.LogError("Exception : network view on object " + path + " ID=" + viewID);
 			}
 		}
 	}
@@ -242,6 +245,7 @@ public class NetworkSync : MonoBehaviour
 			GameObject goChild = GameObject.Find(path);
 			if (goChild)
             {
+				LogManager.Log("NetworkView attached at " + path + " with id " + viewID);
 				NetworkView nView 		= goChild.AddComponent<NetworkView>();
 				nView.viewID 			= viewID;
 
@@ -249,7 +253,7 @@ public class NetworkSync : MonoBehaviour
 			else
 			{
 
-				Debug.Log("Can't find GameObject after postponing : " + path);
+				LogManager.LogError("Can't find GameObject after postponing : " + path);
 			}
 
         }

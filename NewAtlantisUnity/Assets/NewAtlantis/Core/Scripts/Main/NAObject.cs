@@ -45,7 +45,7 @@ public class NAObject
 		NetworkView nView 			= go.AddComponent<NetworkView>();
 		nView.viewID 				= this.NetworkViewId;
 		NetworkSync nSync 			= go.AddComponent<NetworkSync>();
-
+		//nView.SetScope
 		//if (name.Contains("Coffee") || name.Contains("Radio") || name.Contains("Object"))
 		{
 			LogManager.Log("add " + name + " to the instanciables.");
@@ -254,6 +254,7 @@ public class NAObject
 						nSync.AttachNetworkViews();
 					}
 					*/
+
 				}
 			}
 		}
@@ -301,7 +302,9 @@ public class NAObject
 		//Debug.Log ("PrepareAsServer " + path);
 		//NetworkView nView 		= root.AddComponent<NetworkView>();
 		//nView.viewID 			= Network.AllocateViewID();
-		go.GetComponent<NetworkView>().RPC("AttachNetworkView", RPCMode.AllBuffered, path, Network.AllocateViewID());
+		NetworkViewID id = Network.AllocateViewID();
+		LogManager.Log("PrepareAsServer " + path + " id=" + id);
+		go.GetComponent<NetworkView>().RPC("AttachNetworkView", RPCMode.AllBuffered, path, id);
 		for (int i=0;i<root.transform.childCount;++i)
 		{
 			GameObject goChild = root.transform.GetChild(i).gameObject;
