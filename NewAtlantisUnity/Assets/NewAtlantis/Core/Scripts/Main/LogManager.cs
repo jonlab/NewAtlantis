@@ -14,6 +14,7 @@ public class LogManager : MonoBehaviour
 	public static List<LogEntry> logs = new List<LogEntry>();
 	private static LogEntry lastError = null;
 	public static float timer = 0f;
+	private Vector2 scrollPos 			= Vector2.zero;
 	// Use this for initialization
 	void Start () 
 	{
@@ -41,10 +42,12 @@ public class LogManager : MonoBehaviour
 	{
 		if (bGUI)
 		{
+			
 			GUI.color = new Color(0,0,0,0.5f);
 			GUI.DrawTexture(new Rect(0,100,Screen.width, Screen.height-200), texWhite);
 			GUI.color = Color.white;
-			int count = (Screen.height-250)/12;
+			//int count = (Screen.height-250)/12;
+			int count = 2000/12;
 			int start = logs.Count-count;
 			int end = logs.Count-1;
 			start = Mathf.Max (start, 0);
@@ -53,10 +56,15 @@ public class LogManager : MonoBehaviour
 			if (GUI.Button (new Rect(0,y,100,30), "clear"))
 			{
 				logs.Clear();
+				return;
 			}
-			y = 150;
 			if (logs.Count == 0)
 				return;
+			y = 150;
+			scrollPos = GUI.BeginScrollView(new Rect(0, 150, Screen.width, Screen.height-200-100), scrollPos, new Rect(0,0,Screen.width-110, 2000));
+			if (logs.Count == 0)
+				return;
+			y = 0;
 			for (int i=start;i<=end;++i)
 			{
 				LogEntry e = logs[i];
@@ -69,6 +77,7 @@ public class LogManager : MonoBehaviour
 				GUI.Label(new Rect(0, y, Screen.width, 30), e.str);
 				y += 12;
 			}
+			GUI.EndScrollView();
 		}
 		else
 		{

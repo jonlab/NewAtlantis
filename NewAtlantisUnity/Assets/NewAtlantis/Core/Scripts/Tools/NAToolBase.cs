@@ -85,6 +85,7 @@ public class NAToolBase : MonoBehaviour
 		{
 			GUI.skin.label.alignment = TextAnchor.MiddleCenter;
 			DrawExtendedGUI(new Vector3(Screen.width/2, Screen.height-80, 0));
+			GUI.skin.label.alignment = TextAnchor.UpperLeft;
 		}
 	}
 

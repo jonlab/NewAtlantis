@@ -36,7 +36,7 @@ public class NAServer
 			if (wwwPost.error != null)
 			{
 				Debug.Log (wwwPost.error);
-				LogManager.LogError("HTTP ERROR");
+				LogManager.LogError("HTTP ERROR - please check your internet connection.");
 				wwwPost.Dispose();
 				wwwPost = null;
 				//return -1;

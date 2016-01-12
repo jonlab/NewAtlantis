@@ -348,6 +348,11 @@ public class App : MonoBehaviour
 		LogManager.LogError("You are in Web Player build settings ! You will not be able to upload files from your computer. Please change your build settings to standalone in File->Build Settings.");
 #endif
 
+		if (Screen.height < 768)
+		{
+			LogManager.LogError("Height < 768 (" + Screen.height + ")");
+		}
+
 
         /*
 
@@ -630,7 +635,7 @@ public class App : MonoBehaviour
 					nx = (nx+1)%6;
 					//current_tool = (current_tool + 1)%tools.Length;
 					current_tool = ny*6+nx;
-					current_tool = Mathf.Min(current_tool, tools.Length-1);
+					current_tool = Mathf.Clamp(current_tool, 0, tools.Length-1);
 					SetCurrentTool(tools[current_tool]);
 				}
 				else if (padx < 0 && NAInput.PadHorizontalPressed)
@@ -640,6 +645,7 @@ public class App : MonoBehaviour
 
 					//current_tool = (current_tool + tools.Length-1)%tools.Length;
 					current_tool = ny*6+nx;
+					current_tool = Mathf.Clamp(current_tool, 0, tools.Length-1);
 					SetCurrentTool(tools[current_tool]);
 					
 				}
@@ -650,6 +656,7 @@ public class App : MonoBehaviour
 					ny = (ny+1) % linecount;
 					//current_tool = (current_tool + 6)%tools.Length;
 					current_tool = ny*6+nx;
+					current_tool = Mathf.Clamp(current_tool, 0, tools.Length-1);
 					SetCurrentTool(tools[current_tool]);
 				}
 				else if (pady < 0 && NAInput.PadVerticalPressed)
@@ -658,6 +665,7 @@ public class App : MonoBehaviour
 					ny = (ny+linecount-1) % linecount;
 					//current_tool = (current_tool + tools.Length-6)%tools.Length;
 					current_tool = ny*6+nx;
+					current_tool = Mathf.Clamp(current_tool, 0, tools.Length-1);
 					SetCurrentTool(tools[current_tool]);
 
 				}
@@ -933,7 +941,8 @@ public class App : MonoBehaviour
 	//Parse incoming server XML
 	public void ParseXML(string str)
 	{
-		Debug.Log("parsing XML...");
+
+		LogManager.Log("parsing XML from server.");
 		xml = new XmlDocument();
 		xml.XmlResolver = null;
 		try
@@ -1172,6 +1181,30 @@ public class App : MonoBehaviour
 			GUI.matrix = Matrix4x4.Scale(Vector3.one * scale);
 		}
 
+		LogEntry currentError = LogManager.GetLastError();
+		if (currentError != null && currentError != lastError)
+		{
+			GUI.skin.label.alignment= TextAnchor.UpperCenter;
+			GUI.color = new Color(0,0,0,0.5f);
+			GUI.DrawTexture (new Rect (Screen.width/2-200, Screen.height/2-100, 400, 140), texWhite);
+			GUI.color = Color.white;
+			GUI.Label(new Rect(Screen.width/2-150, Screen.height/2-100, 300, 100), currentError.str);
+
+			if (GUI.Button(new Rect(Screen.width/2-50, Screen.height/2, 100, 30), "OK"))
+			{
+				lastError = currentError;
+			}
+			GUI.skin.label.alignment= TextAnchor.UpperLeft;
+			return;
+
+		}
+
+		if (state == AppState.Login)
+		{
+			mGuiWinRectLogin = GUI.Window(1, mGuiWinRectLogin, WindowFunctionLogin, "Login");
+			return;
+		}
+
 		//gestion du panel à la souris avec un dummy button
 		if (GUI.Button(new Rect(Screen.width/2-32,Screen.height-64,64,64), "", new GUIStyle()))
 		{
@@ -1186,7 +1219,8 @@ public class App : MonoBehaviour
 		{
 			float inter = 64+10;
 			GUI.color = new Color(0,0,0,0.2f);
-			GUI.DrawTexture (new Rect (Screen.width/2-inter*3f-5f, Screen.height-256f-inter/2f-5f, inter*6f+10f, inter*3f+10f), texWhite);
+			float panelh = 256+64;
+			GUI.DrawTexture (new Rect (Screen.width/2-inter*3f-5f, Screen.height-panelh-inter/2f-5f, inter*6f+10f, inter*4f+10f), texWhite);
 			GUI.color = Color.white;
 			//we draw the tools
 			int x = 0;
@@ -1194,13 +1228,9 @@ public class App : MonoBehaviour
 			NAToolBase ToolSelected = tools[current_tool];
 			foreach (NAToolBase t in tools)
 			{
-				
 				bool selected = (t==ToolSelected) ? true : false;
-
-				Vector3 pos = new Vector3(Screen.width/2-inter*2.5f+x*inter, Screen.height-256+y*inter, 0);
-
+				Vector3 pos = new Vector3(Screen.width/2-inter*2.5f+x*inter, Screen.height-panelh+y*inter, 0);
 				bool bClicked = t.DrawBaseGUI(pos, selected);
-
 				if (bClicked)
 				{
 					//change tool
@@ -1208,8 +1238,16 @@ public class App : MonoBehaviour
 					{
 						if (t == tools[i])
 						{
-							current_tool = i;
-							SetCurrentTool(tools[current_tool]);
+							if (current_tool == i)
+							{
+								//already selected
+								bToolPanel = false;
+							}
+							else
+							{
+								current_tool = i;
+								SetCurrentTool(tools[current_tool]);
+							}
 						}
 					}
 				}
@@ -1289,28 +1327,8 @@ public class App : MonoBehaviour
 
 		}
 
-		/*if (lastError == null)
-		{
-			lastError = LogManager.GetLastError();
-		}
-		*/
-		LogEntry currentError = LogManager.GetLastError();
-		if (currentError != null && currentError != lastError)
-		{
-			GUI.skin.label.alignment= TextAnchor.UpperCenter;
-			GUI.color = new Color(0,0,0,0.5f);
-			GUI.DrawTexture (new Rect (Screen.width/2-200, Screen.height/2-100, 400, 140), texWhite);
-			GUI.color = Color.white;
-			GUI.Label(new Rect(Screen.width/2-150, Screen.height/2-100, 300, 100), currentError.str);
 
-			if (GUI.Button(new Rect(Screen.width/2-50, Screen.height/2, 100, 30), "OK"))
-			{
-				lastError = currentError;
-			}
-			GUI.skin.label.alignment= TextAnchor.UpperLeft;
-			return;
 
-		}
 
 
 		if (!bGUI)
@@ -1360,12 +1378,8 @@ public class App : MonoBehaviour
 		GUI.Label(new Rect(Screen.width-300, 0, 300, 30), strInteractionMode);
 
 
-		if (state == AppState.Login)
-		{
-			mGuiWinRectLogin = GUI.Window(1, mGuiWinRectLogin, WindowFunctionLogin, "Login");
-			return;
-		}
-		else if (state == AppState.Register)
+
+		if (state == AppState.Register)
 		{
 			mGuiWinRectRegister = GUI.Window(11, mGuiWinRectRegister, WindowFunctionRegister, "Register");
 			return;
@@ -1415,6 +1429,7 @@ public class App : MonoBehaviour
 		}
 
 		GUI.color = Color.white;
+		//remove ?
 		if (GUI.Button(new Rect(tabx+80, 0, 200, 30), "Fix all materials"))
 		{
 			NA.PatchAllMaterials(goRootSpace);
@@ -2938,7 +2953,7 @@ public class App : MonoBehaviour
 
 	void OnFailedToConnect(NetworkConnectionError  err)
 	{
-		LogManager.LogError("Failed to connect : " + err);
+		LogManager.LogWarning("Failed to connect : " + err);
 	}
 
 	void ResetViewerPosition()

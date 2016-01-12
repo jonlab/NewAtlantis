@@ -211,6 +211,12 @@ public class NAObject
 						//NA.DecorateAudioSource(s);
 						s.spatialBlend = 1f;
 						//s.rolloffMode = AudioRolloffMode.Linear;
+
+						if (s.name == "LightBeam")
+						{
+							s.rolloffMode = AudioRolloffMode.Custom;
+							s.maxDistance = 100f;
+						}
 					}
 
 					foreach (AudioListener al in listeners)

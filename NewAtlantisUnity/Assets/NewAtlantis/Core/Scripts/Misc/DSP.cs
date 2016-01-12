@@ -261,7 +261,48 @@ public class DSP
 		
 	}
 	
-	
+	public static float[] Convolve(float[] s1, float[] s2)
+	{
+		int size = s1.Length+s2.Length;
+		float[] output = new float[size];
+		for (int i=0;i<size;++i)
+		{
+			output[i] = 0;
+		}
+		//time domain convolve
+		for (int i=0;i<s1.Length;++i)
+		{
+			for (int j=0;j<s2.Length;++j)
+			{
+				output[i+j] += s1[i]*s2[j];
+			}
+		}
+		return output;
+	}
+
+
+	public static float[] Add(float[] s1, float[] s2)
+	{
+		int size = Mathf.Max(s1.Length,s2.Length);
+
+		float[] output = new float[size];
+		float[] in1 = new float[size];
+		float[] in2 = new float[size];
+		for (int i=0;i<s1.Length;++i)
+		{
+			in1[i] = s1[i];
+		}
+		for (int i=0;i<s2.Length;++i)
+		{
+			in2[i] = s2[i];
+		}
+		for (int i=0;i<size;++i)
+		{
+			output[i] = in1[i]+in2[i];
+		}
+		return output;
+	}
+
 	
 	public static AudioClip Concatenate(AudioClip[] clips)
 	{
@@ -315,6 +356,44 @@ public class DSP
 		mix.SetData(datamix, 0);
 		return mix;
 		
+	}
+
+	public static float[] Extract(AudioClip audioClip, float pos, float duration)
+	{
+		float source_duration 	= audioClip.length;
+		int source_samplerate 	= audioClip.frequency;
+		int source_channels 	= audioClip.channels;
+
+		//get source data
+		int source_samplecount	= audioClip.samples;
+		float[] source_data 	= new float[source_samplecount];
+		audioClip.GetData(source_data, 0);
+
+		float extract_pos = pos * source_duration;
+		float extract_duration = duration*source_duration;
+
+		if (extract_duration == 0)
+			extract_duration = 0.01f;
+		//compute extract coordinates
+		int start = (int)((extract_pos-extract_duration/2f)*(float)source_samplerate);
+		start = Mathf.Max(0,start);
+
+		int end = (int)((extract_pos+extract_duration/2f)*(float)source_samplerate);
+		end = Mathf.Min(audioClip.samples-1,end);
+
+		extract_duration = (float)(end-start)/(float)source_samplerate;
+		Debug.Log("start=" + start + " end="+end);
+
+		int samplecount = end-start;
+		float[] data = new float[samplecount];
+
+		//copy extract
+		for (int i=0;i<samplecount;++i)
+		{
+			data[i] = 	source_data[i+start];
+		}
+
+		return data;
 	}
 	
 }

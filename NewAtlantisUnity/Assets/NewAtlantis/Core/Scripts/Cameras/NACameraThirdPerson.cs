@@ -54,6 +54,7 @@ public class NACameraThirdPerson : NACamera
 			//float angle = Quaternion.Angle(targetrotation, rot);
 			//camera.transform.rotation = Quaternion.Lerp(rot, targetrotation, (1-k));
 			camera.transform.LookAt(transform.position);
+
 		}
 	}
 }
