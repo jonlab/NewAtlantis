@@ -105,6 +105,8 @@ public class NAObjectBase : MonoBehaviour {
 		int y = (int)(Screen.height-pos2d.y*Screen.height);
 		 
 		AudioSource audio = GetComponent<AudioSource>();
+		if (audio == null)
+			return;
 		GUI.Box(new Rect(x,y-20,200,20), "");
 		GUI.color = audio.isPlaying ? Color.green : Color.white;
 		if (GUI.Button (new Rect(x,y-20,60,20), "play (∆)"))

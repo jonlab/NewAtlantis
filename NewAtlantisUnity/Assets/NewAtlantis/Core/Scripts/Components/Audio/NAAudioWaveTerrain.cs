@@ -24,14 +24,13 @@ public class NAAudioWaveTerrain : MonoBehaviour {
 		NAAudioSynthConvolutionLooper c = GetComponent<NAAudioSynthConvolutionLooper>();
 		if (c)
 		{
-			Vector3 pos = collision.contacts[0].point;
-			Vector3 lpos = transform.InverseTransformPoint(pos);
-
+			Vector3 lpos = collision.contacts[0].point; //local
 			//Debug.Log("pos="+lpos);
 			Collider collider = GetComponent<Collider>();
-			float x = Mathf.Abs((lpos.x / collider.bounds.extents.x) / 2f + 0.5f);
-			float z = Mathf.Abs((lpos.z / collider.bounds.extents.z) / 2f + 0.5f);
-			Debug.Log("x=" + x + " z=" + z);
+			float x = (lpos.x-collider.bounds.min.x)/collider.bounds.size.x;
+			float z = (lpos.z-collider.bounds.min.z)/collider.bounds.size.z;
+			//Debug.Log("size="+collider.bounds.size);
+			//Debug.Log("x=" + x + " z=" + z);
 			c.pos1 = x;
 			c.pos2 = z;
 			c.duration1 = 0.04f;//Random.value*0.05f;
