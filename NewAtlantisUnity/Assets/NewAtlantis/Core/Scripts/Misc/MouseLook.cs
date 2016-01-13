@@ -32,7 +32,7 @@ public class MouseLook : MonoBehaviour {
 
 	void Update ()
 	{
-
+        
         GameObject trsGyzmo = GameObject.Find("TRS Gizmo");
         if(trsGyzmo!= null)
         {
