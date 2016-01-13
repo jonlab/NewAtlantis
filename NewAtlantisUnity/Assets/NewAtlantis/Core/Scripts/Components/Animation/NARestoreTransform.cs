@@ -58,5 +58,12 @@ public class NARestoreTransform : MonoBehaviour
 			t.localEulerAngles = tr.localEulerAngles;
 			t.localScale = tr.localScale;
 		}
+		//on reset aussi les RigidBodies
+		Rigidbody[] rbs = this.GetComponentsInChildren<Rigidbody>();
+
+		foreach (Rigidbody rb in rbs)
+		{
+			rb.velocity = Vector3.zero;
+		}
 	}
 }

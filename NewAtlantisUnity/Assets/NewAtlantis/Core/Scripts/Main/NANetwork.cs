@@ -59,6 +59,7 @@ public class NANetwork : MonoBehaviour {
 		Collider.Destroy(clone.GetComponent<Collider>());
 		NetworkView nView = clone.AddComponent<NetworkView>();
 		nView.viewID = viewID;
+		nView.stateSynchronization = NetworkStateSynchronization.Unreliable;
 
 		if (nView.owner == Network.player)
 		{
@@ -138,7 +139,11 @@ public class NANetwork : MonoBehaviour {
 			}
 		}
 		clone = GameObject.Instantiate(model, Vector3.zero, Quaternion.identity) as GameObject;
+
 		LogManager.LogWarning("clone " + name);
+
+		//reset position
+		clone.transform.GetChild(0).gameObject.transform.localPosition = Vector3.zero;
 
 		//remove previous network view
 		NetworkView nViewOriginal = clone.GetComponent<NetworkView>();
@@ -149,6 +154,7 @@ public class NANetwork : MonoBehaviour {
 
 		NetworkView nView = clone.AddComponent<NetworkView>();
 		nView.viewID = viewID;
+		nView.stateSynchronization = NetworkStateSynchronization.Unreliable;
 
 		clone.transform.position = location;
 

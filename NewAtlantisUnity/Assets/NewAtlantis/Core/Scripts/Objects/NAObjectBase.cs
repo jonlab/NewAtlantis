@@ -58,6 +58,8 @@ public class NAObjectBase : MonoBehaviour {
 				if (ExtendedGUI)
 				{
 					DrawExtendedGUI(pos2d);
+					DrawAudioSourceControl(pos2d);
+
 				}
 				else
 				{
@@ -78,8 +80,57 @@ public class NAObjectBase : MonoBehaviour {
 
 	virtual public void ExtendedControl()
 	{
+		//Debug.Log("EXT");
+		AudioSource audio = GetComponent<AudioSource>();
+		bool buttonAction 	= NAInput.GetControlDown(NAControl.Action); 
+		bool buttonJump 	= NAInput.GetControlDown(NAControl.Jump); 
+		bool buttonCamera 	= NAInput.GetControlDown(NAControl.Camera);
+		bool buttonMenu 	= NAInput.GetControlDown(NAControl.Menu);
+
+		if (buttonAction)
+		{
+			Debug.Log("stop");
+			audio.Stop();
+		}
+		if (buttonCamera)
+		{
+			audio.Play();
+		}
 
 	}
+
+	public void DrawAudioSourceControl(Vector3 pos2d)
+	{
+		int x = (int)(pos2d.x*Screen.width);
+		int y = (int)(Screen.height-pos2d.y*Screen.height);
+		 
+		AudioSource audio = GetComponent<AudioSource>();
+		if (audio == null)
+			return;
+		GUI.Box(new Rect(x,y-20,200,20), "");
+		GUI.color = audio.isPlaying ? Color.green : Color.white;
+		if (GUI.Button (new Rect(x,y-20,60,20), "play (∆)"))
+		{
+			audio.Play();
+		}
+		GUI.color = Color.white;
+		if (GUI.Button (new Rect(x+60,y-20,60,20), "stop (□)"))
+		{
+			audio.Stop();
+		}
+
+		audio.volume = GUI.HorizontalSlider(new Rect(x+120,y-20,80,20), audio.volume, 0f, 1f);
+		/*
+		if (GUI.Button (new Rect(x+120,y-30,60,30), "loop"))
+		{
+			audio.loop = !audio.loop;
+		}
+		*/
+
+
+	}
+
+	 
 
 
 

@@ -72,18 +72,13 @@ public class NAToolCloner : NAToolBase {
 
 		if (NAInput.PadHorizontalPressed && padx > 0)
 		{
-			current++;
-			current = current%NA.instanciables.Count;
-			Preview();
+			Next();
 
 		}
 		else if (NAInput.PadHorizontalPressed && padx < 0)
 		{
 			
-			current--;
-			if (current < 0)
-				current = current+NA.instanciables.Count;
-			Preview();
+			Previous();
 		}
 	}
 
@@ -113,7 +108,37 @@ public class NAToolCloner : NAToolBase {
 		}
 		GUI.Label(new Rect(pos2d.x-200, pos2d.y-15, 400, 30), NA.instanciables[current].name);
 
+		//gui souris
+
+		if (GUI.Button(new Rect(pos2d.x-32-30, pos2d.y+15, 30, 30), "<"))
+		{
+			Next();
+		}
+		else if (GUI.Button(new Rect(pos2d.x+32, pos2d.y+15, 30, 30), ">"))
+		{
+
+			Previous();
+		}
+
 	}
+
+
+	public void Next()
+	{
+		current++;
+		current = current%NA.instanciables.Count;
+		Preview();
+		
+	}
+
+	public void Previous()
+	{
+		current--;
+		if (current < 0)
+			current = current+NA.instanciables.Count;
+		Preview();
+	}
+
 
 	
 

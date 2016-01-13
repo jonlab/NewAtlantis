@@ -58,7 +58,7 @@ public class NAAudioSynthOscillator : NAObjectBase
 			{
 				DSP.GenerateSquare(data, samplerate, frequency);
 			}
-			
+			//FIXME : manque certaines formes d'ondes
 			audio.clip.SetData(data, 0);
 			//audio.Play();
 		}
@@ -89,16 +89,19 @@ public class NAAudioSynthOscillator : NAObjectBase
 		string[] waveforms = {"sin", "cos", "squ", "tri", "saw"};
 		frequency = GUIParamEdit(new Rect(x, y+20, 200, 20), "frequency", "Hz", frequency);
 		duration = GUIParamEdit(new Rect(x, y+40, 200, 20), "duration", "s", duration);
+
+		//frequency = Mathf.Floor(frequency);
+		//duration = Mathf.Floor(frequency);
 		waveform = (WaveForm)GUI.SelectionGrid(new Rect(x,y+60,200,20), (int)waveform, waveforms, waveforms.Length);
 
-		if (GUI.Button (new Rect(x,y+80,100,20), "Generate (∆)"))
+		if (GUI.Button (new Rect(x,y+80,100,20), "Generate (X)"))
 		{
 			Generate();
 		}
-		if (GUI.Button (new Rect(x+100,y+80,100,20), "Play (∆)"))
+		/*if (GUI.Button (new Rect(x+100,y+80,100,20), "Play (∆)"))
 		{
 			Play();
-		}
+		}*/
 		/*if (GUI.Button (new Rect(x+100,y+60,100,20), "Stop"))
 				{
 					Stop();
@@ -108,6 +111,7 @@ public class NAAudioSynthOscillator : NAObjectBase
 
 	public override void ExtendedControl()
 	{
+		base.ExtendedControl();
 		float dt = Time.deltaTime;
 
 		float x1 = NAInput.GetAxis(NAControl.MoveHorizontal);
@@ -120,30 +124,29 @@ public class NAAudioSynthOscillator : NAObjectBase
 		bool buttonCamera 	= NAInput.GetControlDown(NAControl.Camera);
 		bool buttonMenu 	= NAInput.GetControlDown(NAControl.Menu);
 
-		frequency += x1;
-		duration += y1;
+		frequency += x1*dt*100f;
+		duration += y1*dt;
 
 		duration = Mathf.Clamp(duration, 0.1f, 10);
 
 
-		if (buttonCamera)
+		if (buttonJump)
 		{
 			Generate();
-			Play();
+			//Play();
 		}
 
 		float padx = NAInput.GetAxis(NAControl.PadHorizontal);
 		float pady = NAInput.GetAxis(NAControl.PadVertical);
-
 
 		if (NAInput.PadHorizontalPressed && padx > 0)
 		{
 			waveform = waveform++;
 		}
 		else if (NAInput.PadHorizontalPressed && padx < 0)
-			{
-				waveform = waveform--;
-			}
+		{
+			waveform = waveform--;
+		}
 	}
 	/*
 	void OnGUI()

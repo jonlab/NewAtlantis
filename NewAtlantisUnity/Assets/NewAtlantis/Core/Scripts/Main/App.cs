@@ -144,14 +144,10 @@ public class App : MonoBehaviour
 	public string strName = "noname";
 	string strObjectName = "object_name";
 
-
-	//static Vector2 WindowSize = new Vector2(790,530);
-	static Vector2 WindowSize = new Vector2(1024-10, 768-70);
+	static Vector2 WindowSize 	= new Vector2(1024-10, 768-70);
 	Rect mGuiWinRectChat 		= new Rect(Screen.width-300, 200, 300, Screen.height-200);
 	Rect mGuiWinRectNetwork 	= new Rect(Screen.width/2-200, Screen.height/2-250, 400, 500);
-	
 	Rect mGuiWinRectScene 		= new Rect(Screen.width/2-WindowSize.x/2, Screen.height/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
-
 	Rect mGuiWinRectSpaces 		= new Rect(Screen.width/2-WindowSize.x/2, Screen.height/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
 	Rect mGuiWinRectOptions 	= new Rect(600, Screen.height/2-200, 200, 400);
 	Rect mGuiWinRectAbout 		= new Rect(800, Screen.height/2-200, 200, 400);
@@ -162,7 +158,9 @@ public class App : MonoBehaviour
 	Rect mGuiWinRectLobby 		= new Rect(Screen.width/2-WindowSize.x/2, Screen.height/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
 	Rect mGuiWinRectUser 		= new Rect(Screen.width/2-WindowSize.x/2, Screen.height/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
 
-	Rect mGuiWinRectWindows 		= new Rect(Screen.width/2-WindowSize.x/2, Screen.height/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
+	//float sh = Mathf.Max(Screen.height, 768);
+	//float sw = Screen.width;
+	Rect mGuiWinRectWindows;// 		= null;//new Rect(sw/2-WindowSize.x/2, sw/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
 
 	private Vector2 scrollPos 	= Vector2.zero;
 	private Vector2 scrollPosMySpaces 		= Vector2.zero;
@@ -287,10 +285,19 @@ public class App : MonoBehaviour
 
 	}
 
+	void OnDestroy()
+	{
+		Debug.Log("app OnDestroy");
+		NA.PlayPhysics();	
+	}
     // Use this for initialization
     void Start () 
 	{
-		
+		strIP = PlayerPrefs.GetString("ip");
+
+		float sh = Mathf.Max(Screen.height, 768);
+		float sw = Screen.width;
+		mGuiWinRectWindows 		= new Rect(sw/2-WindowSize.x/2, sh/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
 		NA.fonts[0] = font0;
 		NA.fonts[1] = font1;
 		NA.fonts[2] = font2;
@@ -342,11 +349,16 @@ public class App : MonoBehaviour
 
 		//ConnectionTesterStatus status = Network.TestConnection(false);
 		//LogManager.Log ("Network connection tests result=" + status.ToString());
-		NA.PausePhysics();
-
+		NA.PausePhysics();	
+		if (Screen.height < 768)
+		{
+			LogManager.LogError("Height < 768 (" + Screen.height + ")");
+		}
 #if UNITY_WEBPLAYER
 		LogManager.LogError("You are in Web Player build settings ! You will not be able to upload files from your computer. Please change your build settings to standalone in File->Build Settings.");
 #endif
+
+
 
 
         /*
@@ -630,7 +642,7 @@ public class App : MonoBehaviour
 					nx = (nx+1)%6;
 					//current_tool = (current_tool + 1)%tools.Length;
 					current_tool = ny*6+nx;
-					current_tool = Mathf.Min(current_tool, tools.Length-1);
+					current_tool = Mathf.Clamp(current_tool, 0, tools.Length-1);
 					SetCurrentTool(tools[current_tool]);
 				}
 				else if (padx < 0 && NAInput.PadHorizontalPressed)
@@ -640,6 +652,7 @@ public class App : MonoBehaviour
 
 					//current_tool = (current_tool + tools.Length-1)%tools.Length;
 					current_tool = ny*6+nx;
+					current_tool = Mathf.Clamp(current_tool, 0, tools.Length-1);
 					SetCurrentTool(tools[current_tool]);
 					
 				}
@@ -650,6 +663,7 @@ public class App : MonoBehaviour
 					ny = (ny+1) % linecount;
 					//current_tool = (current_tool + 6)%tools.Length;
 					current_tool = ny*6+nx;
+					current_tool = Mathf.Clamp(current_tool, 0, tools.Length-1);
 					SetCurrentTool(tools[current_tool]);
 				}
 				else if (pady < 0 && NAInput.PadVerticalPressed)
@@ -658,6 +672,7 @@ public class App : MonoBehaviour
 					ny = (ny+linecount-1) % linecount;
 					//current_tool = (current_tool + tools.Length-6)%tools.Length;
 					current_tool = ny*6+nx;
+					current_tool = Mathf.Clamp(current_tool, 0, tools.Length-1);
 					SetCurrentTool(tools[current_tool]);
 
 				}
@@ -933,7 +948,13 @@ public class App : MonoBehaviour
 	//Parse incoming server XML
 	public void ParseXML(string str)
 	{
-		Debug.Log("parsing XML...");
+#if UNITY_WEBPLAYER
+#else
+		System.DateTime now = System.DateTime.Now;
+		File.WriteAllText("server_" + now.Year+"_"+now.Month+"_"+now.Day+"_"+now.Hour+"_"+now.Minute+"_"+now.Second+".xml", str);
+#endif
+
+		LogManager.Log("parsing XML from server.");
 		xml = new XmlDocument();
 		xml.XmlResolver = null;
 		try
@@ -1161,19 +1182,61 @@ public class App : MonoBehaviour
     }
     
 
-
-    void OnGUI()
-    {
-		GUI.skin.font = font;
-		GUI.skin.label.alignment = TextAnchor.MiddleLeft;
+	void GUIScaleMatrix()
+	{
 		if (Screen.height < 768)
 		{
 			float scale = (float)Screen.height / 768f;
 			GUI.matrix = Matrix4x4.Scale(Vector3.one * scale);
 		}
+	}
+
+	void GUIIdentityMatrix()
+	{
+		GUI.matrix = Matrix4x4.identity;
+	}
+
+
+    void OnGUI()
+    {
+		GUIIdentityMatrix();
+		GUI.skin.font = font;
+		GUI.skin.label.alignment = TextAnchor.MiddleLeft;
+		float scale = 1f;
+		/*
+		if (Screen.height < 768)
+		{
+			scale = (float)Screen.height / 768f;
+			GUI.matrix = Matrix4x4.Scale(Vector3.one * scale);
+		}
+		*/
+
+		LogEntry currentError = LogManager.GetLastError();
+		if (currentError != null && currentError != lastError)
+		{
+			GUI.skin.label.alignment= TextAnchor.UpperCenter;
+			GUI.color = new Color(0,0,0,0.5f);
+			GUI.DrawTexture (new Rect (Screen.width/2-200, Screen.height/2-100, 400, 140), texWhite);
+			GUI.color = Color.white;
+			GUI.Label(new Rect(Screen.width/2-150, Screen.height/2-100, 300, 100), currentError.str);
+
+			if (GUI.Button(new Rect(Screen.width/2-50, Screen.height/2, 100, 30), "OK"))
+			{
+				lastError = currentError;
+			}
+			GUI.skin.label.alignment= TextAnchor.UpperLeft;
+			return;
+
+		}
+
+		if (state == AppState.Login)
+		{
+			mGuiWinRectLogin = GUI.Window(1, mGuiWinRectLogin, WindowFunctionLogin, "Login");
+			return;
+		}
 
 		//gestion du panel à la souris avec un dummy button
-		if (GUI.Button(new Rect(Screen.width/2-32,Screen.height-64,64,64), "", new GUIStyle()))
+		if (GUI.Button(new Rect((Screen.width/2-32),(Screen.height-64),64,64), "", new GUIStyle()))
 		{
 			bToolPanel = !bToolPanel;
 		}
@@ -1186,7 +1249,8 @@ public class App : MonoBehaviour
 		{
 			float inter = 64+10;
 			GUI.color = new Color(0,0,0,0.2f);
-			GUI.DrawTexture (new Rect (Screen.width/2-inter*3f-5f, Screen.height-256f-inter/2f-5f, inter*6f+10f, inter*3f+10f), texWhite);
+			float panelh = 256+64;
+			GUI.DrawTexture (new Rect (Screen.width/2-inter*3f-5f, Screen.height-panelh-inter/2f-5f, inter*6f+10f, inter*4f+10f), texWhite);
 			GUI.color = Color.white;
 			//we draw the tools
 			int x = 0;
@@ -1194,13 +1258,9 @@ public class App : MonoBehaviour
 			NAToolBase ToolSelected = tools[current_tool];
 			foreach (NAToolBase t in tools)
 			{
-				
 				bool selected = (t==ToolSelected) ? true : false;
-
-				Vector3 pos = new Vector3(Screen.width/2-inter*2.5f+x*inter, Screen.height-256+y*inter, 0);
-
+				Vector3 pos = new Vector3(Screen.width/2-inter*2.5f+x*inter, Screen.height-panelh+y*inter, 0);
 				bool bClicked = t.DrawBaseGUI(pos, selected);
-
 				if (bClicked)
 				{
 					//change tool
@@ -1208,8 +1268,16 @@ public class App : MonoBehaviour
 					{
 						if (t == tools[i])
 						{
-							current_tool = i;
-							SetCurrentTool(tools[current_tool]);
+							if (current_tool == i)
+							{
+								//already selected
+								bToolPanel = false;
+							}
+							else
+							{
+								current_tool = i;
+								SetCurrentTool(tools[current_tool]);
+							}
 						}
 					}
 				}
@@ -1289,28 +1357,8 @@ public class App : MonoBehaviour
 
 		}
 
-		/*if (lastError == null)
-		{
-			lastError = LogManager.GetLastError();
-		}
-		*/
-		LogEntry currentError = LogManager.GetLastError();
-		if (currentError != null && currentError != lastError)
-		{
-			GUI.skin.label.alignment= TextAnchor.UpperCenter;
-			GUI.color = new Color(0,0,0,0.5f);
-			GUI.DrawTexture (new Rect (Screen.width/2-200, Screen.height/2-100, 400, 140), texWhite);
-			GUI.color = Color.white;
-			GUI.Label(new Rect(Screen.width/2-150, Screen.height/2-100, 300, 100), currentError.str);
 
-			if (GUI.Button(new Rect(Screen.width/2-50, Screen.height/2, 100, 30), "OK"))
-			{
-				lastError = currentError;
-			}
-			GUI.skin.label.alignment= TextAnchor.UpperLeft;
-			return;
 
-		}
 
 
 		if (!bGUI)
@@ -1324,7 +1372,7 @@ public class App : MonoBehaviour
 		//GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
 		GUI.color = Color.white;
 		//GUI.Label(new Rect(0,0,400,30), "NewAtlantisNew Client - SAIC workshop");
-		GUI.Label(new Rect(0,0,100,30), "New Atlantis v0.90");
+		GUI.Label(new Rect(0,0,100,30), "New Atlantis v0.91");
 		GUI.Label(new Rect(Screen.width-200, 0, 200, 30), strPick);
 
 		DrawChronometer();
@@ -1360,12 +1408,8 @@ public class App : MonoBehaviour
 		GUI.Label(new Rect(Screen.width-300, 0, 300, 30), strInteractionMode);
 
 
-		if (state == AppState.Login)
-		{
-			mGuiWinRectLogin = GUI.Window(1, mGuiWinRectLogin, WindowFunctionLogin, "Login");
-			return;
-		}
-		else if (state == AppState.Register)
+
+		if (state == AppState.Register)
 		{
 			mGuiWinRectRegister = GUI.Window(11, mGuiWinRectRegister, WindowFunctionRegister, "Register");
 			return;
@@ -1415,6 +1459,7 @@ public class App : MonoBehaviour
 		}
 
 		GUI.color = Color.white;
+		//remove ?
 		if (GUI.Button(new Rect(tabx+80, 0, 200, 30), "Fix all materials"))
 		{
 			NA.PatchAllMaterials(goRootSpace);
@@ -1426,7 +1471,7 @@ public class App : MonoBehaviour
         //to do : list of objects ?
         
         GUI.color = Color.white;
-
+		GUIScaleMatrix();
 		switch (tab)
 		{
 		case AppTab.Chat:
@@ -1451,7 +1496,7 @@ public class App : MonoBehaviour
 			GUI.Window(10, mGuiWinRectWindows, WindowFunctionUser, "MyNA");
 			break;
 		}
-
+		GUIIdentityMatrix();
 
         
 	}
@@ -2131,8 +2176,9 @@ public class App : MonoBehaviour
 			Disconnect();
 			Network.Disconnect();
         }
+		GUILayout.Space(50);
 		GUI.color = Color.white;
-		if (GUILayout.Button ("Join Le Cube", GUILayout.Width(200 )) && !Network.isClient) 
+		if (GUILayout.Button ("Join Le Cube", GUILayout.Width(150 )) && !Network.isClient) 
 		{
 
 			LogManager.Log("try to join LeCube at 217.167.7.161:7890");
@@ -2140,13 +2186,31 @@ public class App : MonoBehaviour
 			//Network.Connect(
 		}
 
-		if (GUILayout.Button ("Join Le Cube local", GUILayout.Width(200 )) && !Network.isClient) 
+		if (GUILayout.Button ("Join Le Cube local", GUILayout.Width(150 )) && !Network.isClient) 
 		{
 
 			LogManager.Log("try to join LeCube at 192.168.230.26:7890");
 			Network.Connect("192.168.230.26", 7890);
 			//Network.Connect(
 		}
+
+		if (GUILayout.Button ("Join Localhost", GUILayout.Width(150 )) && !Network.isClient) 
+		{
+
+			LogManager.Log("try to join 127.0.0.1:7890");
+			Network.Connect("127.0.0.1", 7890);
+			//Network.Connect(
+		}
+		GUILayout.Space(50);
+		strIP = GUILayout.TextField(strIP);
+		if (GUILayout.Button ("Join", GUILayout.Width(100 )) && !Network.isClient) 
+		{
+			PlayerPrefs.SetString("ip", strIP);
+
+			LogManager.Log("try to join "+strIP+":7890");
+			Network.Connect(strIP, 7890);
+		}
+
 		GUI.color = Color.white;
 
 
@@ -2938,7 +3002,7 @@ public class App : MonoBehaviour
 
 	void OnFailedToConnect(NetworkConnectionError  err)
 	{
-		LogManager.LogError("Failed to connect : " + err);
+		LogManager.LogWarning("Failed to connect : " + err);
 	}
 
 	void ResetViewerPosition()

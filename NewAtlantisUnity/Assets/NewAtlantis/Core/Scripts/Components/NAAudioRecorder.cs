@@ -75,6 +75,7 @@ public class NAAudioRecorder : NAObjectBase
 
 	public override void ExtendedControl()
 	{
+		base.ExtendedControl();
 		float dt = Time.deltaTime;
 
 		float x1 = NAInput.GetAxis(NAControl.MoveHorizontal);
@@ -87,6 +88,8 @@ public class NAAudioRecorder : NAObjectBase
 		bool buttonCamera 	= NAInput.GetControlDown(NAControl.Camera);
 		bool buttonMenu 	= NAInput.GetControlDown(NAControl.Menu);
 
+		AudioSource audio = GetComponent<AudioSource>();
+
 		if (buttonCamera)
 		{
 			Play();
@@ -98,6 +101,11 @@ public class NAAudioRecorder : NAObjectBase
 		if (buttonAction)
 		{
 			Stop();
+		}
+
+		if (buttonJump)
+		{
+			audio.loop = !audio.loop;
 		}
 
 	}
@@ -117,25 +125,25 @@ public class NAAudioRecorder : NAObjectBase
 		string strDisplay = name;
 		int x = (int)(pos2d.x*Screen.width);
 		int y = (int)(Screen.height-pos2d.y*Screen.height);
-		GUI.Box (new Rect(x,y,320,60), "Trunk");
+		GUI.Box (new Rect(x,y,240,60), "Trunk");
 		GUI.color = GetComponent<AudioSource>().isPlaying ? Color.green : Color.white;
-		if (GUI.Button (new Rect(x,y+30,80,30), "play (∆)"))
+		if (GUI.Button (new Rect(x,y+30,60,20), "play (∆)"))
 		{
 			Play();
 		}
 		GUI.color = Color.white;
-		if (GUI.Button (new Rect(x+80,y+30,80,30), "stop (□)"))
+		if (GUI.Button (new Rect(x+60,y+30,60,20), "stop (□)"))
 		{
 			Stop();
 		}
 		GUI.color = Microphone.IsRecording("") ? Color.red : Color.white;
-		if (GUI.Button (new Rect(x+160,y+30,80,30), "rec (o)"))
+		if (GUI.Button (new Rect(x+120,y+30,60,20), "rec (o)"))
 		{
 			Record();
 		}
 
 		GUI.color = GetComponent<AudioSource>().loop ? Color.red : Color.white;
-		if (GUI.Button (new Rect(x+240,y+30,80,30), "loop"))
+		if (GUI.Button (new Rect(x+180,y+30,60,20), "loop (x)"))
 		{
 			GetComponent<AudioSource>().loop = !GetComponent<AudioSource>().loop;
 		}

@@ -16,7 +16,8 @@ public class NARotate : MonoBehaviour
 	void Update () 
 	{
 
-		if (!NA.isClient ()) {
+		if (!NA.isClient ()) 
+        {
 
 			transform.Rotate(rotateVector * vectorSpeed * Time.deltaTime);
 

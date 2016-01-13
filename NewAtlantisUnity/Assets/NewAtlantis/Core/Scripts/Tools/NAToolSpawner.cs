@@ -1,13 +1,23 @@
 using UnityEngine;
 using System.Collections;
 
+
+
+public enum SpawnMode
+{
+	Raycast,
+	InFront
+	
+}
+
 public class NAToolSpawner : NAToolBase {
 
 
-	public GameObject goPrefabCubeSimple; 
-	public float distance = 1f;
-	public Vector3 localForce = Vector3.forward;
-	public string objectName = "cube";
+	public GameObject 	prefab; 
+	public float 		distance = 1f;
+	public Vector3 		localForce = Vector3.forward;
+	public string 		objectName = "cube";
+	public SpawnMode 	mode = SpawnMode.InFront;
 	/*public NAToolSpawner ()
 	{
 		name = "spawner";
@@ -30,12 +40,16 @@ public class NAToolSpawner : NAToolBase {
 		Vector3 worldforce = transform.rotation * localForce;
 		Vector3 position = transform.position+transform.forward*distance;
 		//test
-		RaycastHit hit;
-		GameObject go = NA.PickObject(new Ray(transform.position, transform.forward), out hit);
-		if (go != null)
+		if (mode == SpawnMode.Raycast)
 		{
-			position = hit.point;
-			//worldforce = Vector3.zero;
+			RaycastHit hit;
+			GameObject go = NA.PickObject(new Ray(transform.position, transform.forward), out hit);
+			if (go != null)
+			{
+				position = hit.point;
+				position += new Vector3(0,0.5f,0);
+				//worldforce = Vector3.zero;
+			}
 		}
 
 		if (Network.isServer)
@@ -99,13 +113,8 @@ public class NAToolSpawner : NAToolBase {
 	[RPC]
 	void SpawnObject(string name, NetworkViewID viewID, Vector3 location, Vector3 forward, Vector3 color) 
 	{
+		LogManager.Log("client : SpawnObject");
 		GameObject clone = null;
-		/*if (name == "cube")
-		{
-			clone = GameObject.Instantiate(goPrefabCubeSimple, Vector3.zero, Quaternion.identity) as GameObject;
-			//clone = GameObject.CreatePrimitive(PrimitiveType.Cube);
-		}
-		else */
 		if (name == "sphere")
 		{
 			clone = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -147,7 +156,8 @@ public class NAToolSpawner : NAToolBase {
 		else
 		{
 			//cas général
-			clone = GameObject.Instantiate(goPrefabCubeSimple, Vector3.zero, Quaternion.identity) as GameObject;
+			clone = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+			//clone = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
 			//clone = GameObject.CreatePrimitive(PrimitiveType.Cube);
 		}
 		

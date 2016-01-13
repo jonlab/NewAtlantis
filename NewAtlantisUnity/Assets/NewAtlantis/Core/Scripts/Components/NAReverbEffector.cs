@@ -62,25 +62,31 @@ public class NAReverbEffector : MonoBehaviour
 		int count = resonators.Count;
 		foreach (NAReverbResonator r in resonators)
 		{
+			try
+			{
+				AudioReverbZone from = r.GetComponent<AudioReverbZone> ();
+				//to.dryLevel 		+= from.dryLevel;
+				//to.decayHFRatio 	+= from.decayHFRatio/count;
+				//to.decayTime		+= from.decayTime/count;
+				//to.density 			+= from.density/count;
+				//to.diffusion 		+= from.diffusion/count;
+				//to.reflections 		= from.reflections;
+				//to.reflectionsDelay = from.reflectionsDelay;
+				//to.reverb 			= from.reverb;
+				//to.reverbDelay 		+= from.reverbDelay/count;
+				//to.reverbPreset 	+= from.reverbPreset/count;
+				//to.room				+= from.room/count;
+				//to.roomHF 			+= from.roomHF/count;
+				//to.roomLF 			+= from.roomLF/count;
+				//to.roomRolloffFactor = from.roomRolloffFactor;
 
-			AudioReverbZone from = r.GetComponent<AudioReverbZone> ();
-			//to.dryLevel 		+= from.dryLevel;
-			//to.decayHFRatio 	+= from.decayHFRatio/count;
-			//to.decayTime		+= from.decayTime/count;
-			//to.density 			+= from.density/count;
-			//to.diffusion 		+= from.diffusion/count;
-			//to.reflections 		= from.reflections;
-			//to.reflectionsDelay = from.reflectionsDelay;
-			//to.reverb 			= from.reverb;
-			//to.reverbDelay 		+= from.reverbDelay/count;
-			//to.reverbPreset 	+= from.reverbPreset/count;
-			//to.room				+= from.room/count;
-			//to.roomHF 			+= from.roomHF/count;
-			//to.roomLF 			+= from.roomLF/count;
-			//to.roomRolloffFactor = from.roomRolloffFactor;
 
-
-			to.reverbPreset = r.reverbPreset;
+				to.reverbPreset = r.reverbPreset;
+			}
+			catch (System.Exception e)
+			{
+				count --;
+			}
 
 		}
 

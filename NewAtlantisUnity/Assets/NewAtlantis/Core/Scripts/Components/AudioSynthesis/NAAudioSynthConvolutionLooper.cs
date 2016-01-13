@@ -1,19 +1,24 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class NAAudioSynthLooper : NAObjectBase 
+public class NAAudioSynthConvolutionLooper : NAObjectBase 
 {
-    public AudioClip    audioClip;
-	public float 		pos;
-	public float		duration;
+	public AudioSource 	target;
+    public AudioClip    audioClip1;
+    public AudioClip    audioClip2;
+	public float 		pos1;
+    public float        pos2;
+	public float		duration1;
+    public float        duration2;
 
 	// Use this for initialization
 	void Start () 
 	{
-		
+		if (target == null)
+			target = GetComponent<AudioSource>();
 		//auto generate
-		Randomize();
-		Generate();
+		//Randomize();
+		//Generate();
 	}
 	
 
@@ -30,7 +35,7 @@ public class NAAudioSynthLooper : NAObjectBase
 	{
 		base.ExtendedControl();
 		//contrôles custom
-		pos += Time.deltaTime*NAInput.GetAxis(NAControl.MoveHorizontal);
+		/*pos += Time.deltaTime*NAInput.GetAxis(NAControl.MoveHorizontal);
 		duration += Time.deltaTime*NAInput.GetAxis(NAControl.MoveVertical);
 
 		pos = Mathf.Clamp(pos, 0f, 1f);
@@ -43,6 +48,7 @@ public class NAAudioSynthLooper : NAObjectBase
 		{
 			Randomize();
 		}
+  */      
 	}
 
 	public override void DrawSimpleGUI(Vector3 pos2d)
@@ -51,13 +57,14 @@ public class NAAudioSynthLooper : NAObjectBase
 		string strDisplay = name;
 		int x = (int)(pos2d.x*Screen.width);
 		int y = (int)(Screen.height-pos2d.y*Screen.height);
-		GUI.Box (new Rect(x,y,100,30), "Looper");
+		GUI.Box (new Rect(x,y,100,30), "ConvolutionLooper");
 
 	}
 
 
 	public override void DrawExtendedGUI(Vector3 pos2d)
 	{
+        /*
 		GUI.color = Color.white;
 		string strDisplay = name;
 		int x = (int)(pos2d.x*Screen.width);
@@ -75,6 +82,7 @@ public class NAAudioSynthLooper : NAObjectBase
 		{
 			Randomize();
 		}
+  */      
 		/*if (GUI.Button (new Rect(x+100,y+80,100,20), "Play"))
 				{
 					Play();
@@ -84,54 +92,29 @@ public class NAAudioSynthLooper : NAObjectBase
 
 	private void Randomize()
 	{
-		pos = Random.value;
-		duration = Random.value * 0.05f;
+		pos1 = Random.value;
+        pos2 = Random.value;
+		duration1 = Random.value * 0.05f;
+        duration2 = Random.value * 0.05f;
 	}
 
 
-	private void Generate ()
+	public void Generate ()
 	{
-		AudioSource audio = GetComponent<AudioSource>();
-        if (audio && audioClip)
+		AudioSource audio = target;//GetComponent<AudioSource>();
+        if (audio && audioClip1 && audioClip2)
 		{
-			//float duration = inputAudioSource.clip.channels * inputAudioSource.clip.length;
+			pos1 = Mathf.Clamp(pos1, 0, 1);
+			pos2 = Mathf.Clamp(pos2, 0, 1);
+			float[] data1 = DSP.Extract(audioClip1, pos1, duration1);
+			float[] data2 = DSP.Extract(audioClip2, pos2, duration2);
+            //convolve
+			//float[] convolved = DSP.Convolve(data1, data2);
+			float[] convolved = DSP.Add(data1, data2);
 
-            float source_duration 	= audioClip.length;
-            int source_samplerate 	= audioClip.frequency;
-            int source_channels 	= audioClip.channels;
-
-			//get source data
-            int source_samplecount	= audioClip.samples;
-			float[] source_data 	= new float[source_samplecount];
-            audioClip.GetData(source_data, 0);
-
-			float extract_pos = pos * source_duration;
-			float extract_duration = duration*source_duration;
-
-			if (extract_duration == 0)
-				extract_duration = 0.01f;
-			//compute extract coordinates
-			int start = (int)((extract_pos-extract_duration/2f)*(float)source_samplerate);
-			start = Mathf.Max(0,start);
-
-			int end = (int)((extract_pos+extract_duration/2f)*(float)source_samplerate);
-			end = Mathf.Min(audioClip.samples-1,end);
-
-			extract_duration = (float)(end-start)/(float)source_samplerate;
-			Debug.Log("start=" + start + " end="+end);
-
-			int samplecount = end-start;
-			float[] data = new float[samplecount];
-
-			//copy extract
-			for (int i=0;i<samplecount;++i)
-			{
-				data[i] = 	source_data[i+start];
-			}
-				
-			audio.clip = AudioClip.Create("NAAudioSynthLooper", samplecount, source_channels, source_samplerate, false);
-
-			audio.clip.SetData(data, 0);
+			int source_samplerate = audioClip1.frequency;
+			audio.clip = AudioClip.Create("NAAudioSynthConvolutionLooper", convolved.Length, 1, source_samplerate, false);
+			audio.clip.SetData(convolved, 0);
 			audio.loop = true;
 			audio.Play();
 		}
