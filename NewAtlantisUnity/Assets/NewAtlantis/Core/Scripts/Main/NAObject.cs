@@ -148,17 +148,7 @@ public class NAObject
 							col.isTrigger = true;
 						}
 
-					}
-
-
-					/*Terrain terrain = go.GetComponentInChildren<Terrain>();
-					foreach (TreePrototype tp in terrain.terrainData.treePrototypes)
-					{
-						NA.PatchAllMaterials(tp.prefab);
-						//Renderer tr = tp.prefab.GetComponent<Renderer>();
-						//tr.material.shader = Shader.Find(tr.material.shader.name);
-					}
-					*/
+					}	
 
 					Light[] 		lights = go.GetComponentsInChildren<Light>();
 					Transform[]	 	gameobjects = go.GetComponentsInChildren<Transform>();
@@ -179,30 +169,7 @@ public class NAObject
 					//we have to scale after instantiation
 					go.transform.localScale 	= scale;
 					bundle.Unload(false); 
-
 					go.AddComponent<NAViewerOptim>();
-					/*goGizmo = new GameObject("object_gizmo");
-					goGizmo.transform.parent = go.transform;
-					goGizmo.transform.localPosition = Vector3.zero;
-					GameObject goGizmoX = GameObject.CreatePrimitive(PrimitiveType.Cube);
-					GameObject goGizmoY = GameObject.CreatePrimitive(PrimitiveType.Cube);
-					GameObject goGizmoZ = GameObject.CreatePrimitive(PrimitiveType.Cube);
-					goGizmoX.transform.parent = goGizmo.transform;
-					goGizmoY.transform.parent = goGizmo.transform;
-					goGizmoZ.transform.parent = goGizmo.transform;
-					goGizmoX.transform.localPosition = Vector3.zero;
-					goGizmoY.transform.localPosition = Vector3.zero;
-					goGizmoZ.transform.localPosition = Vector3.zero;
-					float gizmolen = 4f;
-					float gizmothick = 0.1f;
-					goGizmoX.transform.localScale = new Vector3(gizmolen,gizmothick,gizmothick);
-					goGizmoY.transform.localScale = new Vector3(gizmothick,gizmolen,gizmothick);
-					goGizmoZ.transform.localScale = new Vector3(gizmothick,gizmothick,gizmolen);
-					goGizmoX.GetComponent<Renderer>().material.color = Color.red;
-		            goGizmoY.GetComponent<Renderer>().material.color = Color.green;
-		            goGizmoZ.GetComponent<Renderer>().material.color = Color.blue;
-		            goGizmo.SetActive(false);
-		            */
 		            
 					sources = go.GetComponentsInChildren<AudioSource>();
 					//audio sources have to be augmented with specific NA behaviour
@@ -244,7 +211,7 @@ public class NAObject
 
 		            
 					//jonathan : removed on 1/9/2016
-					/*
+
 					NetworkSync nSync 		= go.GetComponent<NetworkSync>();
 					nSync.Prepare(); //client and server (for now, just stops all AudioSources)
 
@@ -259,7 +226,7 @@ public class NAObject
 					{
 						nSync.AttachNetworkViews();
 					}
-					*/
+
 
 				}
 			}

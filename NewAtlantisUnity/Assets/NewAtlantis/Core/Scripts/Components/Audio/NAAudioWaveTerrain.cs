@@ -33,8 +33,8 @@ public class NAAudioWaveTerrain : MonoBehaviour {
 			//Debug.Log("x=" + x + " z=" + z);
 			c.pos1 = x;
 			c.pos2 = z;
-			c.duration1 = 0.04f;//Random.value*0.05f;
-			c.duration2 = 0.04f;//Random.value*0.05f;
+			c.duration1 = 0.05f;//Random.value*0.05f;
+			c.duration2 = 0.05f;//Random.value*0.05f;
 			c.Generate();
 		}
 
