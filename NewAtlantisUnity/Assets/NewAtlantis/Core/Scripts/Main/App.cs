@@ -293,6 +293,7 @@ public class App : MonoBehaviour
     // Use this for initialization
     void Start () 
 	{
+		AudioListener.volume = 0.25f;
 		strIP = PlayerPrefs.GetString("ip");
 
 		float sh = Mathf.Max(Screen.height, 768);
