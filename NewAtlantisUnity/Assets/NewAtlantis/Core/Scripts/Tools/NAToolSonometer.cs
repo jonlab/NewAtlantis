@@ -44,7 +44,10 @@ public class NAToolSonometer : NAToolBase
 				{
 					GUI.color = Color.white;
 				}
-				GUI.Box(new Rect(x-50, y-15, 100, 30), s.name);
+				if (GUI.Button(new Rect(x-50, y-15, 100, 30), s.name))
+				{
+					s.Play();
+				}
 			}
 		}
 		GUI.color = Color.white;

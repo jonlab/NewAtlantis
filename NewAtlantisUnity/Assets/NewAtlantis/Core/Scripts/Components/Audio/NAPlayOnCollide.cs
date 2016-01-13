@@ -33,6 +33,7 @@ public class NAPlayOnCollide : MonoBehaviour
 		if (magnitude > VelocityThreshold)
 		{
 			float vol = magnitude*4f;
+			vol = Mathf.Clamp(vol, 0, 1f);
 			AudioSource audio = target.GetComponent<AudioSource>();
 			if (audio != null && audio.clip != null)
 			{

@@ -4,14 +4,19 @@ using System.Collections;
 
 public class NAToolLight : NAToolBase 
 {
+
+
+	public GameObject target = null;
 	// Use this for initialization
 	void Start () 
 	{
-		Light light = GetComponent<Light>();
+		if (target == null)
+			target = gameObject;
+		Light light = target.GetComponent<Light>();
 		if (light == null)
 		{
 			//if no light, we add one standard
-			light 			= gameObject.AddComponent<Light>();
+			light 			= target.AddComponent<Light>();
 			light.type 		= LightType.Point;
 			light.intensity = 2;
 			light.range 	= 50;
@@ -28,7 +33,7 @@ public class NAToolLight : NAToolBase
 	public override void Action() 
 	{
 		//local only action
-		Light light = GetComponent<Light>();
+		Light light = target.GetComponent<Light>();
 		light.enabled = !light.enabled;
 	}
 
@@ -48,7 +53,7 @@ public class NAToolLight : NAToolBase
 		bool buttonMenu 	= NAInput.GetControlDown(NAControl.Menu);
 
 
-		Light light 		= GetComponent<Light>();
+		Light light 		= target.GetComponent<Light>();
 		light.spotAngle 	+= x1*dt*10f;
 		light.range 		+= y1*dt*1f;
 		light.intensity 	-= y2*dt*1f;
@@ -62,7 +67,7 @@ public class NAToolLight : NAToolBase
 	public override void DrawExtendedGUI(Vector3 pos2d)
 	{
 		//GUI.BeginGroup(
-		Light light 		= GetComponent<Light>();
+		Light light 		= target.GetComponent<Light>();
 		string str = "";
 		str += "angle=" + light.spotAngle;
 		str += " range=" + light.range;
