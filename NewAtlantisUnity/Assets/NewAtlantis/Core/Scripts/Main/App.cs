@@ -285,6 +285,11 @@ public class App : MonoBehaviour
 
 	}
 
+	void OnDestroy()
+	{
+		Debug.Log("app OnDestroy");
+		NA.PlayPhysics();	
+	}
     // Use this for initialization
     void Start () 
 	{
@@ -342,7 +347,7 @@ public class App : MonoBehaviour
 
 		//ConnectionTesterStatus status = Network.TestConnection(false);
 		//LogManager.Log ("Network connection tests result=" + status.ToString());
-		NA.PausePhysics();
+		NA.PausePhysics();	
 		if (Screen.height < 768)
 		{
 			LogManager.LogError("Height < 768 (" + Screen.height + ")");
@@ -941,7 +946,11 @@ public class App : MonoBehaviour
 	//Parse incoming server XML
 	public void ParseXML(string str)
 	{
-		File.WriteAllText("server.xml", str);
+#if UNITY_WEBPLAYER
+#else
+		System.DateTime now = System.DateTime.Now;
+		File.WriteAllText("server_" + now.Year+"_"+now.Month+"_"+now.Day+"_"+now.Hour+"_"+now.Minute+"_"+now.Second+".xml", str);
+#endif
 
 		LogManager.Log("parsing XML from server.");
 		xml = new XmlDocument();

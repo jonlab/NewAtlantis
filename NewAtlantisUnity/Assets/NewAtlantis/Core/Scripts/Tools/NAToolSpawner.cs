@@ -156,7 +156,8 @@ public class NAToolSpawner : NAToolBase {
 		else
 		{
 			//cas général
-			clone = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
+			clone = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+			//clone = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
 			//clone = GameObject.CreatePrimitive(PrimitiveType.Cube);
 		}
 		

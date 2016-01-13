@@ -215,6 +215,8 @@ public class NAObject
 					NetworkSync nSync 		= go.GetComponent<NetworkSync>();
 					nSync.Prepare(); //client and server (for now, just stops all AudioSources)
 
+
+
 					if (Network.isServer)
 					{
 						if (goChild != null)

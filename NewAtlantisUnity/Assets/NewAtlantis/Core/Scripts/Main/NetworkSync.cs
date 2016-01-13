@@ -218,7 +218,7 @@ public class NetworkSync : MonoBehaviour
 		{
 			NetworkView nView 		= goChild.AddComponent<NetworkView>();
 			nView.viewID 			= viewID;
-
+			nView.stateSynchronization = NetworkStateSynchronization.Unreliable;
 		}
 		else
 		{
@@ -248,6 +248,9 @@ public class NetworkSync : MonoBehaviour
 				LogManager.Log("NetworkView attached at " + path + " with id " + viewID);
 				NetworkView nView 		= goChild.AddComponent<NetworkView>();
 				nView.viewID 			= viewID;
+				nView.stateSynchronization = NetworkStateSynchronization.Unreliable;
+
+					
 
 			}
 			else
