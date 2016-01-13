@@ -40,17 +40,26 @@ public class Arrival : SteeringBehavior {
 	}
 	public override Vector3 Update()
 	{
-		Vector3 desired_velocity = new Vector3();
 
-		Vector3 target_offset = target.position - transform.position; 
-		float distance = target_offset.magnitude;
-		float ramped_speed = vehicle.maxSpeed * (distance / slowing_distance);
-		float clipped_speed = Mathf.Min(ramped_speed, vehicle.maxSpeed);
-		if (distance != 0f )	
-			desired_velocity = (clipped_speed / distance ) * target_offset;
+		if (target != null)
+		{
+			Vector3 desired_velocity = new Vector3();
 
-		Vector3 steering  = desired_velocity - vehicle.GetVelocity();
-		return steering * weight;
+			Vector3 target_offset = target.position - transform.position; 
+			float distance = target_offset.magnitude;
+			float ramped_speed = vehicle.maxSpeed * (distance / slowing_distance);
+			float clipped_speed = Mathf.Min(ramped_speed, vehicle.maxSpeed);
+			if (distance != 0f )	
+				desired_velocity = (clipped_speed / distance ) * target_offset;
+
+			Vector3 steering  = desired_velocity - vehicle.GetVelocity();
+			return steering * weight;
+		}
+		else
+		{
+			return Vector3.zero;
+
+		}
 	}
 }
 

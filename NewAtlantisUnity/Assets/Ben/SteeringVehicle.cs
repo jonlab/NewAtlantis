@@ -16,6 +16,11 @@ public class SteeringVehicle : MonoBehaviour {
 	public float maxAcceleration=5.0f;
 	public float maxSpeed=10.0f;
 
+	public float steeringWeightSeparation = 0.8f;
+	public float steeringWeightCohesion = 0.8f;
+	public float steeringWeightAlignment = 0.5f;
+	public float steeringWeightHoming = 5.0f;
+
 	Arrival steerPerch;
 	List<SteeringVehicle> neighborhood;
 
@@ -42,12 +47,11 @@ public class SteeringVehicle : MonoBehaviour {
 
 			behaviors = new List<SteeringBehavior>();
 
-			behaviors.Add (new Separation (this,.5f));
-			behaviors.Add (new Cohesion (this,.5f));
-			behaviors.Add (new Alignment (this,.5f));
+			behaviors.Add (new Separation (this,steeringWeightSeparation));
+			behaviors.Add (new Cohesion (this,steeringWeightCohesion));
+			behaviors.Add (new Alignment (this,steeringWeightAlignment));
 
-
-			steerPerch = new Arrival(this,50.0f,target,2.0f);
+			steerPerch = new Arrival(this,steeringWeightHoming,target,2.0f);
 			PickNewPerch();
 
 			behaviors.Add (steerPerch);
@@ -154,9 +158,17 @@ public class SteeringVehicle : MonoBehaviour {
 		int r;
 		if (perches.Length>0)
 		{
-			r=Random.Range(0,perches.Length);
-			target=perches[r];
-			steerPerch.SetTarget(target);
+			r=Random.Range(0,perches.Length + 1);
+			if (r >= perches.Length)
+			{
+				// no perch! just flock
+				target=null;
+			}
+			else
+			{
+				target=perches[r];
+				steerPerch.SetTarget(target);
+			}
 		}
 
 	}
