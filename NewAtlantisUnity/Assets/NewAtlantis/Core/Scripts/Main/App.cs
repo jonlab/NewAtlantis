@@ -285,9 +285,17 @@ public class App : MonoBehaviour
 
 	}
 
+	void OnDestroy()
+	{
+		Debug.Log("app OnDestroy");
+		NA.PlayPhysics();	
+	}
     // Use this for initialization
     void Start () 
 	{
+		AudioListener.volume = 0.25f;
+		strIP = PlayerPrefs.GetString("ip");
+
 		float sh = Mathf.Max(Screen.height, 768);
 		float sw = Screen.width;
 		mGuiWinRectWindows 		= new Rect(sw/2-WindowSize.x/2, sh/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
@@ -342,7 +350,7 @@ public class App : MonoBehaviour
 
 		//ConnectionTesterStatus status = Network.TestConnection(false);
 		//LogManager.Log ("Network connection tests result=" + status.ToString());
-		NA.PausePhysics();
+		NA.PausePhysics();	
 		if (Screen.height < 768)
 		{
 			LogManager.LogError("Height < 768 (" + Screen.height + ")");
@@ -941,7 +949,11 @@ public class App : MonoBehaviour
 	//Parse incoming server XML
 	public void ParseXML(string str)
 	{
-		File.WriteAllText("server.xml", str);
+#if UNITY_WEBPLAYER
+#else
+		System.DateTime now = System.DateTime.Now;
+		File.WriteAllText("server_" + now.Year+"_"+now.Month+"_"+now.Day+"_"+now.Hour+"_"+now.Minute+"_"+now.Second+".xml", str);
+#endif
 
 		LogManager.Log("parsing XML from server.");
 		xml = new XmlDocument();
@@ -2165,8 +2177,9 @@ public class App : MonoBehaviour
 			Disconnect();
 			Network.Disconnect();
         }
+		GUILayout.Space(50);
 		GUI.color = Color.white;
-		if (GUILayout.Button ("Join Le Cube", GUILayout.Width(200 )) && !Network.isClient) 
+		if (GUILayout.Button ("Join Le Cube", GUILayout.Width(150 )) && !Network.isClient) 
 		{
 
 			LogManager.Log("try to join LeCube at 217.167.7.161:7890");
@@ -2174,7 +2187,7 @@ public class App : MonoBehaviour
 			//Network.Connect(
 		}
 
-		if (GUILayout.Button ("Join Le Cube local", GUILayout.Width(200 )) && !Network.isClient) 
+		if (GUILayout.Button ("Join Le Cube local", GUILayout.Width(150 )) && !Network.isClient) 
 		{
 
 			LogManager.Log("try to join LeCube at 192.168.230.26:7890");
@@ -2182,13 +2195,23 @@ public class App : MonoBehaviour
 			//Network.Connect(
 		}
 
-		if (GUILayout.Button ("Join Localhost", GUILayout.Width(200 )) && !Network.isClient) 
+		if (GUILayout.Button ("Join Localhost", GUILayout.Width(150 )) && !Network.isClient) 
 		{
 
 			LogManager.Log("try to join 127.0.0.1:7890");
 			Network.Connect("127.0.0.1", 7890);
 			//Network.Connect(
 		}
+		GUILayout.Space(50);
+		strIP = GUILayout.TextField(strIP);
+		if (GUILayout.Button ("Join", GUILayout.Width(100 )) && !Network.isClient) 
+		{
+			PlayerPrefs.SetString("ip", strIP);
+
+			LogManager.Log("try to join "+strIP+":7890");
+			Network.Connect(strIP, 7890);
+		}
+
 		GUI.color = Color.white;
 
 

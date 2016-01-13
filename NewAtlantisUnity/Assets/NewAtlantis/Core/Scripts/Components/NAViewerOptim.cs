@@ -28,12 +28,32 @@ public class NAViewerOptim : MonoBehaviour
 				l.enabled = !b;
 			}
 		}
-		/*foreach (AudioSource s in sources)
+		foreach (AudioSource s in sources)
 		{
-			s.enabled = !b;
-			if (s.enabled && s.playOnAwake)
+			//s.enabled = !b;
+
+			//if (s.enabled && s.playOnAwake)
+			//	s.Play();
+			/*
+			if (!b && s.playOnAwake)
+			{
 				s.Play();
-		}*/
+			}
+			else if (b)
+			{
+				s.Stop();
+			}
+			*/
+
+			if (!b)
+			{
+				s.priority = 0;
+			}
+			else if (b)
+			{
+				s.priority = 255;
+			}
+		}
 		foreach (LensFlare f in flares)
 		{
 			f.enabled = !b;

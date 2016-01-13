@@ -10,7 +10,9 @@ public class NAToggleVolumeOnTrigger : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
-	
+		//FIXME : sync ?
+		AudioSource audio = GetComponent<AudioSource>();
+		audio.volume = VolumeOff;
 	}
 	
 	// Update is called once per frame

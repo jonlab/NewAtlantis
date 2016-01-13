@@ -44,6 +44,7 @@ public class NAObject
 
 		NetworkView nView 			= go.AddComponent<NetworkView>();
 		nView.viewID 				= this.NetworkViewId;
+
 		NetworkSync nSync 			= go.AddComponent<NetworkSync>();
 		//nView.SetScope
 		//if (name.Contains("Coffee") || name.Contains("Radio") || name.Contains("Object"))
@@ -211,9 +212,11 @@ public class NAObject
 
 		            
 					//jonathan : removed on 1/9/2016
-
+					/*
 					NetworkSync nSync 		= go.GetComponent<NetworkSync>();
 					nSync.Prepare(); //client and server (for now, just stops all AudioSources)
+
+
 
 					if (Network.isServer)
 					{
@@ -226,6 +229,8 @@ public class NAObject
 					{
 						nSync.AttachNetworkViews();
 					}
+
+*/
 
 
 				}
@@ -276,7 +281,7 @@ public class NAObject
 		//NetworkView nView 		= root.AddComponent<NetworkView>();
 		//nView.viewID 			= Network.AllocateViewID();
 		NetworkViewID id = Network.AllocateViewID();
-		LogManager.Log("PrepareAsServer " + path + " id=" + id);
+		//LogManager.Log("PrepareAsServer " + path + " id=" + id);
 		go.GetComponent<NetworkView>().RPC("AttachNetworkView", RPCMode.AllBuffered, path, id);
 		for (int i=0;i<root.transform.childCount;++i)
 		{
