@@ -1341,9 +1341,13 @@ public class App : MonoBehaviour
 							int x = (int)(pos2d.x*Screen.width);
 							int y = (int)(Screen.height-pos2d.y*Screen.height);
 
-							x = Mathf.Clamp(x-50,0,Screen.width-100);
-							y = Mathf.Clamp(y-15,0,Screen.height-30);
-							GUI.Label (new Rect(x,y,100,30), strDisplay);
+							//x = Mathf.Clamp(x-50,0,Screen.width-100);
+							//y = Mathf.Clamp(y-15,0,Screen.height-30);
+
+                            x = Mathf.Clamp(x,0,Screen.width-100);
+                            y = Mathf.Clamp(y,0,Screen.height-15);
+
+							GUI.Label (new Rect(x-100,y-15,200,30), strDisplay);
 							GUI.skin.label.alignment = TextAnchor.UpperLeft;
 						}
 
@@ -1399,7 +1403,7 @@ public class App : MonoBehaviour
 		//GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
 		GUI.color = Color.white;
 		//GUI.Label(new Rect(0,0,400,30), "NewAtlantisNew Client - SAIC workshop");
-		GUI.Label(new Rect(0,0,100,30), "New Atlantis v0.93");
+		GUI.Label(new Rect(0,0,100,30), "New Atlantis v0.94");
 		GUI.Label(new Rect(Screen.width-200, 0, 200, 30), strPick);
 
 		DrawChronometer();

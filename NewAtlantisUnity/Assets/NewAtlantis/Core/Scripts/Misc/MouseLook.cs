@@ -30,6 +30,10 @@ public class MouseLook : MonoBehaviour {
 
 	float rotationY = 0F;
 
+    //lissage
+    private float cx = 0f;
+    private float cy = 0f;
+
 	void Update ()
 	{
         
@@ -58,15 +62,19 @@ public class MouseLook : MonoBehaviour {
 		rotationY = Mathf.Clamp (rotationY, minimumY, maximumY);
 		transform.localEulerAngles = new Vector3(-rotationY, rotationJX, 0);
 		*/
-		float JoySensitivityX = 1f * 60f * Time.deltaTime;
-		float JoySensitivityY = 1f * 60f * Time.deltaTime;
+		float JoySensitivityX = 2f * 60f * Time.deltaTime;
+		float JoySensitivityY = 2f * 60f * Time.deltaTime;
 		float jx = NAInput.GetAxis(NAControl.ViewHorizontal);
 		float jy = NAInput.GetAxis(NAControl.ViewVertical);
 
 		float x = 0.1f*jx+(jx*jx*jx)*0.9f;
 		float y = 0.1f*jy+(jy*jy*jy)*0.9f;
-		float rotationJX = transform.localEulerAngles.y + x * JoySensitivityX;
-		rotationY += y * JoySensitivityY * -1f;
+
+        float k = NA.JoystickSmoothing;
+        cx = cx*k+x*(1f-k);
+        cy = cy*k+y*(1f-k);
+		float rotationJX = transform.localEulerAngles.y + cx * JoySensitivityX;
+		rotationY += cy * JoySensitivityY * -1f;
 		rotationY = Mathf.Clamp (rotationY, minimumY, maximumY);
 		transform.localEulerAngles = new Vector3(-rotationY, rotationJX, 0);
 

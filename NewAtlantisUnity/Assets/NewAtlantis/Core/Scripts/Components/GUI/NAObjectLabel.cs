@@ -13,7 +13,7 @@ public class NAObjectLabel : MonoBehaviour
 	private Texture2D texWhite	= null;
 
 	private bool bActive 		= false;
-	private float Duration 		= 30f;
+	private float Duration 		= 15f;
 	private float timer 		= 0f;
 
     private static List<NAObjectLabel> labels = new List<NAObjectLabel>();
@@ -41,11 +41,11 @@ public class NAObjectLabel : MonoBehaviour
 		if (bActive)
 		{
 			timer += Time.deltaTime;
-			/*if (timer > Duration)
+			if (timer > Duration)
 			{
 				bActive = false;
 				timer = 0f;
-			}*/
+			}
 		}
 
 	}

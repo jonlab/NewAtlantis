@@ -15,6 +15,8 @@ public static class NA
 	public static Space PreviousSpace = null;
 	public static Font[] fonts = new Font[4];
 
+    public static float JoystickSmoothing = 0.8f;
+
 	public static Vector3 colorAvatar;
 
 	public static List<NAObject>	instanciables = new List<NAObject>();

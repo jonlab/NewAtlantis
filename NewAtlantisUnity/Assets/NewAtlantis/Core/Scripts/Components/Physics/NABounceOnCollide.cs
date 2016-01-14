@@ -16,7 +16,7 @@ public class NABounceOnCollide : MonoBehaviour {
 
 	void OnCollisionEnter(Collision e)
 	{
-		if (!NA.isClient ()) 
+		//if (!NA.isClient ()) 
 		{
 			//ContactPoint 
 			//e.contacts
