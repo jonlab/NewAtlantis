@@ -45,10 +45,19 @@ public class NetworkSync : MonoBehaviour
 		{
 			GetComponent<NetworkView>().RPC("sync", RPCMode.AllBuffered);
 		}
+
+		
 	}
 
 	void LateUpdate()
 	{
+		// check on any queued network views to set their ID's
+		if (Network.isClient)
+		{
+			AttachNetworkViews();
+		}
+
+
 		//let's do the sync
 		if (Network.isServer)
 		{
@@ -239,6 +248,8 @@ public class NetworkSync : MonoBehaviour
 	public void AttachNetworkViews()
 	{
 
+		List<string> keysToRemove = new List<string>();
+
 		foreach (string path in networkViews.Keys)
 		{
 			NetworkViewID viewID = networkViews[path];
@@ -246,24 +257,62 @@ public class NetworkSync : MonoBehaviour
 			if (goChild)
             {
 				LogManager.Log("NetworkView attached at " + path + " with id " + viewID);
-				NetworkView nView 		= goChild.AddComponent<NetworkView>();
+				//NetworkView nView 		= goChild.AddComponent<NetworkView>();
+
+				NetworkView nView 		= goChild.GetComponent<NetworkView>();
 				nView.viewID 			= viewID;
 				nView.stateSynchronization = NetworkStateSynchronization.Unreliable;
-
-					
-
+				keysToRemove.Add(path);
 			}
 			else
 			{
-
-				LogManager.LogError("Can't find GameObject after postponing : " + path);
+				Debug.Log ("Can't find GameObject after postponing : " + path);
+				//LogManager.LogError("Can't find GameObject after postponing : " + path);
 			}
 
+        }
+        foreach (string path in keysToRemove)
+        {
+        	networkViews.Remove(path);
         }
         
     }
 
+    // another approach to setting up the network views down the hierarchy of an NAObject
+    // assuming the NetworkView component is added as needed by hand before the bundle is exported
+	[RPC]
+	public void SetChildNetworkViewID (string path, NetworkViewID viewID)
+	{
+		GameObject g = GameObject.Find(path);
+		if (g==null)   // probably hasn't been completely instantiated yet, so need to cache it
+		{
+			Debug.Log("SetChildNetworkViewID couldn't find " + path);
+			Debug.Log("My path is " + GetGameObjectPath (gameObject.transform));
+			networkViews.Add (path, viewID);
+		}
 
+		NetworkView nv = g.GetComponent<NetworkView>();
+
+		if (nv==null)
+		{
+			Debug.Log("SetChildNetworkViewID no NetworkView component");
+			return;
+		}
+
+		nv.viewID = viewID;
+
+	}
+
+	private static string GetGameObjectPath(Transform transform)
+ 	{
+     string path = transform.name;
+     while (transform.parent != null)
+     {
+         transform = transform.parent;
+         path = transform.name + "/" + path;
+     }
+     return path;
+ 	}
 
 	public void ServerSyncAudio()
 	{

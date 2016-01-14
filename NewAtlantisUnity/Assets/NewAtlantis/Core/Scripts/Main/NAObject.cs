@@ -130,7 +130,7 @@ public class NAObject
 					//NA.PatchMaterials(go); //crashes on 5.3.1
 					//if (!name.Contains("elevation"))
 					//{
-					NA.PatchAllMaterials(go);
+					//NA.PatchAllMaterials(go);
 					//}
 
 					NAObjectLabel lbl = go.GetComponentInChildren<NAObjectLabel>();
@@ -154,6 +154,43 @@ public class NAObject
 					Light[] 		lights = go.GetComponentsInChildren<Light>();
 					Transform[]	 	gameobjects = go.GetComponentsInChildren<Transform>();
 					AudioListener[] listeners = go.GetComponentsInChildren<AudioListener>();
+
+					// see if any of the bundle's objects have network views attached already
+					NetworkView[] networkViews = go.GetComponentsInChildren<NetworkView>();
+					Debug.Log("networkViews: " +  networkViews);
+
+					// if I'm the server, allocate a viewID for each of the child networkviews and set it 
+
+					NetworkView nView = this.go.GetComponent<NetworkView>(); 
+
+
+					if (Network.isServer)
+					{
+						
+						foreach (NetworkView nv in networkViews)
+						{
+							GameObject childWithNV = nv.gameObject;
+							Debug.Log("NetworkView found in bundle " + childWithNV.name);
+							NetworkViewID childViewID = nv.viewID;
+
+							if (childViewID == NetworkViewID.unassigned)
+							{
+								Debug.Log("no ID assigned");
+								childViewID = Network.AllocateViewID();
+								string childPath = GetGameObjectPath (childWithNV.transform);
+								Debug.Log(childPath);
+								nView.RPC("SetChildNetworkViewID",RPCMode.AllBuffered,childPath,childViewID);
+								// call an RPC function, pass it the path name of the gameobject and the network ID to assign to it
+							}
+							else
+							{
+								Debug.Log(childViewID);
+
+							}
+						}
+
+					}
+
 
 					//exceptions
 					if (name.Contains("maki") || name.Contains("SYN"))
@@ -302,8 +339,17 @@ public class NAObject
 		}
 	}
 
-
-
+	private static string GetGameObjectPath(Transform transform)
+ 	{
+     string path = transform.name;
+     while (transform.parent != null)
+     {
+         transform = transform.parent;
+         path = transform.name + "/" + path;
+     }
+     return path;
+ 	}
 
 
 }
+
