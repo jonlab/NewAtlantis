@@ -8,6 +8,24 @@ public class NACameraFirstPerson : NACamera {
 
 	public Camera 	camera;
 	// Use this for initialization
+
+	void OnEnable()
+	{
+		GameObject goAvatar = GameObject.Find(NAServer.strLogin);
+		if (goAvatar != null)
+		{
+			goAvatar.transform.GetChild(0).gameObject.SetActive(false);
+		}
+	}
+
+	void OnDisable()
+	{
+		GameObject goAvatar = GameObject.Find(NAServer.strLogin);
+		if (goAvatar != null)
+		{
+			goAvatar.transform.GetChild(0).gameObject.SetActive(true);
+		}
+	}
 	void Start () 
 	{
 	}

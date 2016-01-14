@@ -48,7 +48,7 @@ public static class TransitionManager
 				mTimer = mDuration;
 				if (mCallback != null)
 					mCallback();
-				Debug.Log("TransitionManager : end of transition !");
+				//Debug.Log("TransitionManager : end of transition !");
 			}
 		}
 	}
@@ -98,7 +98,7 @@ public static class TransitionManager
 		mCallback = callback;
 		mPlaying = true;
 		mColor = color;
-		Debug.Log ("TransitionManager : start Transition mode="+mode);
+		//Debug.Log ("TransitionManager : start Transition mode="+mode);
 		if (mCurrent == FadeIn || mCurrent == FadeOut)
 		{
 			//fondu à la couleur

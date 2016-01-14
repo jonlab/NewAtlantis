@@ -1204,6 +1204,10 @@ public class App : MonoBehaviour
 		GUI.skin.font = font;
 		GUI.skin.label.alignment = TextAnchor.MiddleLeft;
 		float scale = 1f;
+
+		GUI.color = new Color(NA.colorAvatar.x, NA.colorAvatar.y, NA.colorAvatar.z, 0.3f);
+		GUI.DrawTexture (new Rect (Screen.width-32, 0, 30, 30), texWhite);
+		GUI.color = Color.white;
 		/*
 		if (Screen.height < 768)
 		{
@@ -1308,9 +1312,24 @@ public class App : MonoBehaviour
 				{
 					try
 					{
+
+
+						Font bak = GUI.skin.font;
+						GUI.skin.font = NA.GetFont(2);
+
+
+
+
+
 						Vector3 pos2d = Camera.main.WorldToViewportPoint(a.transform.position);
 						if (pos2d.z > 0)
 						{
+
+
+
+
+
+							GUI.skin.label.alignment = TextAnchor.MiddleCenter;
 							GUI.color = Color.white;
 							string strDisplay = a.name;
 							pos2d.x = Mathf.Clamp(pos2d.x, -1,1);
@@ -1318,10 +1337,13 @@ public class App : MonoBehaviour
 							int x = (int)(pos2d.x*Screen.width);
 							int y = (int)(Screen.height-pos2d.y*Screen.height);
 
-							x = Mathf.Clamp(x,0,Screen.width-100);
-							y = Mathf.Clamp(y,0,Screen.height-30);
+							x = Mathf.Clamp(x-50,0,Screen.width-100);
+							y = Mathf.Clamp(y-15,0,Screen.height-30);
 							GUI.Label (new Rect(x,y,100,30), strDisplay);
+							GUI.skin.label.alignment = TextAnchor.UpperLeft;
 						}
+
+						GUI.skin.font = bak;
 					}
 					catch (System.Exception e)
 					{
@@ -1373,7 +1395,7 @@ public class App : MonoBehaviour
 		//GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
 		GUI.color = Color.white;
 		//GUI.Label(new Rect(0,0,400,30), "NewAtlantisNew Client - SAIC workshop");
-		GUI.Label(new Rect(0,0,100,30), "New Atlantis v0.91");
+		GUI.Label(new Rect(0,0,100,30), "New Atlantis v0.92");
 		GUI.Label(new Rect(Screen.width-200, 0, 200, 30), strPick);
 
 		DrawChronometer();
@@ -1642,6 +1664,7 @@ public class App : MonoBehaviour
 
 	void NetworkChat(string _message)
 	{
+		_message = _message.Replace('\n', ' ');
 		GetComponent<NetworkView>().RPC("Chat", RPCMode.AllBuffered, strName, _message);
 	}
 	
@@ -1708,6 +1731,14 @@ public class App : MonoBehaviour
 		GUILayout.BeginHorizontal();
 		GUILayout.Label(strName, GUILayout.Width(100));
 		strCurrentChatMessage = GUILayout.TextArea(strCurrentChatMessage, GUILayout.Width(200));
+		if (strCurrentChatMessage.Length>0)
+		{
+			if (strCurrentChatMessage[strCurrentChatMessage.Length-1] == '\n')
+			{
+				NetworkChat(strCurrentChatMessage);
+				strCurrentChatMessage = "";
+			}
+		}
 		if (GUILayout.Button("send", GUILayout.Width(100)))
 		{
 			NetworkChat(strCurrentChatMessage);

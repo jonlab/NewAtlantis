@@ -7,10 +7,7 @@ public class NAToolFlag : NAToolBase
 	public float distance = 1f;
 	public Vector3 localForce = Vector3.forward;
 	public string objectName = "cube";
-	/*public NAToolSpawner ()
-	{
-		name = "spawner";
-	}*/
+
 
 	// Use this for initialization
 	void Start () 
@@ -26,16 +23,6 @@ public class NAToolFlag : NAToolBase
 
 	public override void Action() 
 	{
-		Vector3 worldforce = transform.rotation * localForce;
-		if (Network.isServer)
-		{
-			CommandSpawnObject(objectName, transform.position+transform.forward*distance, worldforce, new Vector3(1,0,0)/*colorAvatar*/);
-		}
-		else
-		{
-			//we send to the server
-			GetComponent<NetworkView>().RPC("CommandSpawnObject", RPCMode.Server, objectName, transform.position+transform.forward*distance, worldforce, new Vector3(1,0,0)/*colorAvatar*/);
-		}
 	}
 
 	public override void Press() 

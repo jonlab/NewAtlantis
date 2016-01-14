@@ -4,9 +4,10 @@ using System.Collections;
 
 public class NAToolLight : NAToolBase 
 {
-
-
 	public GameObject target = null;
+	public string LightName = ""; //if empty, avatar lamp
+
+	private bool dirty = false;
 	// Use this for initialization
 	void Start () 
 	{
@@ -32,9 +33,23 @@ public class NAToolLight : NAToolBase
 
 	public override void Action() 
 	{
+		Light l = target.GetComponent<Light>();
 		//local only action
-		Light light = target.GetComponent<Light>();
-		light.enabled = !light.enabled;
+
+		if (dirty)
+		{
+			dirty = false;
+		}
+		else
+		{
+			l.enabled = !l.enabled;
+		}
+		//sync
+		string n = LightName;
+		if (n == "")
+			n = NAServer.strLogin;
+		GetComponent<NetworkView>().RPC("SetLightState", RPCMode.All, n, l.enabled, l.intensity, l.spotAngle, target.transform.eulerAngles);
+
 	}
 
 
@@ -54,14 +69,26 @@ public class NAToolLight : NAToolBase
 
 
 		Light light 		= target.GetComponent<Light>();
-		light.spotAngle 	+= x1*dt*10f;
-		light.range 		+= y1*dt*1f;
+
+		//light.range 		+= y1*dt*1f;
+		light.spotAngle 	+= x2*dt*45f;
 		light.intensity 	-= y2*dt*1f;
+
+		light.intensity = Mathf.Clamp(light.intensity, 0, 2f);
+        light.spotAngle = Mathf.Clamp(light.spotAngle, 0, 179f);
+		if (LightName == "MainLightViewer")
+		{
+			//target.transform.Rotate(y1*dt*45f,x1*dt*45f,0);
+			target.transform.RotateAround(transform.position, transform.up, x1*dt*45f);
+			target.transform.RotateAround(transform.position, transform.right, y1*-1f*dt*45f);
+		}
 
 		if (buttonCamera)
 			light.color = new Color(Random.value, Random.value, Random.value);
 		if (buttonJump)
 			light.color = Color.white;
+
+		dirty = true;
 	}
 
 	public override void DrawExtendedGUI(Vector3 pos2d)

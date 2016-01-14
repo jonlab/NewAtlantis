@@ -82,8 +82,10 @@ public class LogManager : MonoBehaviour
 		else
 		{
 			//version minimisée, on affiche juste le dernier message si dans le timer
-			if (logs.Count > 0 && timer < 2f)
+			if (logs.Count > 0 && timer < 10f)
 			{
+				Font bak = GUI.skin.font;
+				GUI.skin.font = NA.GetFont(1);
 				int end = logs.Count-1;
 				LogEntry e = logs[end];
 				if (e.category == 0)
@@ -96,6 +98,7 @@ public class LogManager : MonoBehaviour
 				GUI.DrawTexture(new Rect(0,Screen.height-30,Screen.width, 30), texWhite);
 				GUI.color = Color.white;
 				GUI.Label(new Rect(0,Screen.height-30,Screen.width, 30), e.str);
+				GUI.skin.font = bak;
 			}
 		}
 	}

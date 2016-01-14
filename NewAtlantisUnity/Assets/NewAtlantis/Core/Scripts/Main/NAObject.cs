@@ -48,6 +48,7 @@ public class NAObject
 		NetworkSync nSync 			= go.AddComponent<NetworkSync>();
 		//nView.SetScope
 		//if (name.Contains("Coffee") || name.Contains("Radio") || name.Contains("Object"))
+		if (name.StartsWith("X"))
 		{
 			LogManager.Log("add " + name + " to the instanciables.");
 			NA.instanciables.Add(this);
@@ -215,9 +216,6 @@ public class NAObject
 					/*
 					NetworkSync nSync 		= go.GetComponent<NetworkSync>();
 					nSync.Prepare(); //client and server (for now, just stops all AudioSources)
-
-
-
 					if (Network.isServer)
 					{
 						if (goChild != null)
@@ -229,8 +227,7 @@ public class NAObject
 					{
 						nSync.AttachNetworkViews();
 					}
-
-*/
+					*/
 
 
 				}

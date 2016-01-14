@@ -105,8 +105,9 @@ public class FlyCamera : MonoBehaviour {
 		if (bPhysics)
 		{
 			Rigidbody rb = GetComponent<Rigidbody>();
-			rb.AddForce(transform.right * joy_speed *x *5, ForceMode.Force);
-			rb.AddForce(transform.forward * joy_speed *y*5, ForceMode.Force);
+			float coeff = Time.deltaTime*60f*5f;
+			rb.AddForce(transform.right * joy_speed *x *coeff, ForceMode.Force);
+			rb.AddForce(transform.forward * joy_speed *y*coeff, ForceMode.Force);
 			//rb.velocity = transform.right * joy_speed * dt*x *100+transform.forward * joy_speed * dt*y*100;
 			//transform.position += transform.right * joy_speed * dt*x;
 			//transform.position += transform.forward * joy_speed * dt*y;

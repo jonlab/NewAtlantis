@@ -61,6 +61,15 @@ public class NANetwork : MonoBehaviour {
 		nView.viewID = viewID;
 		nView.stateSynchronization = NetworkStateSynchronization.Unreliable;
 
+
+		Light l = clone.AddComponent<Light>();
+		l.intensity = 2f;
+		l.enabled = false;
+		l.type = LightType.Spot;
+		l.range = 100f;
+		l.spotAngle = 90f;
+
+
 		if (nView.owner == Network.player)
 		{
 			NA.goAvatar = clone;
@@ -75,9 +84,29 @@ public class NANetwork : MonoBehaviour {
 		{
 			renderer.material.color = new Color(color.x, color.y, color.z, 0.3f);
 		}
+		else
+		{
+			Color col = new Color(color.x, color.y, color.z, 0.3f);
+			Renderer[] renderers = clone.GetComponentsInChildren<Renderer>();
+			Material m = null;
+			foreach (Renderer r in renderers)
+			{
+				if (m == null)
+				{
+					m = r.material;
+
+				}
+				r.material = m;
+				//r.sharedMaterial.color = col;
+				m.color = col;
+			}
+		}
 		clone.transform.parent = NA.app.goRootAvatars.transform;
-		LogManager.Log ("New Avatar:" +  NAServer.strLogin + " owner:" + nView.owner);
+		//LogManager.Log ("New Avatar:" +  name + " owner:" + nView.owner);
+		LogManager.Log (name + " joined!");
 		NA.AddAvatar(clone);
+
+
 	}
 
 
@@ -142,7 +171,7 @@ public class NANetwork : MonoBehaviour {
 
 		LogManager.LogWarning("clone " + name);
 
-		//reset position
+		//reset position of main child
 		clone.transform.GetChild(0).gameObject.transform.localPosition = Vector3.zero;
 
 		//remove previous network view
@@ -178,6 +207,27 @@ public class NANetwork : MonoBehaviour {
 			//rb.isKinematic = true;
 		}
 		NA.player_objects.Add(clone);
+	}
+
+
+	[RPC]
+	public void SetLightState(string name, bool on, float intensity, float spotAngle, Vector3 eulerAngles) 
+	{
+		LogManager.Log("received SetLightState " + name + " " + on + " " + intensity);
+		//find avatar
+		//switch on light
+		GameObject go = GameObject.Find(name);
+		if (go != null)
+		{
+			Light l = go.GetComponent<Light>();
+			if (l != null)
+			{
+				l.enabled = on;
+				l.intensity = intensity;
+				l.spotAngle = spotAngle;
+				go.transform.eulerAngles = eulerAngles;
+			}
+		}
 	}
 
 }

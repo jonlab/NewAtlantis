@@ -153,10 +153,18 @@ public class NAToolSpawner : NAToolBase {
 			NA.DecorateAudioSource(src); //FIXME
 			clone.AddComponent<NetworkSync>(); //FIXME
 		}
+		else if (name == "cube")
+		{
+			clone = GameObject.CreatePrimitive(PrimitiveType.Cube);
+		}
+		else if (name == "capsule")
+		{
+			clone = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+		}
 		else
 		{
 			//cas général
-			clone = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+			clone = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 			//clone = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
 			//clone = GameObject.CreatePrimitive(PrimitiveType.Cube);
 		}
