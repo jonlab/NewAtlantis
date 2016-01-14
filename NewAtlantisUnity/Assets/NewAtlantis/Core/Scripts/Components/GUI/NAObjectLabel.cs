@@ -57,7 +57,6 @@ public class NAObjectLabel : MonoBehaviour
 
 	void OnGUI ()
 	{
-
         bool LabelActive = false;
         foreach (NAObjectLabel l in labels)
         {
@@ -70,7 +69,10 @@ public class NAObjectLabel : MonoBehaviour
 		}
         else if (!LabelActive)
 		{
-
+            if (!NA.app.bGUI)
+            {
+                return;
+            }
             //NAObjectLabel[] labels = Object.
 
             GUI.skin.label.alignment = TextAnchor.MiddleCenter;
