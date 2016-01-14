@@ -4,7 +4,8 @@ using System.Collections;
 public class NA_TwisterAudio : MonoBehaviour {
 
     public AudioSource[] sources;
-    
+
+    public float volume = 0.5f;
 	// Use this for initialization
 	void Start () {
        
@@ -19,7 +20,7 @@ public class NA_TwisterAudio : MonoBehaviour {
         {
             sources[i] = transform.gameObject.AddComponent<AudioSource>();
 
-           sources[i].clip = clip;
+            sources[i].clip = clip;
             sources[i].volume = 0.5f;
             sources[i].loop = true;
             sources[i].spatialBlend = 0.993f;
