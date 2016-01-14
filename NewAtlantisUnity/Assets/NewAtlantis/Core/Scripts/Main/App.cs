@@ -1307,59 +1307,7 @@ public class App : MonoBehaviour
 		//GUI.DrawTexture (new Rect (Screen.width/2-reticule_size/2, Screen.height/2, reticule_size, 2), texWhite);
 		//GUI.DrawTexture (new Rect (Screen.width/2, Screen.height/2-reticule_size/2, 2, reticule_size), texWhite);
 		*/
-		if (bDisplayAvatarNames)
-		{
-			List<GameObject> avatars = NA.GetAvatars();
-			foreach (GameObject a in avatars)
-			{
-				if (Camera.main != null)
-				{
-					try
-					{
-
-
-						Font bak = GUI.skin.font;
-						GUI.skin.font = NA.GetFont(2);
-
-
-
-
-
-						Vector3 pos2d = Camera.main.WorldToViewportPoint(a.transform.position);
-						if (pos2d.z > 0)
-						{
-
-
-
-
-
-							GUI.skin.label.alignment = TextAnchor.MiddleCenter;
-							GUI.color = Color.white;
-							string strDisplay = a.name;
-							pos2d.x = Mathf.Clamp(pos2d.x, -1,1);
-							pos2d.y = Mathf.Clamp(pos2d.y, -1,1);
-							int x = (int)(pos2d.x*Screen.width);
-							int y = (int)(Screen.height-pos2d.y*Screen.height);
-
-							//x = Mathf.Clamp(x-50,0,Screen.width-100);
-							//y = Mathf.Clamp(y-15,0,Screen.height-30);
-
-                            x = Mathf.Clamp(x,0,Screen.width-100);
-                            y = Mathf.Clamp(y,0,Screen.height-15);
-
-							GUI.Label (new Rect(x-100,y-15,200,30), strDisplay);
-							GUI.skin.label.alignment = TextAnchor.UpperLeft;
-						}
-
-						GUI.skin.font = bak;
-					}
-					catch (System.Exception e)
-					{
-						Debug.LogWarning("FIXME : avatars cleaning " + e.ToString());
-					}
-				}
-			}
-		}
+		
 
 		//TransitionManager.DrawGUI();
         
@@ -1397,6 +1345,60 @@ public class App : MonoBehaviour
 			return;
 		}
 
+
+        if (bDisplayAvatarNames)
+        {
+            List<GameObject> avatars = NA.GetAvatars();
+            foreach (GameObject a in avatars)
+            {
+                if (Camera.main != null)
+                {
+                    try
+                    {
+                        
+                        
+                        Font bak = GUI.skin.font;
+                        GUI.skin.font = NA.GetFont(2);
+                        
+                        
+                        
+                        
+                        
+                        Vector3 pos2d = Camera.main.WorldToViewportPoint(a.transform.position);
+                        if (pos2d.z > 0)
+                        {
+                            
+                            
+                            
+                            
+                            
+                            GUI.skin.label.alignment = TextAnchor.MiddleCenter;
+                            GUI.color = Color.white;
+                            string strDisplay = a.name;
+                            pos2d.x = Mathf.Clamp(pos2d.x, -1,1);
+                            pos2d.y = Mathf.Clamp(pos2d.y, -1,1);
+                            int x = (int)(pos2d.x*Screen.width);
+                            int y = (int)(Screen.height-pos2d.y*Screen.height);
+                            
+                            //x = Mathf.Clamp(x-50,0,Screen.width-100);
+                            //y = Mathf.Clamp(y-15,0,Screen.height-30);
+                            
+                            x = Mathf.Clamp(x,0,Screen.width-100);
+                            y = Mathf.Clamp(y,0,Screen.height-15);
+                            
+                            GUI.Label (new Rect(x-100,y-15,200,30), strDisplay);
+                            GUI.skin.label.alignment = TextAnchor.UpperLeft;
+                        }
+                        
+                        GUI.skin.font = bak;
+                    }
+                    catch (System.Exception e)
+                    {
+                        Debug.LogWarning("FIXME : avatars cleaning " + e.ToString());
+                    }
+                }
+            }
+        }
 
 
 		GUI.color = new Color (0, 0, 0, 0.5f);
