@@ -59,7 +59,7 @@ public class NAToolSpawner : NAToolBase {
 		else
 		{
 			//we send to the server
-			GetComponent<NetworkView>().RPC("ServerSpawnObject", RPCMode.Server, objectName, position, worldforce, new Vector3(1,0,0)/*colorAvatar*/);
+            GetComponent<NetworkView>().RPC("ServerSpawnObject", RPCMode.Server, objectName, position, worldforce, NA.colorAvatar);
 		}
 	}
 
@@ -148,6 +148,8 @@ public class NAToolSpawner : NAToolBase {
 			clone.transform.localScale = new Vector3(1f,0.4f, 0.6f);
 			AudioSource src = clone.AddComponent<AudioSource>();
 			src.playOnAwake = false;
+            src.spatialBlend = 1f;
+            clone.AddComponent<NAPhysicsAudioSource>();
 			clone.AddComponent<NAPlayOnCollide>();
 			clone.AddComponent<NAAudioRecorder>();
 			NA.DecorateAudioSource(src); //FIXME

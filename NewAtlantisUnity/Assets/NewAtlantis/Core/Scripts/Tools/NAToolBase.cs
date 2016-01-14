@@ -21,7 +21,7 @@ public class NAToolBase : MonoBehaviour
 	public string 			name = "noname";
 	public Texture2D 		icon = null;
 
-	private Texture2D 		white = null;
+	protected Texture2D 	white = null;
 	private bool			ExtendedGUI = true;
 
 	// Use this for initialization

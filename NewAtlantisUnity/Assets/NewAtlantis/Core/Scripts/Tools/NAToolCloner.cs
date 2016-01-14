@@ -106,7 +106,11 @@ public class NAToolCloner : NAToolBase {
 		{
 			GUI.DrawTexture(new Rect(pos2d.x-32, pos2d.y-64, 64, 64), preview);
 		}
-		GUI.Label(new Rect(pos2d.x-200, pos2d.y-15, 400, 30), NA.instanciables[current].name);
+
+        GUI.color = new Color(0,0,0,0.5f);
+        GUI.DrawTexture(new Rect(pos2d.x-100, pos2d.y-15, 200, 30), white);
+        GUI.color = Color.white;
+		GUI.Label(new Rect(pos2d.x-100, pos2d.y-15, 200, 30), NA.instanciables[current].name);
 
 		//gui souris
 

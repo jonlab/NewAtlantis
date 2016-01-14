@@ -12,7 +12,7 @@ public class NATeleportOnTrigger : MonoBehaviour
 	void OnTriggerEnter(Collider collider) 
 	{
 		//Debug.Log ("NATeleportOnCollide OnCollisionEnter");
-		if (!NA.isClient())
+		//if (!NA.isClient()) //FIXME jonathan ?
 		{
 
 			//send the colliding object to the target position

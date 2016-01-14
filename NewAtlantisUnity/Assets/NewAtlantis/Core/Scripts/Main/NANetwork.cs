@@ -230,4 +230,10 @@ public class NANetwork : MonoBehaviour {
 		}
 	}
 
+    [RPC]
+    public void DestroyAllSpaceObjects()
+    {
+        NA.app.DestroyAllSpaceObjects();
+    }
+
 }

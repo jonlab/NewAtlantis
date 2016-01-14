@@ -1143,6 +1143,8 @@ public class App : MonoBehaviour
 		NA.PreviousSpace = NA.CurrentSpace;
 		NA.CurrentSpace = space;
 		DestroyAllSpaceObjects();
+
+        GetComponent<NetworkView>().RPC("DestroyAllSpaceObjects", RPCMode.OthersBuffered);
 		NAServer.Get(); //get the space description
 	}
 	
@@ -1201,7 +1203,9 @@ public class App : MonoBehaviour
     void OnGUI()
     {
 		GUIIdentityMatrix();
-		GUI.skin.font = font;
+        GUI.skin.font = NA.GetFont(0);
+
+
 		GUI.skin.label.alignment = TextAnchor.MiddleLeft;
 		float scale = 1f;
 
@@ -1395,7 +1399,7 @@ public class App : MonoBehaviour
 		//GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
 		GUI.color = Color.white;
 		//GUI.Label(new Rect(0,0,400,30), "NewAtlantisNew Client - SAIC workshop");
-		GUI.Label(new Rect(0,0,100,30), "New Atlantis v0.92");
+		GUI.Label(new Rect(0,0,100,30), "New Atlantis v0.93");
 		GUI.Label(new Rect(Screen.width-200, 0, 200, 30), strPick);
 
 		DrawChronometer();
@@ -1621,6 +1625,8 @@ public class App : MonoBehaviour
 		LogManager.LogError("You have been disconnected from the server.");
 		Disconnect();
 		refreshHostList();
+
+        NA.ClearAvatars(); //FIXME
 
 		//Called on client during disconnection from server, but also on the server when the connection has disconnected.
 		PlayEvent(10);

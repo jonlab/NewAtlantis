@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class NAObjectLabel : MonoBehaviour 
 {
@@ -14,13 +15,25 @@ public class NAObjectLabel : MonoBehaviour
 	private bool bActive 		= false;
 	private float Duration 		= 30f;
 	private float timer 		= 0f;
+
+    private static List<NAObjectLabel> labels = new List<NAObjectLabel>();
 	
 	// Use this for initialization
 	void Start () 
 	{
 		texWhite = Resources.Load ("white") as Texture2D;
-	
+
 	}
+    void OnEnable()
+    {
+        labels.Add(this);
+    }
+
+
+    void OnDestroy()
+    {
+        labels.Remove(this);
+    }
 	
 	// Update is called once per frame
 	void Update () 
@@ -28,23 +41,39 @@ public class NAObjectLabel : MonoBehaviour
 		if (bActive)
 		{
 			timer += Time.deltaTime;
-			if (timer > Duration)
+			/*if (timer > Duration)
 			{
 				bActive = false;
 				timer = 0f;
-			}
+			}*/
 		}
 
 	}
 
+    void LateUpdate()
+    {
+        //LabelActive = false;
+    }
+
 	void OnGUI ()
 	{
+
+        bool LabelActive = false;
+        foreach (NAObjectLabel l in labels)
+        {
+            if (l.bActive)
+                LabelActive = true;
+        }
 		if (bActive)
 		{
 			DrawGUI();
 		}
-		else
+        else if (!LabelActive)
 		{
+
+            //NAObjectLabel[] labels = Object.
+
+            GUI.skin.label.alignment = TextAnchor.MiddleCenter;
 			Vector3 pos2d = Camera.main.WorldToViewportPoint(transform.position);
 			if (pos2d.z > 0)
 			{
@@ -53,6 +82,7 @@ public class NAObjectLabel : MonoBehaviour
 				GUI.color = Color.white;
 				GUI.Label(new Rect(x-100, y-15, 200, 30), Title + "[" + Author + "]");
 			}
+            GUI.skin.label.alignment = TextAnchor.UpperLeft;
 		}
 	}
 

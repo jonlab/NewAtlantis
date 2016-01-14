@@ -35,8 +35,34 @@ public class NAAudioRecorder : NAObjectBase
 	{
 		if (Microphone.IsRecording(""))
 		{
-			Microphone.End(null);
+            int spos = Microphone.GetPosition("");
+            float pos = (float)spos / (float)SampleRate;
+            LogManager.Log("trunk stopped at " + pos + " s");
+            Microphone.End(null);
+
+            AudioClip clip = AudioClip.Create("TrunkClamped", spos, 1, SampleRate, false);
+            float[] src = new float[record.samples];
+            record.GetData(src, 0);
+
+            float[] dst = new float[spos];
+
+            for (int i=0;i<spos;++i)
+            {
+                dst[i] = src[i];
+            }
+            clip.SetData(dst, 0);
+
+            GetComponent<AudioSource>().clip = clip;
+
+			
+
+            //clamp
+
+
 			SendAudioDataToServer();
+
+
+
 		}
 		else
 		{

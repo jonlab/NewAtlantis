@@ -76,7 +76,7 @@ public class NAToolDestroy : NAToolBase {
 			}
 			else
 			{
-				LogManager.LogWarning("ServerDestroyObject received but no NV on Object to destroy, trying on parents.");
+				/*LogManager.LogWarning("ServerDestroyObject received but no NV on Object to destroy, trying on parents.");
 				nv = go.GetComponentInParent<NetworkView>();
 				if (nv != null)
 				{
@@ -87,6 +87,7 @@ public class NAToolDestroy : NAToolBase {
 					LogManager.LogWarning("ServerDestroyObject received but no NV on Object to destroy on parents.");
 					
 				}
+                */
 
 
 			}
