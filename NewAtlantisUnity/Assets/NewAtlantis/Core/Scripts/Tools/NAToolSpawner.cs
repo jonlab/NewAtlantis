@@ -141,7 +141,7 @@ public class NAToolSpawner : NAToolBase {
 		{
 			clone = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
 		}
-		else if (name == "trunk")
+		else if (name.Contains("trunk"))
 		{
 			clone = GameObject.CreatePrimitive(PrimitiveType.Cube);
 			clone.transform.position = location;
@@ -189,9 +189,16 @@ public class NAToolSpawner : NAToolBase {
 		//Rigidbody rb = clone.AddComponent<Rigidbody>();
 		if (NA.isServer() || NA.isStandalone())
 		{
-			Rigidbody rb = clone.AddComponent<Rigidbody>();
-			rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
-			rb.AddForce(forward*200f);
+			if (name.Contains("nog"))
+			{
+				
+			}
+			else
+			{
+				Rigidbody rb = clone.AddComponent<Rigidbody>();
+				rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+				rb.AddForce(forward*200f);
+			}
 
 		}
 		else
