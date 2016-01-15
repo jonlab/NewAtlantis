@@ -90,21 +90,23 @@ public class NAObjectBase : MonoBehaviour {
 		if (buttonAction)
 		{
 			//Debug.Log("stop");
-			audio.Stop();
+			/*audio.Stop();
 			NetworkSync ns = GetComponent<NetworkSync>();
 			if (ns)
 			{
 				ns.SyncAudioSource();
-			}
+			}*/
+			Stop();
 		}
 		if (buttonCamera)
 		{
-			audio.Play();
+			/*audio.Play();
 			NetworkSync ns = GetComponent<NetworkSync>();
 			if (ns)
 			{
 				ns.SyncAudioSource();
-			}
+			}*/
+			Play();
 		}
 
 	}
@@ -121,22 +123,24 @@ public class NAObjectBase : MonoBehaviour {
 		GUI.color = audio.isPlaying ? Color.green : Color.white;
 		if (GUI.Button (new Rect(x,y-20,60,20), "play (∆)"))
 		{
-			audio.Play();
+			/*audio.Play();
 			NetworkSync ns = GetComponent<NetworkSync>();
 			if (ns)
 			{
 				ns.SyncAudioSource();
-			}
+			}*/
+			Play();
 		}
 		GUI.color = Color.white;
 		if (GUI.Button (new Rect(x+60,y-20,60,20), "stop (□)"))
 		{
-			audio.Stop();
+			/*audio.Stop();
 			NetworkSync ns = GetComponent<NetworkSync>();
 			if (ns)
 			{
 				ns.SyncAudioSource();
-			}
+			}*/
+			Stop();
 		}
 
 		audio.volume = GUI.HorizontalSlider(new Rect(x+120,y-20,80,20), audio.volume, 0f, 1f);
@@ -147,6 +151,50 @@ public class NAObjectBase : MonoBehaviour {
 		}
 		*/
 
+
+	}
+
+
+	public void Play()
+	{
+		AudioSource audio = GetComponent<AudioSource>();
+		if (audio != null)
+		{
+			audio.Play();
+			NetworkSync ns = GetComponent<NetworkSync>();
+			if (ns == null)
+				ns = gameObject.GetComponentInParent<NetworkSync>();
+			if (ns == null)
+			{
+				LogManager.LogError("NAObjectBase Play no NetworkSync found !");
+			}
+			if (ns)
+			{
+				ns.SyncAudioSource();
+			}
+		}
+		
+	}
+
+	public void Stop()
+	{
+		AudioSource audio = GetComponent<AudioSource>();
+		if (audio != null)
+		{
+			audio.Stop();
+			NetworkSync ns = GetComponent<NetworkSync>();
+			if (ns == null)
+				ns = gameObject.GetComponentInParent<NetworkSync>();
+			if (ns == null)
+			{
+				LogManager.LogError("NAObjectBase Stop no NetworkSync found !");
+			}
+			if (ns)
+			{
+				ns.SyncAudioSource();
+			}
+		}
+		
 
 	}
 

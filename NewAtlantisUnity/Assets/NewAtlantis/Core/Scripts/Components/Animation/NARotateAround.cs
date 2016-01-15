@@ -24,7 +24,9 @@ public class NARotateAround : MonoBehaviour
 	void Update () 
 	{
 
-		if (!NA.isClient ()) 
+		//if (!NA.isClient ()) 
+		if (NA.isClient() && NA.syncMode != SyncMode.NoInDepthSync)
+			return;
         {
 			transform.RotateAround(initPos + pivotPoint, rotateVector ,vectorSpeed);
 		}

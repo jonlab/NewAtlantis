@@ -26,7 +26,10 @@ using System.Collections;
 	
 		void OnCollisionEnter(Collision collision) 
 		{
-			if (!NA.isClient ())
+			//if (!NA.isClient ())
+		if (NA.isClient() && NA.syncMode != SyncMode.NoInDepthSync)
+			return;
+		
 			{
 				audio.volume = InitialVolume * 1f;
 				//Debug.Log("on " + GetComponent<AudioSource>().volume);
@@ -40,7 +43,9 @@ using System.Collections;
 		
 		void OnCollisionExit(Collision collision) 
 		{
-			if (!NA.isClient ())
+			//if (!NA.isClient ())
+		if (NA.isClient() && NA.syncMode != SyncMode.NoInDepthSync)
+			return;
 			{
 				audio.volume = InitialVolume * 0f;
 				//Debug.Log("off " + GetComponent<AudioSource>().volume );

@@ -159,6 +159,12 @@ public class NAToolSpawner : NAToolBase {
 		{
 			clone = GameObject.CreatePrimitive(PrimitiveType.Cube);
 		}
+
+		else if (name == "CubeColor")
+		{
+			clone = GameObject.CreatePrimitive(PrimitiveType.Cube);
+			clone.AddComponent<NAColorRandomChanger>();
+		}
 		else if (name == "capsule")
 		{
 			clone = GameObject.CreatePrimitive(PrimitiveType.Capsule);

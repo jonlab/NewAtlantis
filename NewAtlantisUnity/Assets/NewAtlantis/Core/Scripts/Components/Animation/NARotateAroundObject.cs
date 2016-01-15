@@ -9,17 +9,22 @@ using System.Collections;
 
 
 
-	public class NARotateAroundObject : MonoBehaviour {
+	
+public class NARotateAroundObject : MonoBehaviour 
+{
+	public GameObject CentralObject;
+	public Vector3 Angle3DVector;
+	public float Speed = 10f;
 
-			
-			public GameObject CentralObject;
-			public Vector3 Angle3DVector;
-			public float Speed = 10f;
-			
-
-			void Update () {
+	void Update () 
+	{
 				
+		if (CentralObject != null)
+		{
 			transform.RotateAround (CentralObject.transform.position, Angle3DVector, Speed * Time.deltaTime);
-			}
 		}
+	
+	}
+		
+}
 

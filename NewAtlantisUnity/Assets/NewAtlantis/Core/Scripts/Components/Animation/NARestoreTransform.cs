@@ -36,16 +36,16 @@ public class NARestoreTransform : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		if (!NA.isClient()) //server and standalone
+		if (NA.isClient() && NA.syncMode != SyncMode.NoInDepthSync)
+			return;
+		
+		timer += Time.deltaTime;
+		if (timer > interval)
 		{
-			timer += Time.deltaTime;
-			if (timer > interval)
-			{
-				timer -= interval;
-				Restore();
-			}
-
+			timer -= interval;
+			Restore();
 		}
+			
 	}
 
 	void Restore()

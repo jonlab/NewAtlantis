@@ -17,7 +17,9 @@ public class NAAudioWaveTerrain : MonoBehaviour {
 
 	void OnCollisionEnter(Collision collision) 
 	{
-		if (NA.isClient())
+		//if (NA.isClient())
+		//	return;
+		if (NA.isClient() && NA.syncMode != SyncMode.NoInDepthSync)
 			return;
 
 		//Debug.Log("paf");

@@ -281,9 +281,13 @@ public class NetworkSync : MonoBehaviour
 
 	public void SyncAudioSource()
 	{
+		LogManager.Log("SyncAudioSource");
 		AudioSource audio = GetComponent<AudioSource>();
 		if (audio == null)
 			audio = GetComponentInChildren<AudioSource>(); //take children if nothing on the root
+
+		if (audio == null)
+			LogManager.LogError("Error sync AudioSource, no source found !");
 		GetComponent<NetworkView>().RPC("SetAudioSourceState", RPCMode.OthersBuffered, audio.isPlaying, audio.volume, audio.pitch, audio.loop, audio.time);
 	}
 

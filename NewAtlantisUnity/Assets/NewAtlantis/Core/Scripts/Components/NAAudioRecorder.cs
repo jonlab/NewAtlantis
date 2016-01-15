@@ -31,7 +31,7 @@ public class NAAudioRecorder : NAObjectBase
 		GetComponent<AudioSource>().clip = record;
 	}
 
-	void Stop()
+	void RecorderStop()
 	{
 		if (Microphone.IsRecording(""))
 		{
@@ -91,7 +91,7 @@ public class NAAudioRecorder : NAObjectBase
 			ns.ServerSyncAudio();
 		}
 	}
-	void Play()
+	void RecorderPlay()
 	{
 		if (Microphone.IsRecording(""))
 		{
@@ -130,7 +130,7 @@ public class NAAudioRecorder : NAObjectBase
 
 		if (buttonCamera)
 		{
-			Play();
+			RecorderPlay();
 		}
 		if (buttonMenu)
 		{
@@ -138,7 +138,7 @@ public class NAAudioRecorder : NAObjectBase
 		}
 		if (buttonAction)
 		{
-			Stop();
+			RecorderStop();
 		}
 
 		if (buttonJump)
@@ -167,12 +167,12 @@ public class NAAudioRecorder : NAObjectBase
 		GUI.color = GetComponent<AudioSource>().isPlaying ? Color.green : Color.white;
 		if (GUI.Button (new Rect(x,y+30,60,20), "play (∆)"))
 		{
-			Play();
+			RecorderPlay();
 		}
 		GUI.color = Color.white;
 		if (GUI.Button (new Rect(x+60,y+30,60,20), "stop (□)"))
 		{
-			Stop();
+			RecorderStop();
 		}
 		GUI.color = Microphone.IsRecording("") ? Color.red : Color.white;
 		if (GUI.Button (new Rect(x+120,y+30,60,20), "rec (o)"))

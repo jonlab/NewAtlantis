@@ -16,7 +16,11 @@ public class NAModulateVolume : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (!NA.isClient ()) { //server and standalone
+		//if (!NA.isClient ()) 
+		if (NA.isClient() && NA.syncMode != SyncMode.NoInDepthSync)
+			return;
+		
+		{ //server and standalone
 	
 
 

@@ -23,7 +23,9 @@ public class NALooperSequence : MonoBehaviour {
     {
 		interval = Mathf.Clamp (interval, 1, 10000000);
 
-		if (!NA.isClient()) //server and standalone
+		//if (!NA.isClient()) //server and standalone
+		if (NA.isClient() && NA.syncMode != SyncMode.NoInDepthSync)
+			return;
 		{
 			timer += Time.deltaTime;
 			if (timer > interval)

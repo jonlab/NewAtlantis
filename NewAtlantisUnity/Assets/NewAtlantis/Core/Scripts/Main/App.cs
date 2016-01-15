@@ -1364,7 +1364,7 @@ public class App : MonoBehaviour
                         GUI.skin.font = NA.GetFont(2);
                         
 						Vector3 pos2d = Camera.main.WorldToViewportPoint(a.transform.position+a.transform.up*0.7f);
-                        if (pos2d.z > 0)
+                        if (pos2d.z > 0.01f)
                         {
                             GUI.skin.label.alignment = TextAnchor.MiddleCenter;
                             GUI.color = Color.white;
@@ -1409,7 +1409,7 @@ public class App : MonoBehaviour
 		//GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
 		GUI.color = Color.white;
 		//GUI.Label(new Rect(0,0,400,30), "NewAtlantisNew Client - SAIC workshop");
-		GUI.Label(new Rect(0,0,100,30), "New Atlantis v0.97");
+		GUI.Label(new Rect(0,0,100,30), "New Atlantis v0.98");
 		GUI.Label(new Rect(Screen.width-200, 0, 200, 30), strPick);
 
 		DrawChronometer();

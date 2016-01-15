@@ -23,7 +23,7 @@ public static class NA
 
 	public static SyncMode syncMode = SyncMode.NoInDepthSync;
 
-    public static float JoystickSmoothing = 0.8f;
+    public static float JoystickSmoothing = 0.92f;
 
 	public static Vector3 colorAvatar;
 

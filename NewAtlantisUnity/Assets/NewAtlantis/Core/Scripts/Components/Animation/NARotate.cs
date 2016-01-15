@@ -15,8 +15,9 @@ public class NARotate : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-
-		if (!NA.isClient ()) 
+		if (NA.isClient() && NA.syncMode != SyncMode.NoInDepthSync)
+			return;
+		//if (!NA.isClient ()) 
         {
 
 			transform.Rotate(rotateVector * vectorSpeed * Time.deltaTime);

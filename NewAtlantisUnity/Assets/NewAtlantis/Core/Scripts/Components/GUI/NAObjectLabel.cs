@@ -41,11 +41,12 @@ public class NAObjectLabel : MonoBehaviour
 		if (bActive)
 		{
 			timer += Time.deltaTime;
-			if (timer > Duration)
+			/*if (timer > Duration)
 			{
 				//bActive = false;
 				timer = 0f;
 			}
+			*/
 		}
 
 	}
@@ -67,7 +68,7 @@ public class NAObjectLabel : MonoBehaviour
 		{
 			DrawGUI();
 		}
-        else if (!LabelActive)
+		else if (!LabelActive && (timer < Duration))
 		{
             if (!NA.app.bGUI)
             {
