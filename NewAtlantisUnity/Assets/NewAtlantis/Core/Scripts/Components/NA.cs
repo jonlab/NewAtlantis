@@ -277,15 +277,26 @@ public static class NA
 			//r.material.shader = Shader.Find(r.material.shader.name);
 			foreach (Material m in r.sharedMaterials)
 			{
-				Shader s = Shader.Find(m.shader.name);
-				if (s != null)
+				try
 				{
-			         m.shader = s;
-                 //   LogManager.LogError("Shader name : " + m.shader.name);
-                }
-				else
+					if (m.shader != null)
+					{
+					
+						Shader s = Shader.Find(m.shader.name);
+						if (s != null)
+						{
+							m.shader = s;
+							//   LogManager.LogError("Shader name : " + m.shader.name);
+						}
+						else
+						{
+							LogManager.LogWarning("can't find shader : " + m.shader.name);
+						}
+					}
+				}
+				catch (System.Exception e)
 				{
-					LogManager.LogWarning("can't find shader : " + m.shader.name);
+					LogManager.LogWarning("shader exception");
 				}
 			}
 			/*foreach (Material m in r.materials)
