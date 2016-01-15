@@ -56,6 +56,11 @@ public class NAParticleOnCollide : MonoBehaviour {
 
 	void OnCollisionEnter(Collision e){
 
+
+		if (NA.isClient() && NA.syncMode != SyncMode.NoInDepthSync)
+			return;
+		Apply();
+		/*
 		if (!NA.isClient ()) {
 	
 
@@ -69,6 +74,7 @@ public class NAParticleOnCollide : MonoBehaviour {
 				}
 				//p.Play ();
 			}
+			*/
 
 
 

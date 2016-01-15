@@ -7,7 +7,7 @@ public class NAViewerOptim : MonoBehaviour
 	AudioSource[] 	sources;
 	LensFlare[] 	flares;
 
-	public float 	distance = 100f;
+	public float 	distance = 150f;
 	public bool		bCulled = false;
 
 	// Use this for initialization

@@ -89,12 +89,22 @@ public class NAObjectBase : MonoBehaviour {
 
 		if (buttonAction)
 		{
-			Debug.Log("stop");
+			//Debug.Log("stop");
 			audio.Stop();
+			NetworkSync ns = GetComponent<NetworkSync>();
+			if (ns)
+			{
+				ns.SyncAudioSource();
+			}
 		}
 		if (buttonCamera)
 		{
 			audio.Play();
+			NetworkSync ns = GetComponent<NetworkSync>();
+			if (ns)
+			{
+				ns.SyncAudioSource();
+			}
 		}
 
 	}
@@ -112,11 +122,21 @@ public class NAObjectBase : MonoBehaviour {
 		if (GUI.Button (new Rect(x,y-20,60,20), "play (∆)"))
 		{
 			audio.Play();
+			NetworkSync ns = GetComponent<NetworkSync>();
+			if (ns)
+			{
+				ns.SyncAudioSource();
+			}
 		}
 		GUI.color = Color.white;
 		if (GUI.Button (new Rect(x+60,y-20,60,20), "stop (□)"))
 		{
 			audio.Stop();
+			NetworkSync ns = GetComponent<NetworkSync>();
+			if (ns)
+			{
+				ns.SyncAudioSource();
+			}
 		}
 
 		audio.volume = GUI.HorizontalSlider(new Rect(x+120,y-20,80,20), audio.volume, 0f, 1f);

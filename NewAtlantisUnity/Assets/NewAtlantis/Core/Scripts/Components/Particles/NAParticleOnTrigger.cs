@@ -46,6 +46,10 @@ public class NAParticleOnTrigger : MonoBehaviour
 
 	void OnTriggerEnter(Collider collider) 
 	{
+		if (NA.isClient() && NA.syncMode != SyncMode.NoInDepthSync)
+			return;
+		ParticlePlay();
+		/*
 		if (!NA.isClient ()) 
 		{
 			if (NA.isServer())
@@ -57,10 +61,16 @@ public class NAParticleOnTrigger : MonoBehaviour
 				ParticlePlay();
 			}
 		}
+		*/
 	}
 
 	void OnTriggerExit (Collider other) 
 	{
+
+		if (NA.isClient() && NA.syncMode != SyncMode.NoInDepthSync)
+			return;
+		ParticleStop();
+		/*
 		if (!NA.isClient ()) 
 		{
 			if (NA.isServer())
@@ -72,6 +82,7 @@ public class NAParticleOnTrigger : MonoBehaviour
 				ParticleStop();
             }
         }
+        */
 
 	}
 

@@ -26,7 +26,6 @@ public class NAObject
 
 	public NAObject(GameObject _root, string _name, Vector3 _position, Vector3 _angles, Vector3 _scale, string _file, NetworkViewID _NetworkViewId)
 	{
-
 		Debug.Log ("Creating NAObject " + _name);
 		name 				= _name;
 		position 			= _position;
@@ -46,7 +45,7 @@ public class NAObject
 		nView.viewID 				= this.NetworkViewId;
 
 		NetworkSync nSync 			= go.AddComponent<NetworkSync>();
-		//nView.SetScope
+
 		//if (name.Contains("Coffee") || name.Contains("Radio") || name.Contains("Object"))
 		if (name.StartsWith("X"))
 		{
@@ -157,7 +156,7 @@ public class NAObject
 					AudioListener[] listeners = go.GetComponentsInChildren<AudioListener>();
 
 					//exceptions
-					if (name.Contains("maki") || name.Contains("SYN"))
+					/*if (name.Contains("maki") || name.Contains("SYN"))
 					{
 						//unactivate lights
 						foreach (Light l in lights)
@@ -168,6 +167,9 @@ public class NAObject
 
 						
 					}
+					*/
+
+
 					//we have to scale after instantiation
 					go.transform.localScale 	= scale;
 					bundle.Unload(false); 
@@ -213,8 +215,57 @@ public class NAObject
 
 		            
 					//jonathan : removed on 1/9/2016
-					/*
+
+
 					NetworkSync nSync 		= go.GetComponent<NetworkSync>();
+
+					List<GameObject> listSync = new List<GameObject>();
+					if (NA.syncMode == SyncMode.RigibodiesAndAudioSources)
+					{
+						/*Rigidbody[] rbs = go.GetComponentsInChildren<Rigidbody>();
+						foreach (Rigidbody rb in rbs)
+						{
+							listSync.Add(rb.gameObject);
+						}
+						AudioSource[] audios = go.GetComponentsInChildren<AudioSource>();
+						foreach (AudioSource audio in audios)
+						{
+							listSync.Add(audio.gameObject);
+						}
+						*/
+
+						Collider[] colliders = go.GetComponentsInChildren<Collider>();
+						foreach (Collider collider in colliders)
+						{
+							listSync.Add(collider.gameObject);
+						}
+
+						if (NA.isServer())
+						{
+							foreach (GameObject o in listSync)
+							{
+								string path = NA.GetGameObjectPath(o.transform);
+								NetworkViewID id = Network.AllocateViewID();
+								//LogManager.Log("PrepareAsServer " + path + " id=" + id);
+								go.GetComponent<NetworkView>().RPC("AttachNetworkView", RPCMode.AllBuffered, path, id);
+
+							}
+						}
+						else if (NA.isClient())
+						{
+							nSync.AttachNetworkViews();
+						}
+
+
+
+
+					}
+
+
+
+
+					/*
+
 					nSync.Prepare(); //client and server (for now, just stops all AudioSources)
 					if (Network.isServer)
 					{
@@ -227,8 +278,8 @@ public class NAObject
 					{
 						nSync.AttachNetworkViews();
 					}
-					*/
 
+					*/
 
 				}
 			}

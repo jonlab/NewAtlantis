@@ -38,10 +38,16 @@ public class NAAudioSynthLooper : NAObjectBase
 		if (NAInput.GetControlDown(NAControl.Jump))
 		{
 			Generate();
+			Sync();
+			LooperPlay();
 		}
 		if (NAInput.GetControlDown(NAControl.Menu))
 		{
 			Randomize();
+			//new
+			Generate(); 
+			Sync();
+			LooperPlay();
 		}
 	}
 
@@ -54,7 +60,7 @@ public class NAAudioSynthLooper : NAObjectBase
 		GUI.Box (new Rect(x,y,100,30), "Looper");
 
 	}
-
+		
 
 	public override void DrawExtendedGUI(Vector3 pos2d)
 	{
@@ -70,6 +76,7 @@ public class NAAudioSynthLooper : NAObjectBase
 		if (GUI.Button (new Rect(x,y+80,100,20), "Generate (X)"))
 		{
 			Generate();
+			Sync();
 		}
 		if (GUI.Button (new Rect(x+100,y+80,100,20), "Randomize (O)"))
 		{
@@ -89,7 +96,7 @@ public class NAAudioSynthLooper : NAObjectBase
 	}
 
 
-	private void Generate ()
+	public void Generate ()
 	{
 		AudioSource audio = GetComponent<AudioSource>();
         if (audio && audioClip)
@@ -133,16 +140,40 @@ public class NAAudioSynthLooper : NAObjectBase
 
 			audio.clip.SetData(data, 0);
 			audio.loop = true;
-			audio.Play();
+
+
 		}
 	}
 
-	void Play()
+	void LooperPlay()
 	{
-		if (GetComponent<AudioSource>().clip != null)
+		AudioSource audio = GetComponent<AudioSource>();
+
+		if (audio != null)
 		{
-			GetComponent<AudioSource>().Play ();
+			audio.Play();
+
+			NetworkSync ns = GetComponent<NetworkSync>();
+			if (ns == null)
+				ns = gameObject.GetComponentInParent<NetworkSync>();
+			if (ns)
+			{
+				ns.SyncAudioSource();
+			}
 		}
+	}
+
+
+	void Sync()
+	{
+		NetworkView nv = GetComponent<NetworkView>();
+		if (nv == null)
+			nv = gameObject.GetComponentInParent<NetworkView>();
+		if (nv != null)
+		{
+			nv.RPC("SetAudioSynthLooperState", RPCMode.OthersBuffered, pos, duration);
+		}
+		
 	}
 
 

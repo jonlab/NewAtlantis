@@ -48,7 +48,7 @@ public class NAToolLight : NAToolBase
 		string n = LightName;
 		if (n == "")
 			n = NAServer.strLogin;
-		GetComponent<NetworkView>().RPC("SetLightState", RPCMode.All, n, l.enabled, l.intensity, l.spotAngle, target.transform.eulerAngles);
+		GetComponent<NetworkView>().RPC("SetLightState", RPCMode.AllBuffered, n, l.enabled, l.intensity, l.spotAngle, target.transform.eulerAngles);
 
 	}
 

@@ -46,7 +46,10 @@ public class NAToolSonometer : NAToolBase
 				}
 				if (GUI.Button(new Rect(x-50, y-15, 100, 30), s.name))
 				{
-					s.Play();
+					if (s.isPlaying)
+						s.Stop();
+					else
+						s.Play();
 				}
 			}
 		}

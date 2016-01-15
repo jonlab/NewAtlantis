@@ -25,7 +25,7 @@ public class NAPlayOnCollide : MonoBehaviour
 
 	void OnCollisionEnter(Collision collision) 
 	{
-		if (NA.isClient())
+		if (NA.isClient() && NA.syncMode != SyncMode.NoInDepthSync)
 			return;
 		//volume is relative to relative velocity
 		//float magnitude = collision.relativeVelocity.magnitude;
@@ -64,7 +64,7 @@ public class NAPlayOnCollide : MonoBehaviour
 	}
 	void OnCollisionStay(Collision collision) 
 	{
-		if (NA.isClient())
+		if (NA.isClient() && NA.syncMode != SyncMode.NoInDepthSync)
 			return;
 		AudioSource audio = target.GetComponent<AudioSource>();
 		float s = 0f;
@@ -76,8 +76,10 @@ public class NAPlayOnCollide : MonoBehaviour
 
 	void OnCollisionExit(Collision collision) 
 	{
-		if (NA.isClient())
+		if (NA.isClient() && NA.syncMode != SyncMode.NoInDepthSync)
 			return;
+		if (target == null)
+			target = this.gameObject;
 		AudioSource audio = target.GetComponent<AudioSource>();
 		if (StopOnExit && audio != null)
 		{

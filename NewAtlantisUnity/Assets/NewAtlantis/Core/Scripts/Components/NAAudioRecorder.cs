@@ -71,6 +71,12 @@ public class NAAudioRecorder : NAObjectBase
 				GetComponent<AudioSource>().Stop ();
 			}
 		}
+
+		NetworkSync ns = GetComponent<NetworkSync>();
+		if (ns)
+		{
+			ns.SyncAudioSource();
+		}
 	}
 
 	void SendAudioDataToServer()
@@ -95,6 +101,12 @@ public class NAAudioRecorder : NAObjectBase
 		if (GetComponent<AudioSource>().clip != null)
 		{
 			GetComponent<AudioSource>().Play ();
+		}
+
+		NetworkSync ns = GetComponent<NetworkSync>();
+		if (ns)
+		{
+			ns.SyncAudioSource();
 		}
 	}
 

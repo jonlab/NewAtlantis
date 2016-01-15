@@ -288,14 +288,16 @@ public class App : MonoBehaviour
 	void OnDestroy()
 	{
 		Debug.Log("app OnDestroy");
-		NA.PlayPhysics();	
+		NA.PlayPhysics();
+		PlayerPrefs.SetString("spacefilter", SpaceFilter);
+
 	}
     // Use this for initialization
     void Start () 
 	{
 		AudioListener.volume = 0.25f;
 		strIP = PlayerPrefs.GetString("ip");
-
+		SpaceFilter = PlayerPrefs.GetString("spacefilter");
 		float sh = Mathf.Max(Screen.height, 768);
 		float sw = Screen.width;
 		mGuiWinRectWindows 		= new Rect(sw/2-WindowSize.x/2, sh/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
@@ -351,10 +353,10 @@ public class App : MonoBehaviour
 		//ConnectionTesterStatus status = Network.TestConnection(false);
 		//LogManager.Log ("Network connection tests result=" + status.ToString());
 		NA.PausePhysics();	
-		if (Screen.height < 768)
+		/*if (Screen.height < 768)
 		{
 			LogManager.LogError("Height < 768 (" + Screen.height + ")");
-		}
+		}*/
 #if UNITY_WEBPLAYER
 		LogManager.LogError("You are in Web Player build settings ! You will not be able to upload files from your computer. Please change your build settings to standalone in File->Build Settings.");
 #endif
@@ -1023,7 +1025,11 @@ public class App : MonoBehaviour
 					space.name 	= xpnic.Current.GetAttribute("name","");
 					space.type 	= xpnic.Current.GetAttribute("type","");
 					space.creator 	= xpnic.Current.GetAttribute("creator","");
-
+					/*if (space.id == 161)
+					{
+						Debug.Log("LeCube space");
+					}
+					*/
 					//if (CurrentSpace != null)
 					{
 						//Debug.Log ("comparing space ID " + CurrentSpace.id + " AND " + space.id);
@@ -1086,6 +1092,10 @@ public class App : MonoBehaviour
 						}
 
 					}
+					/*if (space.id == 161)
+					{
+						Debug.Log("Add LeCube space");
+					}*/
 					listSpaces.Add (space);
 				}
 				if(xpnic.Current.Name.Equals("asset"))
@@ -1300,14 +1310,7 @@ public class App : MonoBehaviour
 
 			
 		}
-        /*
-
-		//reticule
-		int reticule_size = 50;
-		//GUI.DrawTexture (new Rect (Screen.width/2-reticule_size/2, Screen.height/2, reticule_size, 2), texWhite);
-		//GUI.DrawTexture (new Rect (Screen.width/2, Screen.height/2-reticule_size/2, 2, reticule_size), texWhite);
-		*/
-		
+    
 
 		//TransitionManager.DrawGUI();
         
@@ -1329,9 +1332,18 @@ public class App : MonoBehaviour
 			GUI.color = Color.white;
 			if (NADownloader.current != null)
 			{
+				GUI.skin.label.alignment = TextAnchor.MiddleCenter;
+				GUI.skin.font = NA.GetFont(3);
+				if (NA.CurrentSpace != null)
+				{
+					GUI.Label(new Rect(Screen.width/2-300, Screen.height/2-100, 600, 50), NA.CurrentSpace.name);
+				}
+				GUI.skin.font = NA.GetFont(1);
 				string str = "loading " + NADownloader.current.name + " ... " + (int)(loading*1000f)/10f + "%";
-				GUI.Label(new Rect(Screen.width/2-150, Screen.height/2-15, 300, 30), str);
+				GUI.Label(new Rect(Screen.width/2-300, Screen.height/2-15, 600, 30), str);
 				GUI.color = Color.white;
+				GUI.skin.label.alignment = TextAnchor.UpperLeft;
+				GUI.skin.font = NA.GetFont(0);
 			}
 
 		}
@@ -1351,18 +1363,9 @@ public class App : MonoBehaviour
                         Font bak = GUI.skin.font;
                         GUI.skin.font = NA.GetFont(2);
                         
-                        
-                        
-                        
-                        
-                        Vector3 pos2d = Camera.main.WorldToViewportPoint(a.transform.position);
+						Vector3 pos2d = Camera.main.WorldToViewportPoint(a.transform.position+a.transform.up*0.7f);
                         if (pos2d.z > 0)
                         {
-                            
-                            
-                            
-                            
-                            
                             GUI.skin.label.alignment = TextAnchor.MiddleCenter;
                             GUI.color = Color.white;
                             string strDisplay = a.name;
@@ -1374,8 +1377,8 @@ public class App : MonoBehaviour
                             //x = Mathf.Clamp(x-50,0,Screen.width-100);
                             //y = Mathf.Clamp(y-15,0,Screen.height-30);
                             
-                            x = Mathf.Clamp(x,0,Screen.width-100);
-                            y = Mathf.Clamp(y,0,Screen.height-15);
+                            x = Mathf.Clamp(x,100,Screen.width-100);
+                            y = Mathf.Clamp(y,15,Screen.height-15);
                             
                             GUI.Label (new Rect(x-100,y-15,200,30), strDisplay);
                             GUI.skin.label.alignment = TextAnchor.UpperLeft;
@@ -1406,7 +1409,7 @@ public class App : MonoBehaviour
 		//GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
 		GUI.color = Color.white;
 		//GUI.Label(new Rect(0,0,400,30), "NewAtlantisNew Client - SAIC workshop");
-		GUI.Label(new Rect(0,0,100,30), "New Atlantis v0.95");
+		GUI.Label(new Rect(0,0,100,30), "New Atlantis v0.97");
 		GUI.Label(new Rect(Screen.width-200, 0, 200, 30), strPick);
 
 		DrawChronometer();
@@ -1595,6 +1598,7 @@ public class App : MonoBehaviour
 	{
 		Debug.Log("Connected to server");
 		CreateNetworkAvatar();
+		ResetViewerPosition();
 		PlayEvent(2);
 	}
 
@@ -2000,10 +2004,15 @@ public class App : MonoBehaviour
 	{
 		foreach (Space space in listSpaces)
 		{
+			
 			bool bShow = userfilter && (tabSpaces == TypeTab.Mine && space.creator == NAServer.strLogin || tabSpaces == TypeTab.SharedWithMe && space.type == "public" && space.creator != NAServer.strLogin && space.objectCount > 0);
 
-			if ((bShow || !userfilter && space.objectCount > 0) && (SpaceFilter == "" || space.name.Contains(SpaceFilter) || space.creator.Contains (SpaceFilter)))
+			if ((bShow || !userfilter /*&& space.objectCount > 0*/ ) && (SpaceFilter == "" || space.name.Contains(SpaceFilter) || space.creator.Contains (SpaceFilter)))
 			{
+				/*if (space.id == 161)
+				{
+					Debug.Log("LeCube");
+				}*/
 				GUILayout.BeginHorizontal();
 				if (space.name == strSpace)
 				{
@@ -2970,6 +2979,12 @@ public class App : MonoBehaviour
 		GUILayout.Label(""+db + " dB", GUILayout.Width(100));
 		GUILayout.EndHorizontal();
 
+		GUILayout.BeginHorizontal();
+		string[] strModes = {"Full Authoritative", "Rigibodies And AudioSources", "AudioSources Only","No In Depth Sync"};
+		NA.syncMode = (SyncMode)GUILayout.SelectionGrid((int)NA.syncMode, strModes, 4);
+		GUILayout.EndHorizontal();
+
+
 		GUI.DragWindow();
     }
     
@@ -3052,7 +3067,8 @@ public class App : MonoBehaviour
 
 	void ResetViewerPosition()
 	{
-		transform.position = new Vector3(0,2,0);
+		
+		transform.position = new Vector3(Random.value*10f-5f,10,Random.value*10f-5f);
 	}
     
 	void DrawChronometer()

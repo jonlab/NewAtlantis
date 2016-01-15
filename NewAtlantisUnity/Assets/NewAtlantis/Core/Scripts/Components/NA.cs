@@ -2,7 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 
-
+public  enum SyncMode
+{
+	FullAuthoritative,
+	RigibodiesAndAudioSources,
+	AudioSourcesOnly,
+	NoInDepthSync
+}
 //main New Atlantis engine class
 public static class NA
 {
@@ -14,6 +20,8 @@ public static class NA
 	public static Space CurrentSpace = null;
 	public static Space PreviousSpace = null;
 	public static Font[] fonts = new Font[4];
+
+	public static SyncMode syncMode = SyncMode.NoInDepthSync;
 
     public static float JoystickSmoothing = 0.8f;
 
@@ -498,6 +506,16 @@ public static class NA
 		return null;
 	}
 
+	public static string GetGameObjectPath(Transform transform)
+	{
+		string path = transform.name;
+		while (transform.parent != null)
+		{
+			transform = transform.parent;
+			path = transform.name + "/" + path;
+		}
+		return path;
+	}
 
 
 

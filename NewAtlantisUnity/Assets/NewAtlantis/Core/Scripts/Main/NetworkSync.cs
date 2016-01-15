@@ -219,6 +219,8 @@ public class NetworkSync : MonoBehaviour
 			NetworkView nView 		= goChild.AddComponent<NetworkView>();
 			nView.viewID 			= viewID;
 			nView.stateSynchronization = NetworkStateSynchronization.Unreliable;
+			goChild.AddComponent<NetworkSync>();
+
 		}
 		else
 		{
@@ -231,7 +233,7 @@ public class NetworkSync : MonoBehaviour
 			}
 			catch (System.Exception e)
 			{
-				LogManager.LogError("Exception : network view on object " + path + " ID=" + viewID);
+				LogManager.LogWarning("Exception : network view on object " + path + " ID=" + viewID);
 			}
 		}
 	}
@@ -249,21 +251,67 @@ public class NetworkSync : MonoBehaviour
 				NetworkView nView 		= goChild.AddComponent<NetworkView>();
 				nView.viewID 			= viewID;
 				nView.stateSynchronization = NetworkStateSynchronization.Unreliable;
-
-					
-
+				goChild.AddComponent<NetworkSync>();
 			}
 			else
 			{
-
 				LogManager.LogError("Can't find GameObject after postponing : " + path);
 			}
-
         }
-        
     }
 
 
+	[RPC]
+	void SetAudioSynthLooperState(float pos, float duration)
+	{
+		LogManager.Log("received AudioSynthLooper state " + pos + " " + duration);
+		NAAudioSynthLooper l = GetComponent<NAAudioSynthLooper>();
+		if (l == null)
+		{
+			l = GetComponentInChildren<NAAudioSynthLooper>();
+		}
+		if (l != null)
+		{
+			l.pos = pos;
+			l.duration = duration;
+			l.Generate();
+		}
+	}
+
+
+	public void SyncAudioSource()
+	{
+		AudioSource audio = GetComponent<AudioSource>();
+		if (audio == null)
+			audio = GetComponentInChildren<AudioSource>(); //take children if nothing on the root
+		GetComponent<NetworkView>().RPC("SetAudioSourceState", RPCMode.OthersBuffered, audio.isPlaying, audio.volume, audio.pitch, audio.loop, audio.time);
+	}
+
+
+	[RPC]
+	void SetAudioSourceState(bool playing, float volume, float pitch, bool loop, float time) 
+	{
+		LogManager.Log("received AudioSource state " + playing + " " + volume + " "  + pitch + " " + loop + " " + time);
+		AudioSource audio = GetComponent<AudioSource>();
+
+		if (audio == null)
+			audio = GetComponentInChildren<AudioSource>();
+		if (audio)
+		{
+			if (playing && !audio.isPlaying)
+			{
+				audio.Play();
+			}
+			else if (!playing && audio.isPlaying)
+			{
+				audio.Stop();
+			}
+			audio.volume = volume;
+			audio.pitch = pitch;
+			audio.loop = loop;
+			audio.time = time;
+		}
+	}
 
 	public void ServerSyncAudio()
 	{
@@ -271,16 +319,11 @@ public class NetworkSync : MonoBehaviour
 		AudioSource audio = GetComponent<AudioSource>();
 		if (audio)
 		{
-			//float[] audioFloat = new float[audio.clip.samples * audio.clip.channels];
-			//audio.clip.GetData (audioFloat, 0);
-			//GetComponent<NetworkView>().RPC("SendAudioBuffer", RPCMode.Others, ToByteArray(audioFloat), audio.clip.channels);
-
 			//ADPCM
 			int samples = audio.clip.samples*audio.clip.channels;
 			LogManager.Log ("raw audio samples sent = " + samples);
 			byte[] data = CodecIMAADPCM.GetADPCMWAVData(audio.clip, samples);
-			GetComponent<NetworkView>().RPC("SendAudioBufferADPCM", RPCMode.Others, data);
-
+			GetComponent<NetworkView>().RPC("SendAudioBufferADPCM", RPCMode.OthersBuffered, data);
 		}
 
 	}
