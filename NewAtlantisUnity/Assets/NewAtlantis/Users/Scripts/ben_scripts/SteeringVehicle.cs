@@ -33,7 +33,8 @@ public class SteeringVehicle : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-		if (!NA.isClient())
+		//if (!NA.isClient())
+		//local mode
 		{
 			velocity = new Vector3();
 			//velocity = UnityEngine.Random.onUnitSphere * 2.0f;
@@ -64,7 +65,8 @@ public class SteeringVehicle : MonoBehaviour {
 	
 	void Update () {
 
-		if (!NA.isClient())
+		//local mode
+		//if (!NA.isClient())
 		{
 
 			if (MyUtils.RandomFrequency (newTargetFrequency))
