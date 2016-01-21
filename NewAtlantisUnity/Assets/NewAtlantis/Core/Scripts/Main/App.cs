@@ -1409,7 +1409,7 @@ public class App : MonoBehaviour
 		//GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
 		GUI.color = Color.white;
 		//GUI.Label(new Rect(0,0,400,30), "NewAtlantisNew Client - SAIC workshop");
-		GUI.Label(new Rect(0,0,100,30), "New Atlantis v0.98");
+		GUI.Label(new Rect(0,0,100,30), "New Atlantis v0.99");
 		GUI.Label(new Rect(Screen.width-200, 0, 200, 30), strPick);
 
 		DrawChronometer();

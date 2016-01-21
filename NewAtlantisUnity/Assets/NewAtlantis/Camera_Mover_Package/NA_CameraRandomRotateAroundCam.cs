@@ -113,9 +113,12 @@ public class NA_CameraRandomRotateAroundCam : NACamera{
 
 		//La caméra ne peut pas descendre plus bas qu'un certain seuil
 		// ( objectif : empecher a la camera de tomber sous le sol )
-		if (myCamera.transform.position.y < minimalYPositionValue)
+		if (myCamera.transform.position.y < minimalYPositionValue && time > 20) //fix jonathan (time>20)
 			init ();
-	
+		//jonathan Fix
+		//float d = (myCamera.transform.position - focusPoint.transform.position).magnitude;
+		//if (d<0.1f)
+		//	init();
 
 	if (!over) {
 
