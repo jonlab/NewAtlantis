@@ -37,7 +37,13 @@ public class rheingold: MonoBehaviour {
 
         if (t.parent != null)
         {
+            if (t.gameObject == myParent)
+            {
+                currentParent = t.gameObject;
+                return;
+            }
             seekParent(t.parent);
+
         }
         else
         {
@@ -45,7 +51,6 @@ public class rheingold: MonoBehaviour {
         }
 
     }
-
     void StartEvent()
     {
         GetComponent<Renderer>().material.color = Color.white;

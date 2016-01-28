@@ -23,7 +23,11 @@ public class nebmoon : MonoBehaviour {
 
         seekParent(e.transform);
 
-        if (currentParent != myParent) StartEvent();
+        if (currentParent != myParent)
+        {
+            Debug.LogError("eeee"+e.gameObject);
+            StartEvent();
+        }
 
     }
 
@@ -33,7 +37,13 @@ public class nebmoon : MonoBehaviour {
 
         if (t.parent != null)
         {
-            seekParent(t.parent);
+                if (t.gameObject == myParent)
+            {
+                currentParent = t.gameObject;
+                return;
+            }
+                seekParent(t.parent);
+          
         }
         else
         {
@@ -44,6 +54,7 @@ public class nebmoon : MonoBehaviour {
 
     void StartEvent()
     {
+        print("HEEEY ");
 
         on = !on;
         if (on)

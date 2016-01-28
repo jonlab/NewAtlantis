@@ -5,16 +5,17 @@ public class Siegfried : MonoBehaviour {
 	public AudioClip mysound;
 	Vector3 target;
 	Vector3 startpos1;
-	bool on = false;
+	public bool on = false;
     public GameObject myParent;
     GameObject currentParent;
+    Quaternion qua;
     // Use this for initialization
     void Start () {
 		//target = new Vector3 (0.2317217f, -12.655194f, -12.375238f);  orig
 		target = new Vector3 (-4.6317217f, -12.655194f, -13.375238f);
 		startpos1 = transform.position;
 		GetComponent<AudioChorusFilter>().delay = 45.1F;
-
+        qua = transform.rotation;
 		//GameObject parent = GameObject.Find ("Vahalla");	//new
 		//transform.parent = parent.transform;				//new
 		
@@ -24,12 +25,13 @@ public class Siegfried : MonoBehaviour {
 
 	void StartEvent ()
 	{
+        print("start event");
 		GetComponent<Renderer>().material.color = Color.white;
-	/*}
-	
-	void OnMouseDown()
-	{*/
-		on = true;
+        /*}
+
+        void OnMouseDown()
+        {*/
+        on = !on;
 		GetComponent<AudioSource>().Play ();
 	}
 
@@ -42,13 +44,18 @@ public class Siegfried : MonoBehaviour {
 
     }
 
-
     void seekParent(Transform t)
     {
 
         if (t.parent != null)
         {
+            if (t.gameObject == myParent)
+            {
+                currentParent = t.gameObject;
+                return;
+            }
             seekParent(t.parent);
+
         }
         else
         {
@@ -94,8 +101,28 @@ public class Siegfried : MonoBehaviour {
 				transform.localRotation = Quaternion.identity;
 
 			}
+
+            AudioSource clip = GetComponent<AudioSource>();
+            if (!clip.isPlaying)
+            {
+                on = false;
+                transform.rotation = qua;
+                transform.position = startpos1;
+
+            }
+
+            
 		}
-		
+
+        if (!on)
+        {
+           
+            GetComponent<AudioSource>().Stop();
+            transform.position = startpos1;
+            GetComponent<Renderer>().material.color = Color.grey;
+            transform.rotation = qua;
+
+        }
 		
 		
 	}

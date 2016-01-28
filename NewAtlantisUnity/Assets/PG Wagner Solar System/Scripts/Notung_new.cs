@@ -28,6 +28,7 @@ using System.Collections;
 			GetComponent<Renderer>().material.color = Color.yellow;
             GetComponent<Rigidbody>().angularVelocity = new Vector3(0, 0, 0);
             GetComponent<Rigidbody>().velocity = new Vector3(0, 0, 0);
+           // GetComponent<AudioSource>().Stop();
 		}
 	}
 
@@ -66,17 +67,21 @@ using System.Collections;
     void seekParent(Transform t)
     {
 
-        if(t.parent!= null)
+        if (t.parent != null)
         {
+            if (t.gameObject == myParent)
+            {
+                currentParent = t.gameObject;
+                return;
+            }
             seekParent(t.parent);
+
         }
         else
         {
-
             currentParent = t.gameObject;
         }
-  
-  
+
     }
 
     [RPC]

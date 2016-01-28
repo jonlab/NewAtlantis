@@ -46,7 +46,13 @@ public class gold_orbit : MonoBehaviour {
 
         if (t.parent != null)
         {
+            if (t.gameObject == myParent)
+            {
+                currentParent = t.gameObject;
+                return;
+            }
             seekParent(t.parent);
+
         }
         else
         {
@@ -54,7 +60,6 @@ public class gold_orbit : MonoBehaviour {
         }
 
     }
-
     void Update () 
 	{
 		
