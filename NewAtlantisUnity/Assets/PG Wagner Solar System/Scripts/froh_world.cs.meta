@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 9a2a20cf5783d4e688c13afe729d686b
+timeCreated: 1442584971
+licenseType: Pro
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - mysound: {fileID: 8300000, guid: 9d37b22085007427386d3303c63a835a, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
