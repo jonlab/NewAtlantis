@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
 #ifndef TERRAIN_ENGINE_INCLUDED
 #define TERRAIN_ENGINE_INCLUDED
 
@@ -308,7 +310,7 @@ inline float4 AnimateVertex(float4 pos, float3 normal, float4 animParams)
 	float fBranchAmp = 0.3f;
 	
 	// Phases (object, vertex, branch)
-	float fObjPhase = dot(_Object2World[3].xyz, 1);
+	float fObjPhase = dot(unity_ObjectToWorld[3].xyz, 1);
 	float fBranchPhase = fObjPhase + animParams.x;
 	
 	float fVtxPhase = dot(pos.xyz, animParams.y + fBranchPhase);

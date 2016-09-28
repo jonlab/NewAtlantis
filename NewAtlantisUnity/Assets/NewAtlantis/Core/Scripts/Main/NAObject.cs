@@ -130,7 +130,7 @@ public class NAObject
 					//NA.PatchMaterials(go); //crashes on 5.3.1
 					//if (!name.Contains("elevation"))
 					//{
-					NA.PatchAllMaterials(go);
+					NA.PatchAllMaterials(goChild); //go
 					//}
 
 					NAObjectLabel lbl = go.GetComponentInChildren<NAObjectLabel>();

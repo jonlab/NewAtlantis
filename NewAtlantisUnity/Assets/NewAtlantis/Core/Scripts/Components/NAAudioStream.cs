@@ -8,8 +8,8 @@ public class NAAudioStream : MonoBehaviour {
 	//private string url = "http://locus.creacast.com:9001/liverpool_ormskirk";
 	//private string url = "http://locus.creacast.com:9001/wave_farm_pond_station_new_york.mp3"; //not supported
 	//private string url = "http://locus.creacast.com:9001/mrs_splitsoundscape1.ogg";
-	private string url = "http://locus.creacast.com:9001/london_camberwell.ogg";
-
+	//private string url = "http://locus.creacast.com:9001/london_camberwell.ogg";
+	private string url = "http://ia902707.us.archive.org/11/items/NearlyCompleteHPLovecraftCollection/01_The_Whisperer_in_Darkness_01.mp3";
 	float t = 0;
 	bool playing = false;
 	// Use this for initialization
@@ -49,8 +49,13 @@ public class NAAudioStream : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-
-		Debug.Log ("bytes=" + www.bytesDownloaded);
+		Debug.Log("error=" + www.error);
+		AudioSource audio = GetComponent<AudioSource>();
+		Debug.Log("audio playing=" + audio.isPlaying);
+		if (!audio.isPlaying)
+			audio.Play ();
+		
+		//Debug.Log ("bytes=" + www.bytesDownloaded);
 		/*
 		AudioSource audio = GetComponent<AudioSource>();
 		Debug.Log ("progress=" + www.progress);

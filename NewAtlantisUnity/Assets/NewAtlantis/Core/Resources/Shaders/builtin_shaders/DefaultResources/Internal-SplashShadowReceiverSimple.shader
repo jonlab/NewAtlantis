@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'unity_World2Shadow' with 'unity_WorldToShadow'
+
 Shader "Hidden/InternalSplashShadowReceiverSimple" {
 
 	CGINCLUDE
@@ -27,7 +29,7 @@ Shader "Hidden/InternalSplashShadowReceiverSimple" {
 		output.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 		output.normal = v.normal;
 		output.worldPos = float4(v.vertex.xyz, 1.0);
-		float4 shadowCoord = mul (unity_World2Shadow[0], output.worldPos);
+		float4 shadowCoord = mul (unity_WorldToShadow[0], output.worldPos);
 		output.texCoord = (shadowCoord.xy / shadowCoord.w) * 0.5 + 0.5;
 		return output;
 	}
@@ -42,7 +44,7 @@ Shader "Hidden/InternalSplashShadowReceiverSimple" {
 		UNITY_UNROLL
 		for (int planeIndex = 0; planeIndex < 4; planeIndex++)
 		{
-			float4 casterPlaneEquation = unity_World2Shadow[1][planeIndex];
+			float4 casterPlaneEquation = unity_WorldToShadow[1][planeIndex];
 			float depthFromCaster = dot(casterPlaneEquation, input.worldPos).x;
 			float depthBias = 0.5;
 			if (depthFromCaster > depthBias)

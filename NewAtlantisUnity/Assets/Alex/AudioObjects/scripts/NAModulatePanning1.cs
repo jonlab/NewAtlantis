@@ -18,7 +18,10 @@ public class NAModulatePanning1 : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		if (!NA.isClient ()) { //server and standalone
+		if (NA.isClient() && NA.syncMode != SyncMode.NoInDepthSync)
+			return;
+		//if (!NA.isClient ()) 
+		{ //server and standalone
 			panning = aud.panStereo;
 
 			if (step % 2 == 0) {

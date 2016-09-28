@@ -167,6 +167,12 @@ public class NANetwork : MonoBehaviour {
 				model = o.go;
 			}
 		}
+		//instead of cloning the root, we clone the first child (for synchronization purpose on physicallized objects)
+		if (model.transform.childCount > 0)
+		{
+			model = model.transform.GetChild(0).gameObject;
+		}
+
 		clone = GameObject.Instantiate(model, Vector3.zero, Quaternion.identity) as GameObject;
 
 		LogManager.LogWarning("clone " + name);

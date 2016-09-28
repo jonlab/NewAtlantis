@@ -20,8 +20,9 @@ public class NATurnOff2 : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	
-
-		if (!NA.isClient()) {
+		if (NA.isClient() && NA.syncMode != SyncMode.NoInDepthSync)
+			return;
+		//if (!NA.isClient()) {
 
 			timer += Time.deltaTime;
 
@@ -36,7 +37,7 @@ public class NATurnOff2 : MonoBehaviour {
 
 			aud.volume = volume;
 
-		}
+		//}
 
 
 	

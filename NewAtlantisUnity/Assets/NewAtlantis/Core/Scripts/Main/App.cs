@@ -1409,7 +1409,7 @@ public class App : MonoBehaviour
 		//GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
 		GUI.color = Color.white;
 		//GUI.Label(new Rect(0,0,400,30), "NewAtlantisNew Client - SAIC workshop");
-		GUI.Label(new Rect(0,0,100,30), "New Atlantis v0.99");
+		GUI.Label(new Rect(0,0,100,30), "New Atlantis v1.02");
 		GUI.Label(new Rect(Screen.width-200, 0, 200, 30), strPick);
 
 		DrawChronometer();
@@ -1906,7 +1906,20 @@ public class App : MonoBehaviour
 				//we add this asset to the current space
 				if (NA.CurrentSpace != null)
 				{
-					NAServer.ObjectAdd(NA.CurrentSpace, CurrentAsset);
+					NAServer.ObjectAdd(NA.CurrentSpace, CurrentAsset, Vector3.zero);
+				}
+				else
+				{
+					LogManager.LogError("You are not connected to a space");
+				}
+			}
+
+			if (GUILayout.Button("add to space at pos", GUILayout.Width(100)))
+			{
+				//we add this asset to the current space
+				if (NA.CurrentSpace != null)
+				{
+					NAServer.ObjectAdd(NA.CurrentSpace, CurrentAsset, transform.position+transform.forward);
 				}
 				else
 				{

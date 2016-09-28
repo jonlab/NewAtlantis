@@ -1,3 +1,6 @@
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
+
 #ifndef SPEEDTREE_VERTEX_INCLUDED
 #define SPEEDTREE_VERTEX_INCLUDED
 
@@ -65,8 +68,8 @@ void OffsetSpeedTreeVertex(inout SpeedTreeVB data, float lodValue)
 		else
 		{
 			// compute rotated wind parameters
-			rotatedWindVector = normalize(mul((float3x3)_World2Object, _ST_WindVector.xyz));
-			rotatedBranchAnchor = normalize(mul((float3x3)_World2Object, _ST_WindBranchAnchor.xyz)) * _ST_WindBranchAnchor.w;
+			rotatedWindVector = normalize(mul((float3x3)unity_WorldToObject, _ST_WindVector.xyz));
+			rotatedBranchAnchor = normalize(mul((float3x3)unity_WorldToObject, _ST_WindBranchAnchor.xyz)) * _ST_WindBranchAnchor.w;
 		}
 	#endif
 
@@ -122,7 +125,7 @@ void OffsetSpeedTreeVertex(inout SpeedTreeVB data, float lodValue)
 	#endif
 
 	#ifdef ENABLE_WIND
-		float3 treePos = float3(_Object2World[0].w, _Object2World[1].w, _Object2World[2].w);
+		float3 treePos = float3(unity_ObjectToWorld[0].w, unity_ObjectToWorld[1].w, unity_ObjectToWorld[2].w);
 
 		#ifndef GEOM_TYPE_MESH
 			if (windQuality >= WIND_QUALITY_BETTER)

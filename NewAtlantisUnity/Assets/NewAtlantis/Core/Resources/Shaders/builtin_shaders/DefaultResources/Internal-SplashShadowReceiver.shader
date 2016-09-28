@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'unity_World2Shadow' with 'unity_WorldToShadow'
+
 Shader "Hidden/InternalSplashShadowReceiver" {
 
 	CGINCLUDE
@@ -43,7 +45,7 @@ Shader "Hidden/InternalSplashShadowReceiver" {
 
 	fixed4 frag (v2f input) : SV_Target
 	{
-		float4 shadowCoord = mul (unity_World2Shadow[0], input.worldPos);
+		float4 shadowCoord = mul (unity_WorldToShadow[0], input.worldPos);
 		float2 texCoord = (shadowCoord.xy / shadowCoord.w) * 0.5 + 0.5;
 		fixed4 shadowSample0 = tex2D(unity_SplashScreenShadowTex0, texCoord);
 		fixed4 shadowSample1 = tex2D(unity_SplashScreenShadowTex1, texCoord);
@@ -83,7 +85,7 @@ Shader "Hidden/InternalSplashShadowReceiver" {
 				equationIndex -= 4;
 			}
 			
-			float4 casterPlaneEquation = unity_World2Shadow[equationMatrixIndex][equationIndex];
+			float4 casterPlaneEquation = unity_WorldToShadow[equationMatrixIndex][equationIndex];
 			
 			float depthFromCaster = dot(casterPlaneEquation, input.worldPos).x;
 			float depthBias = 1.0;

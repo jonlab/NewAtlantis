@@ -139,14 +139,16 @@ public class NAServer
 		
 	}
 	
-	public static void ObjectAdd(Space space, Asset asset)
+	public static void ObjectAdd(Space space, Asset asset, Vector3 position)
 	{
 		WWWForm form = new WWWForm();
 		form.AddField("login", 	strLogin);
 		form.AddField("pwd", 	strPassword);
 		form.AddField("asset_id", 	asset.id);
 		form.AddField("space_id", 	space.id);
-		
+		form.AddField("x", 	""+position.x);
+		form.AddField("y", 	""+position.y);
+		form.AddField("z", 	""+position.z);
 		wwwPost = new WWW("http://tanant.info/newatlantis2/addobject.php", form);
 	}
 	

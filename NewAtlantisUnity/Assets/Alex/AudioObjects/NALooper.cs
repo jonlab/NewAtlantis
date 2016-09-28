@@ -15,8 +15,10 @@ public class NALooper : MonoBehaviour {
 	void Update () {
 	    
 		interval = Mathf.Clamp (interval, 1, 10000000);
-
-		if (!NA.isClient()) //server and standalone
+		if (NA.isClient() && NA.syncMode != SyncMode.NoInDepthSync)
+			return;
+		
+		//if (!NA.isClient()) //server and standalone
 		{
 			timer += Time.deltaTime;
 			if (timer > interval)
@@ -26,12 +28,12 @@ public class NALooper : MonoBehaviour {
 			}
 		}
 
-		if (!NA.isClient ()) {
+		//if (!NA.isClient ()) {
 
 			if (timer % interval == 0) {
 
 				aud.Play ();
-			}
+			//}
 
 
 

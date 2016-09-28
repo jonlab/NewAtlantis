@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced '_GUIClipTextureMatrix' with 'unity_GUIClipTextureMatrix'
+
 
 Shader "Hidden/Internal-GUITextureClipText"
 {
@@ -37,14 +39,14 @@ Shader "Hidden/Internal-GUITextureClipText"
 
 			uniform float4 _MainTex_ST;
 			uniform fixed4 _Color;
-			uniform float4x4 _GUIClipTextureMatrix;
+			uniform float4x4 unity_GUIClipTextureMatrix;
 
 			v2f vert (appdata_t v)
 			{
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				float4 eyePos = mul(UNITY_MATRIX_MV, v.vertex);
-				o.clipUV = mul(_GUIClipTextureMatrix, eyePos);
+				o.clipUV = mul(unity_GUIClipTextureMatrix, eyePos);
 				o.color = v.color * _Color;
 				o.texcoord = TRANSFORM_TEX(v.texcoord,_MainTex);
 				return o;

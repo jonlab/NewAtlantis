@@ -44,6 +44,8 @@ public class NAReverbEffector : MonoBehaviour
 		//return;
 
 		AudioReverbFilter to = GetComponent<AudioReverbFilter> ();
+		if (to == null)
+			return;
 		to.decayHFRatio = 0;
 		to.decayTime = 0;
 		to.density = 0;

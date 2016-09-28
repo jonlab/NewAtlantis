@@ -1,3 +1,11 @@
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
+// Upgrade NOTE: replaced '_World2Shadow' with 'unity_WorldToShadow[0]'
+// Upgrade NOTE: replaced '_World2Shadow1' with 'unity_WorldToShadow[1]'
+// Upgrade NOTE: replaced '_World2Shadow2' with 'unity_WorldToShadow[2]'
+// Upgrade NOTE: replaced '_World2Shadow3' with 'unity_WorldToShadow[3]'
+// Upgrade NOTE: replaced 'unity_World2Shadow' with 'unity_WorldToShadow'
+
 #ifndef UNITY_SHADER_VARIABLES_INCLUDED
 #define UNITY_SHADER_VARIABLES_INCLUDED
 
@@ -110,15 +118,15 @@ CBUFFER_START(UnityShadows)
 	float4 unity_LightShadowBias;
 	float4 _LightSplitsNear;
 	float4 _LightSplitsFar;
-	float4x4 unity_World2Shadow[4];
+	float4x4 unity_WorldToShadow[4];
 	half4 _LightShadowData;
 	float4 unity_ShadowFadeCenterAndType;
 CBUFFER_END
 
-#define _World2Shadow unity_World2Shadow[0]
-#define _World2Shadow1 unity_World2Shadow[1]
-#define _World2Shadow2 unity_World2Shadow[2]
-#define _World2Shadow3 unity_World2Shadow[3]
+#define unity_WorldToShadow[0] unity_WorldToShadow[0]
+#define unity_WorldToShadow[1] unity_WorldToShadow[1]
+#define unity_WorldToShadow[2] unity_WorldToShadow[2]
+#define unity_WorldToShadow[3] unity_WorldToShadow[3]
 
 
 // ----------------------------------------------------------------------------
@@ -131,8 +139,8 @@ CBUFFER_START(UnityPerDraw)
 	#define UNITY_MATRIX_MV glstate_matrix_modelview0
 	#define UNITY_MATRIX_IT_MV glstate_matrix_invtrans_modelview0
 	
-	uniform float4x4 _Object2World;
-	uniform float4x4 _World2Object;
+	uniform float4x4 unity_ObjectToWorld;
+	uniform float4x4 unity_WorldToObject;
 	uniform float4 unity_LODFade; // x is the fade value ranging within [0,1]. y is x quantized into 16 levels
 	uniform float4 unity_WorldTransformParams; // w is usually 1.0, or -1.0 for odd-negative scale transforms
 CBUFFER_END

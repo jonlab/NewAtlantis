@@ -198,7 +198,7 @@ public static class NA
 			foreach (GameObject go in player_objects)
 			{
 				Vector3 pos = go.transform.position;
-				if (pos.y < -100) //destroy object under y == -100
+				if (pos.y < -1000) //destroy object under y == -100
 				{
 					if (!Network.isClient)
 					{
@@ -303,6 +303,61 @@ public static class NA
 			{
 				m.shader = Shader.Find(m.shader.name);
 			}*/
+		}
+		Terrain[] terrains = root.GetComponentsInChildren<Terrain>();
+		foreach (Terrain t in terrains)
+		{
+			t.terrainData.RefreshPrototypes();
+
+			//t.terrainData.
+			foreach (TreePrototype tp in t.terrainData.treePrototypes)
+			{
+				if (tp.prefab != null)
+				{
+					Renderer[] trenderers = tp.prefab.GetComponentsInChildren<Renderer>();
+					foreach (Renderer r in trenderers)
+					{
+						Debug.Log("=>patching " + r.name);
+						foreach (Material m in r.sharedMaterials)
+						{
+							
+							try
+							{
+								if (m.shader != null)
+								{
+
+									string sname = m.shader.name;
+
+									if (m.shader.name.Contains("Bark"))
+									{
+										sname = "Nature/Tree Creator Bark";
+									}
+									else if (m.shader.name.Contains("Leaves"))
+									{
+										sname = "Nature/Tree Creator Leaves";
+									}
+									Shader s = Shader.Find(sname);
+									if (s != null)
+									{
+										m.shader = s;
+										//   LogManager.LogError("Shader name : " + m.shader.name);
+									}
+									else
+									{
+										LogManager.LogWarning("can't find shader : " + m.shader.name);
+									}
+								}
+							}
+							catch (System.Exception e)
+							{
+								LogManager.LogWarning("shader exception");
+							}
+						}
+					}
+				}
+
+			}
+
 		}
 
 	}

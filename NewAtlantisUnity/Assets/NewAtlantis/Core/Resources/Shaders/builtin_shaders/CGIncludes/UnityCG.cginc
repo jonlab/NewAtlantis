@@ -1,3 +1,7 @@
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
+// Upgrade NOTE: replaced 'unity_World2Shadow' with 'unity_WorldToShadow'
+
 #ifndef UNITY_CG_INCLUDED
 #define UNITY_CG_INCLUDED
 
@@ -111,20 +115,20 @@ inline half3 LinearToGammaSpace (half3 linRGB)
 // Transforms direction from object to world space
 inline float3 UnityObjectToWorldDir( in float3 dir )
 {
-	return normalize(mul((float3x3)_Object2World, dir));
+	return normalize(mul((float3x3)unity_ObjectToWorld, dir));
 }
 
 // Transforms direction from world to object space
 inline float3 UnityWorldToObjectDir( in float3 dir )
 {
-	return normalize(mul((float3x3)_World2Object, dir));
+	return normalize(mul((float3x3)unity_WorldToObject, dir));
 }
 
 // Transforms normal from object to world space
 inline float3 UnityObjectToWorldNormal( in float3 norm )
 {
 	// Multiply by transposed inverse matrix, actually using transpose() generates badly optimized code
-	return normalize(_World2Object[0].xyz * norm.x + _World2Object[1].xyz * norm.y + _World2Object[2].xyz * norm.z);
+	return normalize(unity_WorldToObject[0].xyz * norm.x + unity_WorldToObject[1].xyz * norm.y + unity_WorldToObject[2].xyz * norm.z);
 }
 
 // Computes world space light direction, from world space position
@@ -145,14 +149,14 @@ inline float3 UnityWorldSpaceLightDir( in float3 worldPos )
 // *Legacy* Please use UnityWorldSpaceLightDir instead
 inline float3 WorldSpaceLightDir( in float4 localPos )
 {
-	float3 worldPos = mul(_Object2World, localPos).xyz;
+	float3 worldPos = mul(unity_ObjectToWorld, localPos).xyz;
 	return UnityWorldSpaceLightDir(worldPos);
 }
 
 // Computes object space light direction
 inline float3 ObjSpaceLightDir( in float4 v )
 {
-	float3 objSpaceLightPos = mul(_World2Object, _WorldSpaceLightPos0).xyz;
+	float3 objSpaceLightPos = mul(unity_WorldToObject, _WorldSpaceLightPos0).xyz;
 	#ifndef USING_LIGHT_MULTI_COMPILE
 		return objSpaceLightPos.xyz - v.xyz * _WorldSpaceLightPos0.w;
 	#else
@@ -174,14 +178,14 @@ inline float3 UnityWorldSpaceViewDir( in float3 worldPos )
 // *Legacy* Please use UnityWorldSpaceViewDir instead
 inline float3 WorldSpaceViewDir( in float4 localPos )
 {
-	float3 worldPos = mul(_Object2World, localPos).xyz;
+	float3 worldPos = mul(unity_ObjectToWorld, localPos).xyz;
 	return UnityWorldSpaceViewDir(worldPos);
 }
 
 // Computes object space view direction
 inline float3 ObjSpaceViewDir( in float4 v )
 {
-	float3 objSpaceCameraPos = mul(_World2Object, float4(_WorldSpaceCameraPos.xyz, 1)).xyz;
+	float3 objSpaceCameraPos = mul(unity_WorldToObject, float4(_WorldSpaceCameraPos.xyz, 1)).xyz;
 	return objSpaceCameraPos - v.xyz;
 }
 
@@ -697,7 +701,7 @@ float4 UnityClipSpaceShadowCasterPos(float3 vertex, float3 normal)
     // into the depth texture, so branch on normal bias being zero.
     if (unity_LightShadowBias.z != 0.0)
     {
-		float3 wPos = mul(_Object2World, float4(vertex,1)).xyz;
+		float3 wPos = mul(unity_ObjectToWorld, float4(vertex,1)).xyz;
 		float3 wNormal = UnityObjectToWorldNormal(normal);
 		float3 wLight = normalize(UnityWorldSpaceLightDir(wPos));
 
@@ -736,8 +740,8 @@ float4 UnityApplyLinearShadowBias(float4 clipPos)
 #ifdef SHADOWS_CUBE
 	// Rendering into point light (cubemap) shadows
 	#define V2F_SHADOW_CASTER_NOPOS float3 vec : TEXCOORD0;
-	#define TRANSFER_SHADOW_CASTER_NOPOS_LEGACY(o,opos) o.vec = mul(_Object2World, v.vertex).xyz - _LightPositionRange.xyz; opos = mul(UNITY_MATRIX_MVP, v.vertex);
-	#define TRANSFER_SHADOW_CASTER_NOPOS(o,opos) o.vec = mul(_Object2World, v.vertex).xyz - _LightPositionRange.xyz; opos = mul(UNITY_MATRIX_MVP, v.vertex);
+	#define TRANSFER_SHADOW_CASTER_NOPOS_LEGACY(o,opos) o.vec = mul(unity_ObjectToWorld, v.vertex).xyz - _LightPositionRange.xyz; opos = mul(UNITY_MATRIX_MVP, v.vertex);
+	#define TRANSFER_SHADOW_CASTER_NOPOS(o,opos) o.vec = mul(unity_ObjectToWorld, v.vertex).xyz - _LightPositionRange.xyz; opos = mul(UNITY_MATRIX_MVP, v.vertex);
 	#define SHADOW_CASTER_FRAGMENT(i) return UnityEncodeCubeShadowDepth ((length(i.vec) + unity_LightShadowBias.x) * _LightPositionRange.w);
 #else
 	// Rendering into directional or spot light shadows
@@ -902,13 +906,13 @@ UNITY_DECLARE_SHADOWMAP(_ShadowMapTexture);
 #define V2F_SHADOW_COLLECTOR float4 pos : SV_POSITION; float3 _ShadowCoord0 : TEXCOORD0; float3 _ShadowCoord1 : TEXCOORD1; float3 _ShadowCoord2 : TEXCOORD2; float3 _ShadowCoord3 : TEXCOORD3; float4 _WorldPosViewZ : TEXCOORD4
 #define TRANSFER_SHADOW_COLLECTOR(o)	\
 	o.pos = mul(UNITY_MATRIX_MVP, v.vertex); \
-	float4 wpos = mul(_Object2World, v.vertex); \
+	float4 wpos = mul(unity_ObjectToWorld, v.vertex); \
 	o._WorldPosViewZ.xyz = wpos; \
 	o._WorldPosViewZ.w = -mul( UNITY_MATRIX_MV, v.vertex ).z; \
-	o._ShadowCoord0 = mul(unity_World2Shadow[0], wpos).xyz; \
-	o._ShadowCoord1 = mul(unity_World2Shadow[1], wpos).xyz; \
-	o._ShadowCoord2 = mul(unity_World2Shadow[2], wpos).xyz; \
-	o._ShadowCoord3 = mul(unity_World2Shadow[3], wpos).xyz;
+	o._ShadowCoord0 = mul(unity_WorldToShadow[0], wpos).xyz; \
+	o._ShadowCoord1 = mul(unity_WorldToShadow[1], wpos).xyz; \
+	o._ShadowCoord2 = mul(unity_WorldToShadow[2], wpos).xyz; \
+	o._ShadowCoord3 = mul(unity_WorldToShadow[3], wpos).xyz;
 
 // Note: SAMPLE_SHADOW_COLLECTOR_SHADOW is deprecated
 #define SAMPLE_SHADOW_COLLECTOR_SHADOW(coord) \

@@ -1,3 +1,7 @@
+// Upgrade NOTE: commented out 'float4x4 _CameraToWorld', a built-in variable
+// Upgrade NOTE: replaced '_CameraToWorld' with 'unity_CameraToWorld'
+// Upgrade NOTE: replaced 'unity_World2Shadow' with 'unity_WorldToShadow'
+
 // Collects cascaded shadows into screen space buffer
 Shader "Hidden/Internal-PrePassCollectShadows" {
 Properties {
@@ -72,7 +76,7 @@ sampler2D_float _CameraDepthTexture;
 float4 unity_ShadowCascadeScales;
 
 CBUFFER_START(UnityPerCamera2)
-float4x4 _CameraToWorld;
+// float4x4 _CameraToWorld;
 CBUFFER_END
 
 UNITY_DECLARE_SHADOWMAP(_ShadowMapTexture);
@@ -157,10 +161,10 @@ inline float getShadowFade_SplitSpheres( float3 wpos )
  */
 inline float4 getShadowCoord( float4 wpos, fixed4 cascadeWeights )
 {
-	float3 sc0 = mul (unity_World2Shadow[0], wpos).xyz;
-	float3 sc1 = mul (unity_World2Shadow[1], wpos).xyz;
-	float3 sc2 = mul (unity_World2Shadow[2], wpos).xyz;
-	float3 sc3 = mul (unity_World2Shadow[3], wpos).xyz;
+	float3 sc0 = mul (unity_WorldToShadow[0], wpos).xyz;
+	float3 sc1 = mul (unity_WorldToShadow[1], wpos).xyz;
+	float3 sc2 = mul (unity_WorldToShadow[2], wpos).xyz;
+	float3 sc3 = mul (unity_WorldToShadow[3], wpos).xyz;
 	return float4(sc0 * cascadeWeights[0] + sc1 * cascadeWeights[1] + sc2 * cascadeWeights[2] + sc3 * cascadeWeights[3], 1);
 }
 
@@ -169,7 +173,7 @@ inline float4 getShadowCoord( float4 wpos, fixed4 cascadeWeights )
  */
 inline float4 getShadowCoord_SingleCascade( float4 wpos )
 {
-	return float4( mul (unity_World2Shadow[0], wpos).xyz, 0);
+	return float4( mul (unity_WorldToShadow[0], wpos).xyz, 0);
 }
 
 /**
@@ -329,7 +333,7 @@ fixed4 frag_hard (v2f i) : SV_Target
 	// pick the perspective or ortho position as needed
 	float3 vpos = lerp (vposPersp, vposOrtho, unity_OrthoParams.w);
 
-	float4 wpos = mul (_CameraToWorld, float4(vpos,1));
+	float4 wpos = mul (unity_CameraToWorld, float4(vpos,1));
 
 	fixed4 cascadeWeights = GET_CASCADE_WEIGHTS (wpos, vpos.z);
 	half shadow = unity_sampleShadowmap( GET_SHADOW_COORDINATES(wpos, cascadeWeights) );
@@ -388,7 +392,7 @@ Pass {
 		float3 vpos = lerp (vposPersp, vposOrtho, unity_OrthoParams.w);
 
 		// sample the cascade the pixel belongs to
-		float4 wpos = mul (_CameraToWorld, float4(vpos,1));
+		float4 wpos = mul (unity_CameraToWorld, float4(vpos,1));
 		fixed4 cascadeWeights = GET_CASCADE_WEIGHTS (wpos, vpos.z);
 		float4 coord = GET_SHADOW_COORDINATES(wpos, cascadeWeights);
 
