@@ -14,8 +14,6 @@ public class NANetwork : MonoBehaviour {
 	}
 
 
-
-
 	[RPC]
 	void SetColor(Color color) 
 	{
@@ -178,7 +176,10 @@ public class NANetwork : MonoBehaviour {
 		LogManager.LogWarning("clone " + name);
 
 		//reset position of main child
-		clone.transform.GetChild(0).gameObject.transform.localPosition = Vector3.zero;
+		if (clone.transform.childCount>0)
+		{
+			clone.transform.GetChild(0).gameObject.transform.localPosition = Vector3.zero;
+		}	
 
 		//remove previous network view
 		NetworkView nViewOriginal = clone.GetComponent<NetworkView>();
