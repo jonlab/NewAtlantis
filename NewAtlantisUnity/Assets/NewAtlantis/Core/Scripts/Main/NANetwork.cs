@@ -194,12 +194,17 @@ public class NANetwork : MonoBehaviour {
 
 		clone.transform.position = location;
 
+
 		MeshRenderer renderer = clone.GetComponent<MeshRenderer>();
 		if (renderer != null)
 		{
 			renderer.material.color = new Color(color.x, color.y, color.z);
 		}
 		//clone.transform.forward = transform.rotation * Vector3.Normalize(forward) ;
+
+		clone.transform.rotation.SetLookRotation(forward);
+
+
 		//Rigidbody rb = clone.AddComponent<Rigidbody>();
 		if (NA.isServer() || NA.isStandalone())
 		{
