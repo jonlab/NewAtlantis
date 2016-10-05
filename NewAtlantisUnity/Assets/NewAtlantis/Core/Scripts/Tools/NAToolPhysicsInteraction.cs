@@ -36,6 +36,7 @@ public class NAToolPhysicsInteraction : NAToolBase {
 		GameObject go = PickObject(new Ray(transform.position, transform.forward), out hit);
 		if (go != null)
 		{
+			Debug.Log ("object name = " + go.name);
 			//look at distance
 			Rigidbody rb = go.GetComponent<Rigidbody>();
 			if (rb != null)

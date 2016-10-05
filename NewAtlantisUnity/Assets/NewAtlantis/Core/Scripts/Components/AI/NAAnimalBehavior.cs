@@ -70,7 +70,7 @@ public class NAAnimalBehavior : MonoBehaviour {
 	[RPC]
 	void Apply(bool stand, bool move, float volume, float pitch, int index)
 	{
-		LogManager.Log("NAAnimalBehavior::Apply received " + stand + " " + move + " " + volume + " " + pitch + " " + index);
+		//LogManager.Log("NAAnimalBehavior::Apply received " + stand + " " + move + " " + volume + " " + pitch + " " + index);
 		//this part must be deterministic
 		audioSourceStand.Stop();
 		audioSourceMove.Stop();
