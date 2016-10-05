@@ -198,6 +198,8 @@ public class NANetwork : MonoBehaviour {
 		{
 			renderer.material.color = new Color(color.x, color.y, color.z);
 		}
+		//apply forward world orientation
+		clone.transform.forward = forward;
 		//clone.transform.forward = transform.rotation * Vector3.Normalize(forward) ;
 		//Rigidbody rb = clone.AddComponent<Rigidbody>();
 		if (NA.isServer() || NA.isStandalone())
