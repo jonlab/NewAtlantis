@@ -40,7 +40,7 @@ public class NAToolCloner : NAToolBase {
 		{
 			//we send to the server
 			LogManager.Log("Send RPC ServerCloneObject");
-			GetComponent<NetworkView>().RPC("ServerCloneObject", RPCMode.Server, objectName, pos, worldforce, new Vector3(1,0,0)/*colorAvatar*/);
+			GetComponent<NetworkView>().RPC("ServerCloneObject", RPCMode.Server, objectName, pos, worldforce, new Vector3(1,1,1)/*colorAvatar*/);
 		}
 	}
 

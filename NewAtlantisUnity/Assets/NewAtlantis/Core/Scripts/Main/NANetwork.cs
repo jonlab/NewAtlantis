@@ -204,7 +204,7 @@ public class NANetwork : MonoBehaviour {
 		clone.transform.forward = forward;
 		//clone.transform.forward = transform.rotation * Vector3.Normalize(forward) ;
 
-		clone.transform.forward = forward;
+		//clone.transform.forward = forward;
 
 
 		//Rigidbody rb = clone.AddComponent<Rigidbody>();
