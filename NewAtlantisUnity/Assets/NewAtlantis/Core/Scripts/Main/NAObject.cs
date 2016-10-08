@@ -220,6 +220,15 @@ public class NAObject
 					NetworkSync nSync 		= go.GetComponent<NetworkSync>();
 
 					List<GameObject> listSync = new List<GameObject>();
+
+
+					//Oct 2016 : get the objects to be custom synced and add to the list
+					NASync[] nasyncs = go.GetComponentsInChildren<NASync>();
+					foreach (NASync nasync in nasyncs)
+					{
+						listSync.Add(nasync.gameObject);
+					}
+
 					if (NA.syncMode == SyncMode.RigibodiesAndAudioSources)
 					{
 						/*Rigidbody[] rbs = go.GetComponentsInChildren<Rigidbody>();
@@ -240,25 +249,27 @@ public class NAObject
 							listSync.Add(collider.gameObject);
 						}
 
-						if (NA.isServer())
+
+
+
+
+
+					}
+
+					if (NA.isServer())
+					{
+						foreach (GameObject o in listSync)
 						{
-							foreach (GameObject o in listSync)
-							{
-								string path = NA.GetGameObjectPath(o.transform);
-								NetworkViewID id = Network.AllocateViewID();
-								//LogManager.Log("PrepareAsServer " + path + " id=" + id);
-								go.GetComponent<NetworkView>().RPC("AttachNetworkView", RPCMode.AllBuffered, path, id);
+							string path = NA.GetGameObjectPath(o.transform);
+							NetworkViewID id = Network.AllocateViewID();
+							//LogManager.Log("PrepareAsServer " + path + " id=" + id);
+							go.GetComponent<NetworkView>().RPC("AttachNetworkView", RPCMode.AllBuffered, path, id);
 
-							}
 						}
-						else if (NA.isClient())
-						{
-							nSync.AttachNetworkViews();
-						}
-
-
-
-
+					}
+					else if (NA.isClient())
+					{
+						nSync.AttachNetworkViews();
 					}
 
 

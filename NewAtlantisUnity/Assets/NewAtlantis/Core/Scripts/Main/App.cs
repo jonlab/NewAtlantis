@@ -537,6 +537,11 @@ public class App : MonoBehaviour
 			NA.PlayPhysics();
 		else
 			NA.PausePhysics();
+
+		if (!NAReverbEffector.Enabled)
+		{
+			//fixme : find the closest + colliding reverb resonator and apply it to the listener ?
+		}
 	}
 
 
@@ -1714,14 +1719,17 @@ public class App : MonoBehaviour
 		GUILayout.Label ("Users : ");
 		GUILayout.EndHorizontal();
 		GUILayout.BeginHorizontal();
-		GUILayout.Label ("Player=" + Network.player.guid + " ip="+Network.player.ipAddress + " port=" + Network.player.port + " ping=" + Network.GetAveragePing(Network.player) + "ms");
+		GUILayout.Label ("Player=" + Network.player.guid + " ip="+Network.player.ipAddress + " port=" + Network.player.port + " ping=" + Network.GetAveragePing(Network.player) + "ms - Total players connected=" + Network.connections.Length);
 		GUILayout.EndHorizontal();
         foreach (NetworkPlayer player in Network.connections)
 		{
-			GUILayout.BeginHorizontal();
-			GUILayout.Label ("Player="+player.guid + " ip="+player.ipAddress + " port=" + player.port + " ping=" + Network.GetAveragePing(player) + "ms");
-			GUILayout.EndHorizontal();
+			//GUILayout.BeginHorizontal();
+			//GUILayout.Label ("Player="+player.guid + " ip="+player.ipAddress + " port=" + player.port + " ping=" + Network.GetAveragePing(player) + "ms");
+			//GUILayout.EndHorizontal();
+
+
         }
+
 		GUILayout.Space(20);
 		GUILayout.BeginHorizontal();
 		GUILayout.Label ("Chat : ");
@@ -1747,7 +1755,7 @@ public class App : MonoBehaviour
 
 		GUILayout.BeginHorizontal();
 		GUILayout.Label(strName, GUILayout.Width(100));
-		strCurrentChatMessage = GUILayout.TextArea(strCurrentChatMessage, GUILayout.Width(200));
+		strCurrentChatMessage = GUILayout.TextArea(strCurrentChatMessage, GUILayout.Width(600));
 		if (strCurrentChatMessage.Length>0)
 		{
 			if (strCurrentChatMessage[strCurrentChatMessage.Length-1] == '\n')
@@ -2993,9 +3001,17 @@ public class App : MonoBehaviour
 		GUILayout.EndHorizontal();
 
 		GUILayout.BeginHorizontal();
+		NAReverbEffector.Enabled = GUILayout.Toggle(NAReverbEffector.Enabled, "Per-source reverberation processing");
+		GUILayout.EndHorizontal();
+
+		GUILayout.BeginHorizontal();
 		string[] strModes = {"Full Authoritative", "Rigibodies And AudioSources", "AudioSources Only","No In Depth Sync"};
 		NA.syncMode = (SyncMode)GUILayout.SelectionGrid((int)NA.syncMode, strModes, 4);
 		GUILayout.EndHorizontal();
+
+
+
+
 
 
 		GUI.DragWindow();

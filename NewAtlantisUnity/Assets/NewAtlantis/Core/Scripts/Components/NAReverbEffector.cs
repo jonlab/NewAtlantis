@@ -6,6 +6,7 @@ public class NAReverbEffector : MonoBehaviour
 {
 
 	private List<NAReverbResonator> resonators = new List<NAReverbResonator>();
+	public static bool Enabled = true;
 	// Use this for initialization
 	void Start () 
 	{
@@ -93,7 +94,7 @@ public class NAReverbEffector : MonoBehaviour
 		}
 
 		if (count > 0)
-			EnableAudioReverbFilter (true);
+			EnableAudioReverbFilter (true && NAReverbEffector.Enabled);
 		else
 			EnableAudioReverbFilter (false);
 
