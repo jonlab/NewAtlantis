@@ -29,10 +29,10 @@ public class NoiseBall : MonoBehaviour {
         {
             Debug.LogError(this.gameObject.name);
         }
-		if (!NA.isClient()) 
+		/*if (!NA.isClient()) 
 		{
         	StartCoroutine (RepellBalls());
-		}
+		}*/
 	}
 	
 	public void FixedUpdate(){
@@ -42,7 +42,12 @@ public class NoiseBall : MonoBehaviour {
 		}
 	}
 
-	private IEnumerator RepellBalls(){
+	public void Update()
+	{
+		 RepellBalls();
+	}
+
+	private void RepellBalls(){
         m_rigidbody.AddTorque(new Vector3(Random.Range(-1000.0f, 1000.0f), Random.Range(-1000.0f, 1000.0f), Random.Range(-1000.0f, 1000.0f)));
 		Vector3 origPosition = this.transform.position;
 		//GameObject [] NoisyBalls = GameObject.FindGameObjectsWithTag ("NoiseBall");
@@ -50,7 +55,8 @@ public class NoiseBall : MonoBehaviour {
 		//JT : instead of getting the objects with tag "NoiseBall", we get the NoiseBall holders
 		NoiseBall[] NoisyBalls = NoiseBall.FindObjectsOfType<NoiseBall>();
 
-		while (!NA.isClient()) {
+		//while (!NA.isClient()) 
+		{
 			Collider[] hits = Physics.OverlapSphere (this.transform.position, mc_searchDistance,m_playerLayerMask);
 
 			List<Vector3> positions = new List<Vector3>();
@@ -65,8 +71,10 @@ public class NoiseBall : MonoBehaviour {
 
                 float distance = Vector3.Distance(this.transform.position, hit.transform.position) + .1f;
                 averageDistance += distance;
-
-				m_rigidbody.AddForce(direction.normalized * m_repulsiveForce * Time.deltaTime * -1.0f/distance);
+				if (!NA.isClient())
+				{
+					m_rigidbody.AddForce(direction.normalized * m_repulsiveForce * Time.deltaTime * -1.0f/distance);
+				}
 			}
 
             averageDistance = Mathf.Min(1.0f,averageDistance / (positions.Count * 10.0f));
@@ -76,29 +84,30 @@ public class NoiseBall : MonoBehaviour {
                 m_lineRenderer.SetPositions(positions.ToArray());
                 m_lineRenderer.SetWidth(1/(averageDistance*2.0f), 1/averageDistance);
             }
+
+			if (!NA.isClient())
+			{
+				foreach(NoiseBall ball in this.m_attractiveBalls){
+					Vector3 dir = transform.position - ball.transform.position;
+					m_rigidbody.AddForce(dir * m_ballMultiplier * m_repulsiveForce * Time.deltaTime * m_groupMultiplier);
+				}
 			
-			foreach(NoiseBall ball in this.m_attractiveBalls){
-				Vector3 dir = transform.position - ball.transform.position;
-				m_rigidbody.AddForce(dir * m_ballMultiplier * m_repulsiveForce * Time.deltaTime * m_groupMultiplier);
+				//foreach (GameObject ball in NoisyBalls) {
+				foreach (NoiseBall ball in NoisyBalls) {
+					if (ball == this)
+						continue; //no self test
+					Vector3 direction = this.transform.position - ball.gameObject.transform.position;
+
+	                //add a force proportional to that distance to the ball
+	                float distance = Vector3.Distance(this.transform.position, ball.gameObject.transform.position) + .1f;
+	                if(distance > 20.0f)
+	                {
+	                    continue;
+	                }
+
+	                m_rigidbody.AddForce(direction * m_repulsiveForce * m_ballMultiplier * Time.deltaTime/distance);
+				}
 			}
-				
-
-			//foreach (GameObject ball in NoisyBalls) {
-			foreach (NoiseBall ball in NoisyBalls) {
-				if (ball == this)
-					continue; //no self test
-				Vector3 direction = this.transform.position - ball.gameObject.transform.position;
-
-                //add a force proportional to that distance to the ball
-                float distance = Vector3.Distance(this.transform.position, ball.gameObject.transform.position) + .1f;
-                if(distance > 20.0f)
-                {
-                    continue;
-                }
-
-                m_rigidbody.AddForce(direction * m_repulsiveForce * m_ballMultiplier * Time.deltaTime/distance);
-			}
-
 			hits = Physics.OverlapSphere (this.transform.position, mc_searchDistance,m_layerMask);
 			positions = new List<Vector3>();
 			foreach (Collider hit in hits) {
@@ -107,7 +116,10 @@ public class NoiseBall : MonoBehaviour {
                
 
                 Vector3 direction = this.transform.position - hit.transform.position;
-				m_rigidbody.AddForce(direction * m_repulsiveForce * m_playerModifier * Time.deltaTime/ (Vector3.Distance(this.transform.position,hit.transform.position)));
+				if (!NA.isClient())
+				{
+					m_rigidbody.AddForce(direction * m_repulsiveForce * m_playerModifier * Time.deltaTime/ (Vector3.Distance(this.transform.position,hit.transform.position)));
+				}
 			}
 
             if (m_playerLineRenderer != null)
@@ -115,9 +127,12 @@ public class NoiseBall : MonoBehaviour {
                 m_playerLineRenderer.SetVertexCount(positions.Count);
                 m_playerLineRenderer.SetPositions(positions.ToArray());
             }
-			m_rigidbody.AddForce ((origPosition - this.transform.position) * Vector3.Distance(origPosition,this.transform.position) * m_ballMultiplier * Time.deltaTime);
+			if (!NA.isClient())
+			{
+				m_rigidbody.AddForce ((origPosition - this.transform.position) * Vector3.Distance(origPosition,this.transform.position) * m_ballMultiplier * Time.deltaTime);
+			}
 			
-			yield return new WaitForEndOfFrame ();
+			//yield return new WaitForEndOfFrame ();
 		}
 	}
 }
