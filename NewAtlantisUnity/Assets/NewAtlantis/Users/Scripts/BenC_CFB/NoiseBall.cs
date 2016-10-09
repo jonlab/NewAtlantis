@@ -15,11 +15,15 @@ public class NoiseBall : MonoBehaviour {
 	[SerializeField]private float m_groupMultiplier;
 	[SerializeField]private float m_maximumVelocity = 10;
 	[SerializeField]private NoiseBall [] m_attractiveBalls;
+	
+	[SerializeField]private Vector3 origPosition;
+	[SerializeField]private float origDistance;
 
 
 	private const float mc_searchDistance = 15.0f;
 	// Use this for initialization
 	void Start () {
+		origPosition = this.transform.position;
         System.Array values = AudioReverbPreset.GetValues(typeof(AudioReverbPreset));
         AudioReverbPreset randomBar = (AudioReverbPreset)values.GetValue(Random.Range(0,values.Length));
 
@@ -41,15 +45,17 @@ public class NoiseBall : MonoBehaviour {
 			m_rigidbody.velocity = m_rigidbody.velocity.normalized * this.m_maximumVelocity;
 		}
 	}
-
+	
 	public void Update()
 	{
-		 RepellBalls();
+		if(m_rigidbody.velocity.magnitude > this.m_maximumVelocity){
+			m_rigidbody.velocity = m_rigidbody.velocity.normalized * this.m_maximumVelocity;
+		}
+		RepellBalls();
 	}
 
 	private void RepellBalls(){
         m_rigidbody.AddTorque(new Vector3(Random.Range(-1000.0f, 1000.0f), Random.Range(-1000.0f, 1000.0f), Random.Range(-1000.0f, 1000.0f)));
-		Vector3 origPosition = this.transform.position;
 		//GameObject [] NoisyBalls = GameObject.FindGameObjectsWithTag ("NoiseBall");
 
 		//JT : instead of getting the objects with tag "NoiseBall", we get the NoiseBall holders
@@ -92,13 +98,13 @@ public class NoiseBall : MonoBehaviour {
 					m_rigidbody.AddForce(dir * m_ballMultiplier * m_repulsiveForce * Time.deltaTime * m_groupMultiplier);
 				}
 			
-				//foreach (GameObject ball in NoisyBalls) {
+				//foreach (GameObject ball in NoisyBalls) {}
 				foreach (NoiseBall ball in NoisyBalls) {
 					if (ball == this)
 						continue; //no self test
 					Vector3 direction = this.transform.position - ball.gameObject.transform.position;
 
-	                //add a force proportional to that distance to the ball
+	                //add a force inversely proportional to that distance to the ball
 	                float distance = Vector3.Distance(this.transform.position, ball.gameObject.transform.position) + .1f;
 	                if(distance > 20.0f)
 	                {
@@ -129,7 +135,8 @@ public class NoiseBall : MonoBehaviour {
             }
 			if (!NA.isClient())
 			{
-				m_rigidbody.AddForce ((origPosition - this.transform.position) * Vector3.Distance(origPosition,this.transform.position) * m_ballMultiplier * Time.deltaTime);
+				origDistance = Vector3.Distance(origPosition,this.transform.position);
+				m_rigidbody.AddForce ((origPosition - this.transform.position) * origDistance * m_ballMultiplier * Time.deltaTime);
 			}
 			
 			//yield return new WaitForEndOfFrame ();
