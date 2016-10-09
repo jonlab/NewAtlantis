@@ -8,5 +8,7 @@ public class Space
 	public string type = "";
 	public string creator = "";
 	public int objectCount = 0;
+	public Texture2D texture = null;
+
 
 }

@@ -29,6 +29,7 @@ public enum NavigationMode
 
 public enum AppTab
 {
+	Performance,
 	Lobby,
 	User,
 	Scene,
@@ -112,7 +113,7 @@ public class App : MonoBehaviour
 	Vector3		PreviousMousePosition = Vector3.zero;
 	
 	AppTab 		tab = AppTab.Lobby;
-	AppTab[] 	tabs = {AppTab.Lobby, AppTab.User, AppTab.Space, AppTab.Scene, AppTab.Options, AppTab.Chat, AppTab.About};
+	AppTab[] 	tabs = {AppTab.Performance, AppTab.Lobby, AppTab.User, AppTab.Space, AppTab.Scene, AppTab.Options, AppTab.Chat, AppTab.About};
 
 	TypeTab 	tabAssets = TypeTab.Mine;
 	TypeTab 	tabSpaces = TypeTab.Mine;
@@ -175,23 +176,9 @@ public class App : MonoBehaviour
 	private Vector2 scrollPosCameras 			= Vector2.zero;
 	private Vector2 scrollPosSources 			= Vector2.zero;
 
-
-
-	/*
-	string 	strLogin 			= "";
-	string 	strPassword 		= "";
-	string 	strPasswordRetype 	= "";
-	string 	strEmail 			= "";
-	string 	strSpaceName 		= "";
-
-
-	bool	bSpacePublic 		= true;
-	bool	bAssetPublic 		= true;
-	*/
-
-
-	List<Space> 	listSpaces 	= new List<Space>();
-	List<Asset> 	listAssets 	= new List<Asset>(); //Asset bundles library 
+	List<Space> 			listSpaces 	= new List<Space>();
+	List<Asset> 			listAssets 	= new List<Asset>(); //Asset bundles library 
+	Dictionary<int, RemoteTexture> 	dicImages 	= new Dictionary<int, RemoteTexture>();
 	Asset 			CurrentAsset = null;
 	string			AssetFilter = "";
 	string			SpaceFilter = "";
@@ -561,7 +548,24 @@ public class App : MonoBehaviour
 
 
 
+	void UpdateSpacesThumbnails()
+	{
+		foreach (RemoteTexture rt in dicImages.Values)
+		{
+			//Debug.Log("process Remote textures");
+			rt.Process();
+		}
 
+		foreach (Space s in listSpaces)
+		{
+			if (s.texture == null && dicImages.ContainsKey(s.id))
+			{
+				//Debug.Log("found Remote textures");
+				RemoteTexture rt = dicImages[s.id];
+				s.texture = rt.texture;
+			}
+		}
+	}
 
 	// Update is called once per frame
 	void Update () 
@@ -571,6 +575,9 @@ public class App : MonoBehaviour
 		TransitionManager.Process();
 		NAInput.Process();
 		timerGC+=Time.deltaTime;
+
+		//only when in lobby ?
+		UpdateSpacesThumbnails();
 
 
 		if (Input.GetKeyDown(KeyCode.R))
@@ -1030,6 +1037,14 @@ public class App : MonoBehaviour
 					space.name 	= xpnic.Current.GetAttribute("name","");
 					space.type 	= xpnic.Current.GetAttribute("type","");
 					space.creator 	= xpnic.Current.GetAttribute("creator","");
+
+					if (!dicImages.ContainsKey(space.id))
+					{
+						RemoteTexture remote_texture = new RemoteTexture();
+						string url = "http://tanant.info/newatlantis2/images/space"+space.id+".jpg";
+						remote_texture.Download(url);
+						dicImages.Add(space.id, remote_texture);
+					}
 					/*if (space.id == 161)
 					{
 						Debug.Log("LeCube space");
@@ -1414,7 +1429,7 @@ public class App : MonoBehaviour
 		//GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
 		GUI.color = Color.white;
 		//GUI.Label(new Rect(0,0,400,30), "NewAtlantisNew Client - SAIC workshop");
-		GUI.Label(new Rect(0,0,100,30), "New Atlantis v1.02");
+		GUI.Label(new Rect(0,0,100,30), "New Atlantis v1.03");
 		GUI.Label(new Rect(Screen.width-200, 0, 200, 30), strPick);
 
 		DrawChronometer();
@@ -1533,6 +1548,10 @@ public class App : MonoBehaviour
 			break;
 		case AppTab.Lobby:
 			GUI.Window(2, mGuiWinRectWindows, WindowFunctionLobby, "Lobby");
+			break;
+
+		case AppTab.Performance:
+			GUI.Window(12, mGuiWinRectWindows, WindowFunctionPerformance, "Performance");
 			break;
 		case AppTab.User:
 			GUI.Window(10, mGuiWinRectWindows, WindowFunctionUser, "MyNA");
@@ -2001,22 +2020,23 @@ public class App : MonoBehaviour
 
     public bool getTabOpen()
     {
-        if (tab == AppTab.None) return false;
-
+        if (tab == AppTab.None) 
+			return false;
         return true;
-
     }
+
 
 	void GUISpacesHeader()
 	{
 		GUILayout.BeginHorizontal();
-		GUILayout.Label("name", 		GUILayout.Width(200));
+		GUILayout.Label("name", 		GUILayout.Width(250));
 		GUILayout.Label("label", 		GUILayout.Width(100));
 		GUILayout.Label("ID", 			GUILayout.Width(50));
 		GUILayout.Label("creator", 		GUILayout.Width(100));
-		GUILayout.Label("creation date", GUILayout.Width(100));
-		GUILayout.Label("last change", 	GUILayout.Width(100));
-		GUILayout.Label("objects", 		GUILayout.Width(100));
+		//GUILayout.Label("creation date", GUILayout.Width(100));
+		//GUILayout.Label("last change", 	GUILayout.Width(100));
+		GUILayout.Label("image", 		GUILayout.Width(192));
+		GUILayout.Label("objects", 		GUILayout.Width(50));
 		GUILayout.EndHorizontal();
 	}
 
@@ -2035,7 +2055,7 @@ public class App : MonoBehaviour
 					Debug.Log("LeCube");
 				}*/
 				GUILayout.BeginHorizontal();
-				if (space.name == strSpace)
+				if (space.name == strSpace) //selected
 				{
 					GUI.color = Color.green;
 				}
@@ -2043,7 +2063,7 @@ public class App : MonoBehaviour
 				{
 					GUI.color = Color.white;
 				}
-				if (GUILayout.Button(space.name, GUILayout.Width(200)))
+				if (GUILayout.Button(space.name, GUILayout.Width(250)))
 				{
 					
 					strSpace = space.name;
@@ -2060,105 +2080,41 @@ public class App : MonoBehaviour
 				GUILayout.Label(""+space.id, GUILayout.Width(50));
 
 				GUILayout.Label(space.creator, GUILayout.Width(100));
-				GUILayout.Label("", GUILayout.Width(100)); //creation date?
-				GUILayout.Label("", GUILayout.Width(100)); //last change?
+				//GUILayout.Label("", GUILayout.Width(100)); //creation date?
+				//GUILayout.Label("", GUILayout.Width(100)); //last change?
+				if (space.texture != null)
+				{
+					GUILayout.Label(space.texture, GUILayout.Width(192), GUILayout.Height(108));
+				}
+				else
+				{
+					GUILayout.Label("", GUILayout.Width(192)); 
+				}
 				GUILayout.Label(""+space.objectCount, GUILayout.Width(100)); //share/invite?
 				
 				GUILayout.EndHorizontal();
 			}
 		}
 	}
-	void WindowFunctionLobby (int windowID)
+
+	void WindowFunctionPerformance (int windowID)
 	{
 		GUI.color = Color.white;
 
 		GUILayout.BeginHorizontal();
-		GUILayout.Label ("Join an existing server...");
+		GUILayout.Label ("Join an existing performance...");
 		GUILayout.EndHorizontal();
 
-		GUILayout.BeginHorizontal();
-		GUILayout.Label ("This machine ip : " + Network.player.ipAddress + "(" + Network.player.externalIP + ")" + " guid=" + Network.player.guid);// + " " + Network.player.externalIP);
-		if (Network.isServer)
-			GUILayout.Label ("[SERVER STARTED]");
-		else if (Network.isClient)
-			GUILayout.Label ("[CLIENT CONNECTED]");
-		GUILayout.EndHorizontal();
-	
-		//GUILayout.BeginHorizontal();
-			//if (GUILayout.Button ("start server at " + Network.player.ipAddress)) 
-			/*if (GUILayout.Button ("start server", GUILayout.Width(200 ))) 
-			{
-				
-				Network.InitializeServer(32, 7890, true);
-				
-				MasterServer.RegisterHost("NewAtlantis", strSpace, "comment...");
-
-				CreateNetworkAvatar();
-				//NetworkConnectToSpace(strSpace);
-				if (strSpace != "")
-					ConnectToSpace(strSpace);
-				refreshHostList();
-				//bNetwork = false;
-				state = AppState.Game;
-				//bSpace = false;
-			}
-			if (GUILayout.Button ("stop server", GUILayout.Width(200 ))) 
-			{
-				foreach (NetworkPlayer player in Network.connections)
-				{
-					if (Network.player.guid == player.guid)
-					{
-						Network.DestroyPlayerObjects(player); 
-						Network.RemoveRPCs(player);
-					}
-				}
-				DestroyPlayerObjects();
-				Disconnect();
-				Network.Disconnect();
-				MasterServer.UnregisterHost();
-				refreshHostList();
-			}
-			if (GUILayout.Button ("run standalone", GUILayout.Width(200 ))) 
-			{
-				ConnectToSpace(strSpace);
-			}
-			GUILayout.EndHorizontal();
-*/
-			//GUILayout.Space(20);
-		//GUILayout.BeginArea(new Rect(0,0,1000,200), texWhite);
 		GUILayout.BeginHorizontal();
 		GUILayout.Label ("ACTIVE SESSIONS");
 		if (GUILayout.Button ("Refresh", GUILayout.Width(100 ))) 
 		{
 			refreshHostList();
-        }
-        GUILayout.EndHorizontal();
-		
-		/*GUILayout.BeginHorizontal();
-		strIP = GUILayout.TextField(strIP);
-		
-		
-		if (GUILayout.Button ("connect to " + strIP)) 
-		{
-			Network.Connect(strIP, 7890);
 		}
 		GUILayout.EndHorizontal();
-		*/
-		//GUI.color = new Color(0.7f,0.7f,1f);
-		
-		
-		/*foreach (NetworkPlayer player in Network.connections)
-		{
-			GUILayout.BeginHorizontal();
-			GUILayout.Label ("Player="+player.guid + " ip="+player.ipAddress + " port=" + player.port + " ping=" + Network.GetAveragePing(player) + "ms");
-			GUILayout.EndHorizontal();
-		}
-		*/
-		
-		//serveurs dans le monde
 
-		//texWhite
-		scrollPos = GUILayout.BeginScrollView( scrollPos, GUILayout.Height( 230 ) ); //150
+
+		scrollPos = GUILayout.BeginScrollView( scrollPos, GUILayout.Height( 500 ) ); //150
 		if( loading )
 		{
 			GUILayout.BeginHorizontal();
@@ -2195,8 +2151,132 @@ public class App : MonoBehaviour
 				}
 				string caption = d.gameName + "[" + d.connectedPlayers + "/" + d.playerLimit + "] on " +lip + ":" + d.port + " " + d.guid;
 
+				if (currentHost != null)
+				{
+					if (currentHost.guid == d.guid)
+					{
+						GUI.color = Color.green;
+					}
+					else
+					{
+						GUI.color = Color.white;
+					}
+				}	
+				else
+				{
+					GUI.color = Color.white;
+				}
+				GUILayout.BeginHorizontal();
+
+				if( GUILayout.Button( d.gameName,GUILayout.Width(250 )) )
+				{
+					currentHost = d;
+				}
+				GUILayout.Label( "" + d.connectedPlayers + "/" + d.playerLimit	,GUILayout.Width(50 ));
+				GUILayout.Label( lip+":"+d.port	,GUILayout.Width(140 ));
+				GUILayout.Label( d.guid	,GUILayout.Width(140 ));
+				GUILayout.Label( d.comment	,GUILayout.Width(170 ));
+
+				GUILayout.EndHorizontal();
+
+				//recherche du visuel de l'espace
+				Texture2D t = null;
+				foreach (Space s in listSpaces)
+				{
+					if (d.gameName.Contains(s.name + " ["))
+					{
+						t = s.texture;
+						break;
+					}
+				}
+				if (t != null)
+				{
+					GUILayout.BeginHorizontal();
+					GUILayout.Button(t, GUILayout.Width(192*2), GUILayout.Height(108*2));
+					GUILayout.EndHorizontal();
+				}
 
 
+			}
+
+			if( hosts.Length == 0 )
+			{
+				GUILayout.Label( "No servers running, you can start one below !" );
+			}
+		}
+		GUILayout.EndScrollView();
+		GUI.color = Color.white;
+
+
+
+
+
+		GUI.color = Color.white;
+	}
+
+	void WindowFunctionLobby (int windowID)
+	{
+		GUI.color = Color.white;
+
+		GUILayout.BeginHorizontal();
+		GUILayout.Label ("Join an existing server...");
+		GUILayout.EndHorizontal();
+
+		GUILayout.BeginHorizontal();
+		GUILayout.Label ("This machine ip : " + Network.player.ipAddress + "(" + Network.player.externalIP + ")" + " guid=" + Network.player.guid);// + " " + Network.player.externalIP);
+		if (Network.isServer)
+			GUILayout.Label ("[SERVER STARTED]");
+		else if (Network.isClient)
+			GUILayout.Label ("[CLIENT CONNECTED]");
+		GUILayout.EndHorizontal();
+	
+		GUILayout.BeginHorizontal();
+		GUILayout.Label ("ACTIVE SESSIONS");
+		if (GUILayout.Button ("Refresh", GUILayout.Width(100 ))) 
+		{
+			refreshHostList();
+        }
+        GUILayout.EndHorizontal();
+		
+		//serveurs dans le monde
+
+		//texWhite
+		scrollPos = GUILayout.BeginScrollView( scrollPos, GUILayout.Height( 230 ) ); //150
+		if( loading )
+		{
+			GUILayout.BeginHorizontal();
+			GUILayout.Label( "Loading..." );
+			GUILayout.EndHorizontal();
+		}
+		else
+		{
+			//Debug.Log ("IP="+MasterServer.ipAddress);
+			//Debug.Log ("PORT="+MasterServer.port);
+			GUILayout.BeginHorizontal();
+			GUILayout.Label( "name"	,GUILayout.Width(250 ));
+			GUILayout.Label( "players"	,GUILayout.Width(50 ));
+			GUILayout.Label( "IP/port"	,GUILayout.Width(140 ));
+			GUILayout.Label( "GUID"	,GUILayout.Width(140 ));
+			GUILayout.Label( "comment"	,GUILayout.Width(240 ));
+
+			GUILayout.EndHorizontal();
+			HostData[] hosts = MasterServer.PollHostList();
+			for( int i = 0; i < hosts.Length; i++ )
+			{
+				HostData d = hosts[i];
+				string ip = "";
+				foreach (string s in d.ip)
+				{
+					ip += s + ".";
+				}
+
+				string lip = "";
+				foreach (string s in d.ip)
+				{
+					lip += s;
+					lip += ".";
+				}
+				string caption = d.gameName + "[" + d.connectedPlayers + "/" + d.playerLimit + "] on " +lip + ":" + d.port + " " + d.guid;
 
                 if (currentHost != null)
 				{
@@ -2223,9 +2303,25 @@ public class App : MonoBehaviour
 				GUILayout.Label( "" + d.connectedPlayers + "/" + d.playerLimit	,GUILayout.Width(50 ));
 				GUILayout.Label( lip+":"+d.port	,GUILayout.Width(140 ));
 				GUILayout.Label( d.guid	,GUILayout.Width(140 ));
-				GUILayout.Label( d.comment	,GUILayout.Width(170 ));
+				GUILayout.Label( d.comment	,GUILayout.Width(240 ));
 				GUILayout.EndHorizontal();
-                
+
+				//recherche du visuel de l'espace
+				Texture2D t = null;
+				foreach (Space s in listSpaces)
+				{
+					if (d.gameName.Contains(s.name + " ["))
+					{
+						t = s.texture;
+						break;
+					}
+				}
+				if (t != null)
+				{
+					GUILayout.BeginHorizontal();
+					GUILayout.Label(t, GUILayout.Width(192*2), GUILayout.Height(108*2));
+					GUILayout.EndHorizontal();
+				}
 			}
 
 			if( hosts.Length == 0 )
@@ -2243,7 +2339,6 @@ public class App : MonoBehaviour
 			LogManager.Log("try to join " + currentHost.gameName + " at " + currentHost.ip + ":" + currentHost.port);
 			Network.Connect(currentHost);
 			tab = AppTab.None; //hide windows
-			//Network.Connect(
 		}
 		GUI.color = !Network.isClient ? Color.gray : Color.white;
 		if (GUILayout.Button ("Leave server", GUILayout.Width(100 )) && Network.isClient) 
@@ -2253,7 +2348,7 @@ public class App : MonoBehaviour
         }
 		GUILayout.Space(50);
 		GUI.color = Color.white;
-		if (GUILayout.Button ("Join Le Cube", GUILayout.Width(150 )) && !Network.isClient) 
+		/*if (GUILayout.Button ("Join Le Cube", GUILayout.Width(150 )) && !Network.isClient) 
 		{
 
 			LogManager.Log("try to join LeCube at 217.167.7.161:7890");
@@ -2268,6 +2363,7 @@ public class App : MonoBehaviour
 			Network.Connect("192.168.230.26", 7890);
 			//Network.Connect(
 		}
+		*/
 
 		if (GUILayout.Button ("Join Localhost", GUILayout.Width(150 )) && !Network.isClient) 
 		{
@@ -2289,21 +2385,6 @@ public class App : MonoBehaviour
 		GUI.color = Color.white;
 
 
-		/*if (GUILayout.Button ("Test open", GUILayout.Width(100 ))) 
-		{
-			//string strFile = EditorUtility.OpenFilePanel("open", "~", "unity3d");
-			//Debug.Log ("file opened" + strFile);
-		}
-		*/
-
-		//
-
-		/*if (GUILayout.Button ("Close lobby ", GUILayout.Width(100 ))) 
-		{
-			state = AppState.Game;
-			bNetwork = false;
-		}
-		*/
 
 		/*if (GUILayout.Button ("Clean objects", GUILayout.Width(100 ))) 
 		{
@@ -2336,7 +2417,7 @@ public class App : MonoBehaviour
 		GUILayout.BeginHorizontal();
 		GUI.color = Color.gray;
 		//if (GUILayout.Button ("start server at " + Network.player.ipAddress)) 
-		if (GUILayout.Button ("run standalone", GUILayout.Width(120 ))) 
+		/*if (GUILayout.Button ("run standalone", GUILayout.Width(120 ))) 
 		{
 			//ConnectToSpace(strSpace); //removed
 		}
@@ -2345,6 +2426,7 @@ public class App : MonoBehaviour
 			//ConnectToSpace(strSpace);
 			//TO DO !
 		}
+		*/
 
 		GUI.color = Network.isServer ? Color.gray : Color.white;
 		
@@ -2390,8 +2472,9 @@ public class App : MonoBehaviour
 		//GUILayout.EndArea();
 		GUI.color = Color.white;
 			
-
 	}
+
+
     
 
 

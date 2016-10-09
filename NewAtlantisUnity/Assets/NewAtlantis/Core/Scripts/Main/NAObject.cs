@@ -221,6 +221,12 @@ public class NAObject
 
 					List<GameObject> listSync = new List<GameObject>();
 
+					//Oct 2016 : special cases
+					NoiseBall[] nballs = go.GetComponentsInChildren<NoiseBall>();
+					foreach (NoiseBall nb in nballs)
+					{
+						listSync.Add(nb.gameObject);
+					}
 
 					//Oct 2016 : get the objects to be custom synced and add to the list
 					NASync[] nasyncs = go.GetComponentsInChildren<NASync>();
@@ -248,12 +254,6 @@ public class NAObject
 						{
 							listSync.Add(collider.gameObject);
 						}
-
-
-
-
-
-
 					}
 
 					if (NA.isServer())

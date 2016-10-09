@@ -57,8 +57,13 @@ public class NANetwork : MonoBehaviour {
 		Collider.Destroy(clone.GetComponent<Collider>());
 		NetworkView nView = clone.AddComponent<NetworkView>();
 		nView.viewID = viewID;
-		nView.stateSynchronization = NetworkStateSynchronization.Unreliable;
 
+		//JT Oct 2016 - test with manual sync instead of built-in
+		//nView.stateSynchronization = NetworkStateSynchronization.Unreliable;
+		nView.stateSynchronization = NetworkStateSynchronization.Off;
+		nView.observed = null;
+		clone.AddComponent<NASyncTransform>();
+		//===
 
 		Light l = clone.AddComponent<Light>();
 		l.intensity = 2f;
@@ -70,7 +75,7 @@ public class NANetwork : MonoBehaviour {
 
 		if (nView.owner == Network.player)
 		{
-			NA.goAvatar = clone;
+			NA.goAvatar = clone; //mine
 		}
 		else
 		{
