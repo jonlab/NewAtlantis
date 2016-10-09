@@ -7,6 +7,7 @@ public class ChatEntry
     public string name = "";
 	public string str = "";
 	public int category = 0;
+	public Color color = Color.white;
 }
 public class ChatManager  : MonoBehaviour
 {
@@ -110,11 +111,12 @@ public class ChatManager  : MonoBehaviour
 	}
 
 
-	public static void Log(string name, string str, int cat)
+	public static void Log(string name, string str, Color col)
 	{
 		Debug.Log (str);
 		ChatEntry e = new ChatEntry();
-		e.category = cat;
+		//e.category = cat;
+		e.color = col;
         e.name = name;
 		e.str = str;
 		logs.Add (e);

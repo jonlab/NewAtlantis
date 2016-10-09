@@ -7,6 +7,7 @@ public class NAReverbEffector : MonoBehaviour
 
 	private List<NAReverbResonator> resonators = new List<NAReverbResonator>();
 	public static bool Enabled = true;
+	public static float reverb_count = 0;
 	// Use this for initialization
 	void Start () 
 	{
@@ -37,13 +38,20 @@ public class NAReverbEffector : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-	
+		reverb_count = 0;
 	}
 
 	void LateUpdate()
 	{
 		//return;
-
+		//look at distance from listener
+		float distance = (this.transform.position-NA.listener.transform.position).magnitude;
+		if (distance > 50 || reverb_count > 10)
+		{
+			
+			EnableAudioReverbFilter (false);
+			return;
+		}
 		AudioReverbFilter to = GetComponent<AudioReverbFilter> ();
 		if (to == null)
 			return;
@@ -94,9 +102,14 @@ public class NAReverbEffector : MonoBehaviour
 		}
 
 		if (count > 0)
+		{
+			reverb_count++;
 			EnableAudioReverbFilter (true && NAReverbEffector.Enabled);
+		}
 		else
+		{
 			EnableAudioReverbFilter (false);
+		}
 
 
 	}

@@ -21,9 +21,12 @@ public class NANetwork : MonoBehaviour {
 	}
 
 	[RPC]
-	void Chat(string _name, string _message) 
+	void Chat(string _name, string _message/*, Vector3 color*/) 
 	{
-		ChatManager.Log(_name, _message, 0);
+		//Color c = new Color(color.x, color.y, color.z);
+		ChatManager.Log(_name, _message, Color.white);
+		//HERE
+		//NA.get
 		LogManager.LogWarning(_name + " : " + _message);
 
 	}
@@ -168,6 +171,8 @@ public class NANetwork : MonoBehaviour {
 			if (o.name == name)
 			{
 				model = o.go;
+				if (o.downloading)
+					LogManager.LogWarning ("clone command received but model is still downloading !");
 			}
 		}
 		//instead of cloning the root, we clone the first child (for synchronization purpose on physicallized objects)

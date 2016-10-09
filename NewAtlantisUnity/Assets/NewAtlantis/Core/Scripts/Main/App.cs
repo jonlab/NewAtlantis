@@ -67,6 +67,9 @@ public class App : MonoBehaviour
 	public Font font2;
 	public Font font3;
 
+	private Color ColorUnselected = new Color(0.70f,0.70f,0.70f);
+	private Color ColorSelected = Color.white;
+
 	LogEntry lastError = null;
 	
 	/*
@@ -334,7 +337,7 @@ public class App : MonoBehaviour
 		texWhite 		= Resources.Load ("white") as Texture2D;
 		texSoundHouses 		= Resources.Load ("bacon_soundhouses1") as Texture2D;
 		goMainLight 	= GameObject.Find ("MainLightViewer");
-		ChatManager.Log("system", "welcome to New Atlantis", 0);
+		ChatManager.Log("system", "welcome to New Atlantis", Color.blue);
 		NAToolBase[] _tools = GetComponents<NAToolBase>();
 
 		//ConnectionTesterStatus status = Network.TestConnection(false);
@@ -521,9 +524,15 @@ public class App : MonoBehaviour
 		if (currentSelection != null)
 			bPlayPhysics = false;
 		if (bPlayPhysics)
+		{
 			NA.PlayPhysics();
+			//Network.SetReceivingEnabled(Network.player, 0, true);
+		}
 		else
+		{
 			NA.PausePhysics();
+			//Network.SetReceivingEnabled(Network.player, 0, false);
+		}
 
 		if (!NAReverbEffector.Enabled)
 		{
@@ -1632,7 +1641,7 @@ public class App : MonoBehaviour
 	{
 		//Called on the server whenever a player is disconnected from the server.
 		Debug.Log("Player connected from " + player.ipAddress + ":" + player.port);
-		ChatManager.Log("system", "player connected", 0);
+		ChatManager.Log("system", "player connected", Color.green);
 		PlayEvent(3);
 		LogManager.LogWarning("A new player just connected to the server.");
 
@@ -1706,7 +1715,7 @@ public class App : MonoBehaviour
 	void NetworkChat(string _message)
 	{
 		_message = _message.Replace('\n', ' ');
-		GetComponent<NetworkView>().RPC("Chat", RPCMode.AllBuffered, strName, _message);
+		GetComponent<NetworkView>().RPC("Chat", RPCMode.AllBuffered, strName, _message/*, NA.colorAvatar*/);
 	}
 	
 
@@ -1760,6 +1769,7 @@ public class App : MonoBehaviour
 		{
 			GUILayout.BeginHorizontal();
 			ChatEntry e = ChatManager.logs[i];
+			GUI.color = e.color;
 			GUILayout.Label ("[" + e.name + "] : " + e.str);
 			GUILayout.EndHorizontal();
 		}
@@ -1771,7 +1781,7 @@ public class App : MonoBehaviour
 			GUILayout.Label ("");
 			GUILayout.EndHorizontal();
 		}
-
+		GUI.color = Color.white;
 		GUILayout.BeginHorizontal();
 		GUILayout.Label(strName, GUILayout.Width(100));
 		strCurrentChatMessage = GUILayout.TextArea(strCurrentChatMessage, GUILayout.Width(600));
@@ -2057,11 +2067,11 @@ public class App : MonoBehaviour
 				GUILayout.BeginHorizontal();
 				if (space.name == strSpace) //selected
 				{
-					GUI.color = Color.green;
+					GUI.color = ColorSelected;
 				}
 				else
 				{
-					GUI.color = Color.white;
+					GUI.color = ColorUnselected;
 				}
 				if (GUILayout.Button(space.name, GUILayout.Width(250)))
 				{
@@ -2155,16 +2165,16 @@ public class App : MonoBehaviour
 				{
 					if (currentHost.guid == d.guid)
 					{
-						GUI.color = Color.green;
+						GUI.color = ColorSelected;
 					}
 					else
 					{
-						GUI.color = Color.white;
+						GUI.color = ColorUnselected;
 					}
 				}	
 				else
 				{
-					GUI.color = Color.white;
+					GUI.color = ColorUnselected;
 				}
 				GUILayout.BeginHorizontal();
 
@@ -2183,7 +2193,7 @@ public class App : MonoBehaviour
 				Texture2D t = null;
 				foreach (Space s in listSpaces)
 				{
-					if (d.gameName.Contains(s.name + " ["))
+					if (s.texture != null && d.gameName.Contains(s.name + " ["))
 					{
 						t = s.texture;
 						break;
@@ -2192,7 +2202,14 @@ public class App : MonoBehaviour
 				if (t != null)
 				{
 					GUILayout.BeginHorizontal();
-					GUILayout.Button(t, GUILayout.Width(192*2), GUILayout.Height(108*2));
+					if (GUILayout.Button(t, GUILayout.Width(192), GUILayout.Height(108)))
+					{
+						//HERE
+						currentHost = d;
+						LogManager.Log("try to join " + currentHost.gameName + " at " + currentHost.ip + ":" + currentHost.port);
+						Network.Connect(currentHost);
+						tab = AppTab.None; //hide windows
+					}
 					GUILayout.EndHorizontal();
 				}
 
@@ -2282,16 +2299,16 @@ public class App : MonoBehaviour
 				{
 					if (currentHost.guid == d.guid)
 					{
-						GUI.color = Color.green;
+						GUI.color = ColorSelected;
 					}
 					else
 					{
-						GUI.color = Color.white;
+						GUI.color = ColorUnselected;
 					}
 				}	
 				else
 				{
-					GUI.color = Color.white;
+					GUI.color = ColorUnselected;
                 }
 				GUILayout.BeginHorizontal();
 				//GUILayout.Label( "Loading..." );
@@ -2338,6 +2355,7 @@ public class App : MonoBehaviour
 			
 			LogManager.Log("try to join " + currentHost.gameName + " at " + currentHost.ip + ":" + currentHost.port);
 			Network.Connect(currentHost);
+			//Network.SetReceivingEnabled(Network.player, 0, false);
 			tab = AppTab.None; //hide windows
 		}
 		GUI.color = !Network.isClient ? Color.gray : Color.white;

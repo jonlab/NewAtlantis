@@ -85,7 +85,7 @@ public class NAAnimalBehavior : MonoBehaviour {
 		}
 		if (ras != null)
 		{
-			ras.Apply(index, volume, pitch);
+			ras.Set(index, volume, pitch);
 		}
 		if (stand)
 		{

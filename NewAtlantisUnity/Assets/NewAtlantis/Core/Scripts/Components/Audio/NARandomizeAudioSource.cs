@@ -64,7 +64,7 @@ public class NARandomizeAudioSource : MonoBehaviour
 		}
 	}
 
-	public void Apply(int clipindex, float volume, float pitch)
+	public void Set(int clipindex, float volume, float pitch)
 	{
 		AudioSource audio = GetComponent<AudioSource>();
 		if (audio == null)

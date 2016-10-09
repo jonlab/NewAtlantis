@@ -12,6 +12,11 @@ public class NASyncTransform : MonoBehaviour {
 	Vector3 last_received_angles = Vector3.zero;
 	Vector3 last_received_velocity = Vector3.zero;
 	Quaternion last_received_rotation = Quaternion.identity;
+
+
+	Vector3 current_speed = Vector3.zero;
+	Vector3 last_position = Vector3.zero;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -23,12 +28,14 @@ public class NASyncTransform : MonoBehaviour {
 	{
 		if (nv.owner == Network.player)
 		{
+			current_speed = (transform.position-last_position)/Time.deltaTime;
+			last_position = transform.position;
 			timer+=Time.deltaTime;
 			if (timer > interval)
 			{
 				timer -= interval;
 				//send a sync frame
-				nv.RPC("SetTransformState", RPCMode.Others, transform.position, transform.rotation, Vector3.zero);
+				nv.RPC("SetTransformState", RPCMode.Others, transform.position, transform.rotation, current_speed);
 			}
 		}
 		else
@@ -36,10 +43,12 @@ public class NASyncTransform : MonoBehaviour {
 			//kind of dead reckoning
 			Vector3 position = transform.position;
 			Quaternion rotation = transform.rotation;
+
+			last_received_position += last_received_velocity*Time.deltaTime;
 			//to do : improve this !!!
 			position = Vector3.Lerp(position, last_received_position, 0.1f);
-			rotation = Quaternion.Lerp(rotation, last_received_rotation, 0.1f);
-
+			rotation = Quaternion.Lerp(rotation, last_received_rotation, 0.2f);
+			//position += last_received_velocity*Time.deltaTime;
 			transform.position = position;
 			transform.rotation = rotation;
 		}

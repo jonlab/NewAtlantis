@@ -155,6 +155,21 @@ public static class NA
 		return listAvatars;
 	}
 
+	public static Color GetAvatarColorByName(string name)
+	{
+		foreach (GameObject a in listAvatars)
+		{
+			if (a.name == name)
+			{
+				
+				//return 
+				
+			}
+		}
+
+		return Color.white;
+	}
+
 	public static void DestroyPlayerObjects()
 	{
 		foreach (GameObject go in player_objects)
