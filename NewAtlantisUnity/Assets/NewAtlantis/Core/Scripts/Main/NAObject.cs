@@ -214,6 +214,16 @@ public class NAObject
 		            */
 
 		            
+					//special cases
+					foreach (Light l in lights)
+					{
+						if (l.transform.parent.name == "dome world" || l.transform.parent.name == "Christmas")
+						{
+							l.enabled = false;
+						}
+					}
+
+
 					//jonathan : removed on 1/9/2016
 
 

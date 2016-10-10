@@ -149,7 +149,7 @@ public class App : MonoBehaviour
 	string strObjectName = "object_name";
 
 	static Vector2 WindowSize 	= new Vector2(1024-10, 768-70);
-	Rect mGuiWinRectChat 		= new Rect(Screen.width-300, 200, 300, Screen.height-200);
+	//Rect mGuiWinRectChat 		= new Rect(Screen.width-300, 200, 300, Screen.height-200);
 	Rect mGuiWinRectNetwork 	= new Rect(Screen.width/2-200, Screen.height/2-250, 400, 500);
 	Rect mGuiWinRectScene 		= new Rect(Screen.width/2-WindowSize.x/2, Screen.height/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
 	Rect mGuiWinRectSpaces 		= new Rect(Screen.width/2-WindowSize.x/2, Screen.height/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
@@ -165,6 +165,7 @@ public class App : MonoBehaviour
 	//float sh = Mathf.Max(Screen.height, 768);
 	//float sw = Screen.width;
 	Rect mGuiWinRectWindows;// 		= null;//new Rect(sw/2-WindowSize.x/2, sw/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
+	Rect mGuiWinRectChat;// 		= null;//new Rect(sw/2-WindowSize.x/2, sw/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
 
 	private Vector2 scrollPos 	= Vector2.zero;
 	private Vector2 scrollPosMySpaces 		= Vector2.zero;
@@ -285,12 +286,13 @@ public class App : MonoBehaviour
     // Use this for initialization
     void Start () 
 	{
-		AudioListener.volume = 0.25f;
+		AudioListener.volume = 0.50f;
 		strIP = PlayerPrefs.GetString("ip");
 		SpaceFilter = PlayerPrefs.GetString("spacefilter");
 		float sh = Mathf.Max(Screen.height, 768);
 		float sw = Screen.width;
 		mGuiWinRectWindows 		= new Rect(sw/2-WindowSize.x/2, sh/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
+		mGuiWinRectChat			= new Rect(sw-400, sh/2-WindowSize.y/2, 400, WindowSize.y);
 		NA.fonts[0] = font0;
 		NA.fonts[1] = font1;
 		NA.fonts[2] = font2;
@@ -1191,7 +1193,6 @@ public class App : MonoBehaviour
 
 		DestroyCreatedPlayerObjects();
 		GetComponent<NetworkView>().RPC("DestroyCreatedPlayerObjects", RPCMode.OthersBuffered);
-
 		NAServer.Get(); //get the space description (will force update on clients)
 	}
 	
@@ -1412,11 +1413,9 @@ public class App : MonoBehaviour
             {
                 if (Camera.main != null)
                 {
+					Font bak = GUI.skin.font;
                     try
                     {
-                        
-                        
-                        Font bak = GUI.skin.font;
                         GUI.skin.font = NA.GetFont(2);
                         
 						Vector3 pos2d = Camera.main.WorldToViewportPoint(a.transform.position+a.transform.up*0.7f);
@@ -1449,6 +1448,7 @@ public class App : MonoBehaviour
                     catch (System.Exception e)
                     {
                         Debug.LogWarning("FIXME : avatars cleaning " + e.ToString());
+						GUI.skin.font = bak;
                     }
                 }
             }
@@ -1469,12 +1469,12 @@ public class App : MonoBehaviour
 		//GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
 		GUI.color = Color.white;
 		//GUI.Label(new Rect(0,0,400,30), "NewAtlantisNew Client - SAIC workshop");
-		GUI.Label(new Rect(0,0,100,30), "New Atlantis v1.04");
+		GUI.Label(new Rect(0,0,100,30), "New Atlantis v1.05");
 		GUI.Label(new Rect(Screen.width-200, 0, 200, 30), strPick);
 
 		DrawChronometer();
 
-
+		GUI.skin.font = NA.GetFont(0);
 
 		//general loading bar
 		float progress_val = 0;
@@ -1572,7 +1572,7 @@ public class App : MonoBehaviour
 		switch (tab)
 		{
 		case AppTab.Chat:
-			mGuiWinRectChat 	= GUI.Window(1, mGuiWinRectWindows, WindowFunctionChat, "Chat");
+			mGuiWinRectChat 	= GUI.Window(1, mGuiWinRectChat, WindowFunctionChat, "Chat");
 			break;
 		case AppTab.About:
 			mGuiWinRectAbout 	= GUI.Window(7, mGuiWinRectWindows, WindowFunctionAbout, "About");
@@ -1777,7 +1777,8 @@ public class App : MonoBehaviour
 		GUILayout.Label ("Users : ");
 		GUILayout.EndHorizontal();
 		GUILayout.BeginHorizontal();
-		GUILayout.Label ("Player=" + Network.player.guid + " ip="+Network.player.ipAddress + " port=" + Network.player.port + " ping=" + Network.GetAveragePing(Network.player) + "ms - Total players connected=" + Network.connections.Length);
+		//GUILayout.Label ("Player=" + Network.player.guid + " ip="+Network.player.ipAddress + " port=" + Network.player.port + " ping=" + Network.GetAveragePing(Network.player) + "ms - Total players connected=" + Network.connections.Length);
+		GUILayout.Label ("Player ip="+Network.player.ipAddress + " ping=" + Network.GetAveragePing(Network.player) + "ms - Total players connected=" + Network.connections.Length);
 		GUILayout.EndHorizontal();
         foreach (NetworkPlayer player in Network.connections)
 		{
@@ -1814,21 +1815,51 @@ public class App : MonoBehaviour
 		GUI.color = Color.white;
 		GUILayout.BeginHorizontal();
 		GUILayout.Label(strName, GUILayout.Width(100));
-		strCurrentChatMessage = GUILayout.TextArea(strCurrentChatMessage, GUILayout.Width(600));
+
+
+		strCurrentChatMessage = GUILayout.TextArea(strCurrentChatMessage, GUILayout.Width(220));
 		if (strCurrentChatMessage.Length>0)
 		{
-			if (strCurrentChatMessage[strCurrentChatMessage.Length-1] == '\n')
+
+			bool enter = false;
+			if (Event.current.keyCode == KeyCode.Return) 
 			{
-				NetworkChat(strCurrentChatMessage);
+				enter = true;
+				Event.current.Use();
+			}
+			//LogManager.Log("char typed : " + strCurrentChatMessage[strCurrentChatMessage.Length-1]);
+			//int c = (int)strCurrentChatMessage[strCurrentChatMessage.Length-1];
+			//LogManager.Log("char typed : " + c);
+
+			//LogManager.Log("Event.current = " + Event.current.keyCode);
+			if (strCurrentChatMessage.Length > 40)
+			{
+				strCurrentChatMessage = strCurrentChatMessage.Substring(0, 40);
+			}
+			if (strCurrentChatMessage[strCurrentChatMessage.Length-1] == '\n' || strCurrentChatMessage[strCurrentChatMessage.Length-1] == '\r' || enter)
+			{
+				//LogManager.Log("chat " + strCurrentChatMessage.Length);
+				if (strCurrentChatMessage.Length > 1)
+				{
+					NetworkChat(strCurrentChatMessage);
+				}
 				strCurrentChatMessage = "";
+				
+
+					
+			}
+			else
+			{
+				
 			}
 		}
-		if (GUILayout.Button("send", GUILayout.Width(100)))
+		if (GUILayout.Button("send", GUILayout.Width(50)))
 		{
 			NetworkChat(strCurrentChatMessage);
 			strCurrentChatMessage = "";
 		}
 		GUILayout.EndHorizontal();
+		GUI.DragWindow();
     }
 
 

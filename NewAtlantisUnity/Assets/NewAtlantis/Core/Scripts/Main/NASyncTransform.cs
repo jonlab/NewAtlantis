@@ -12,7 +12,7 @@ public class NASyncTransform : MonoBehaviour {
 	Vector3 last_received_angles = Vector3.zero;
 	Vector3 last_received_velocity = Vector3.zero;
 	Quaternion last_received_rotation = Quaternion.identity;
-
+	GameObject goTarget = null;
 
 	Vector3 current_speed = Vector3.zero;
 	Vector3 last_position = Vector3.zero;
@@ -21,6 +21,15 @@ public class NASyncTransform : MonoBehaviour {
 	void Start () 
 	{
 		nv = GetComponent<NetworkView>();
+		goTarget = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+		goTarget.transform.localScale = Vector3.one*0.3f;
+		Collider.Destroy(goTarget.GetComponent<Collider>());
+
+	}
+
+	void OnDestroy()
+	{
+		GameObject.Destroy(goTarget);
 	}
 	
 	// Update is called once per frame
@@ -37,6 +46,7 @@ public class NASyncTransform : MonoBehaviour {
 				timer -= interval;
 				//send a sync frame
 				nv.RPC("SetTransformState", RPCMode.Others, transform.position, transform.rotation, current_speed);
+				//LogManager.Log("SEND SetTransformState " + gameObject.name + " " + transform.position);
 			}
 		}
 		else
@@ -48,6 +58,7 @@ public class NASyncTransform : MonoBehaviour {
 			last_received_position += last_received_velocity*Time.deltaTime;
 			//to do : improve this !!!
 			position = Vector3.Lerp(position, last_received_position, 0.1f);
+			//position = last_received_position;
 			rotation = Quaternion.Lerp(rotation, last_received_rotation, 0.2f);
 			//position += last_received_velocity*Time.deltaTime;
 			transform.position = position;
@@ -64,9 +75,12 @@ public class NASyncTransform : MonoBehaviour {
 	[RPC]
 	void SetTransformState(Vector3 position, Quaternion rotation, Vector3 velocity) 
 	{
+		//LogManager.Log("SetTransformState " + gameObject.name + " " + position);
 		timer = 0;
 		last_received_position 	= position;
 		last_received_rotation 	= rotation;
 		last_received_velocity 	= velocity;
+		goTarget.transform.position = position;
+		//transform.position = last_received_position;
 	}
 }
