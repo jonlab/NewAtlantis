@@ -7,13 +7,43 @@ public class ChatEntry
     public string name = "";
 	public string str = "";
 	public int category = 0;
+	public Color color = Color.white;
 }
-public class ChatManager 
+public class ChatManager  : MonoBehaviour
 {
 
 	public static bool bGUI = false;
 	public static Texture2D texWhite = null;
     public static List<ChatEntry> logs = new List<ChatEntry>();
+	public float timer = 0f;
+
+	public static string text = "";
+
+	void Start () 
+	{
+		texWhite = Resources.Load ("white") as Texture2D;
+
+	}
+
+	// Update is called once per frame
+	void Update () 
+	{
+		timer+=Time.deltaTime;
+		if (Input.GetKeyDown(KeyCode.Tab))
+		{
+			bGUI = !bGUI;
+		}
+
+		/*if (bGUI)
+		{
+			//if (Input.GetKeyDown(KeyCode.
+			KeyCode c;
+
+		}*/
+
+	}
+
+
 	// Use this for initialization
 	public static void Initialize () 
 	{
@@ -33,7 +63,13 @@ public class ChatManager
         int end = logs.Count-1;
 		return end;
     }
-
+	void OnGUI()
+	{
+		if (bGUI)
+		{
+			DrawGUI();
+		}
+	}
 	public static void DrawGUI()
 	{
 		if (bGUI)
@@ -66,15 +102,21 @@ public class ChatManager
 				GUI.Label(new Rect(0, y, Screen.width, 30), e.str);
 				y += 12;
 			}
+
+			GUI.SetNextControlName("MyTextField");
+
+			text = GUI.TextField(new Rect(0,Screen.height-250,Screen.width, 50), text);
+			GUI.FocusControl("MyTextField");
 		}
 	}
 
 
-	public static void Log(string name, string str, int cat)
+	public static void Log(string name, string str, Color col)
 	{
 		Debug.Log (str);
 		ChatEntry e = new ChatEntry();
-		e.category = cat;
+		//e.category = cat;
+		e.color = col;
         e.name = name;
 		e.str = str;
 		logs.Add (e);

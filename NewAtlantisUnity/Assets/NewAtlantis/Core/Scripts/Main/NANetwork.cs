@@ -21,9 +21,12 @@ public class NANetwork : MonoBehaviour {
 	}
 
 	[RPC]
-	void Chat(string _name, string _message) 
+	void Chat(string _name, string _message/*, Vector3 color*/) 
 	{
-		ChatManager.Log(_name, _message, 0);
+		//Color c = new Color(color.x, color.y, color.z);
+		ChatManager.Log(_name, _message, Color.white);
+		//HERE
+		//NA.get
 		LogManager.LogWarning(_name + " : " + _message);
 
 	}
@@ -57,8 +60,13 @@ public class NANetwork : MonoBehaviour {
 		Collider.Destroy(clone.GetComponent<Collider>());
 		NetworkView nView = clone.AddComponent<NetworkView>();
 		nView.viewID = viewID;
-		nView.stateSynchronization = NetworkStateSynchronization.Unreliable;
 
+		//JT Oct 2016 - test with manual sync instead of built-in
+		//nView.stateSynchronization = NetworkStateSynchronization.Unreliable;
+		nView.stateSynchronization = NetworkStateSynchronization.Off;
+		nView.observed = null;
+		clone.AddComponent<NASyncTransform>();
+		//===
 
 		Light l = clone.AddComponent<Light>();
 		l.intensity = 2f;
@@ -70,7 +78,7 @@ public class NANetwork : MonoBehaviour {
 
 		if (nView.owner == Network.player)
 		{
-			NA.goAvatar = clone;
+			NA.goAvatar = clone; //mine
 		}
 		else
 		{
@@ -121,6 +129,7 @@ public class NANetwork : MonoBehaviour {
 	[RPC]
 	void Refresh()
 	{
+		LogManager.Log("Refresh, get state...");
 		NAServer.Get();
 	}
 
@@ -128,6 +137,7 @@ public class NANetwork : MonoBehaviour {
 	[RPC]
 	void LoadObject(string _name, NetworkViewID _viewID, Vector3 _pos, Vector3 _angles, Vector3 _scale, string _filename, string _id) 
 	{
+		LogManager.Log("LoadObject " + _name);
 		//on regarde si l'object n'existe pas déjà
 		foreach (NAObject o in NA.app.listObjects) 
 		{
@@ -163,6 +173,8 @@ public class NANetwork : MonoBehaviour {
 			if (o.name == name)
 			{
 				model = o.go;
+				if (o.downloading)
+					LogManager.LogWarning ("clone command received but model is still downloading !");
 			}
 		}
 		//instead of cloning the root, we clone the first child (for synchronization purpose on physicallized objects)

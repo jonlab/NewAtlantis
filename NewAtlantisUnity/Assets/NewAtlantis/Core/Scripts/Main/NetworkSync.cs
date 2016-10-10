@@ -145,8 +145,8 @@ public class NetworkSync : MonoBehaviour
 			foreach (AudioSource s in sources)
 			{
 				//TO DO : gérer les sources indépendemment
-				//string log = "Source name = "  + s.name + " instance ID = " + s.GetInstanceID();
-                //LogManager.Log(log);
+				string log = "NetworkPlay Source name = "  + s.name + " instance ID = " + s.GetInstanceID();
+                LogManager.Log(log);
 				if (val)
 					s.Play();
 				else
@@ -162,6 +162,7 @@ public class NetworkSync : MonoBehaviour
 		{
 			foreach (AudioSource s in sources)
 			{
+				LogManager.Log("NetworkSetAudioSourceLoop " + s.name);
 				//TO DO : gérer les sources indépendemment
 				s.loop = val;
 			}
@@ -175,6 +176,7 @@ public class NetworkSync : MonoBehaviour
 		{
 			foreach (AudioSource s in sources)
 			{
+				LogManager.Log("NetworkSetAudioSourcePitch " + s.name);
 				//TO DO : gérer les sources indépendemment
 				s.pitch = val;
 			}
@@ -188,6 +190,7 @@ public class NetworkSync : MonoBehaviour
 		{
 			foreach (AudioSource s in sources)
 			{
+				LogManager.Log("NetworkSetAudioSourceVolume " + s.name);
 				//TO DO : gérer les sources indépendemment
 				s.volume = val;
 			}
@@ -201,6 +204,7 @@ public class NetworkSync : MonoBehaviour
 		{
 			foreach (AudioSource s in sources)
 			{
+				LogManager.Log("NetworkSetAudioSourcePanStereo " + s.name);
 				//TO DO : gérer les sources indépendemment
 				s.panStereo = val;
 			}

@@ -129,6 +129,8 @@ public class NAToolCloner : NAToolBase {
 
 	public void Next()
 	{
+		if (NA.instanciables.Count == 0)
+			return;
 		current++;
 		current = current%NA.instanciables.Count;
 		Preview();
@@ -137,6 +139,8 @@ public class NAToolCloner : NAToolBase {
 
 	public void Previous()
 	{
+		if (NA.instanciables.Count == 0)
+			return;
 		current--;
 		if (current < 0)
 			current = current+NA.instanciables.Count;
