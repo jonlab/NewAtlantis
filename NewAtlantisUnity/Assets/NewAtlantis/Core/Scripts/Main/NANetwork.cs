@@ -129,6 +129,7 @@ public class NANetwork : MonoBehaviour {
 	[RPC]
 	void Refresh()
 	{
+		LogManager.Log("Refresh, get state...");
 		NAServer.Get();
 	}
 
@@ -136,6 +137,7 @@ public class NANetwork : MonoBehaviour {
 	[RPC]
 	void LoadObject(string _name, NetworkViewID _viewID, Vector3 _pos, Vector3 _angles, Vector3 _scale, string _filename, string _id) 
 	{
+		LogManager.Log("LoadObject " + _name);
 		//on regarde si l'object n'existe pas déjà
 		foreach (NAObject o in NA.app.listObjects) 
 		{

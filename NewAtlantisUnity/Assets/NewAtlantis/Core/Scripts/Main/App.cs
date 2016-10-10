@@ -429,7 +429,7 @@ public class App : MonoBehaviour
 
 
 
-
+	[RPC]
 	void DestroyNetworkAvatar(NetworkPlayer player)
 	{
 		List<GameObject> avatars = NA.GetAvatars();
@@ -1181,14 +1181,22 @@ public class App : MonoBehaviour
 
 		NA.PreviousSpace = NA.CurrentSpace;
 		NA.CurrentSpace = space;
-		DestroyAllSpaceObjects();
 
+		ResetViewerPosition();
+		GetComponent<NetworkView>().RPC("ResetViewerPosition", RPCMode.OthersBuffered);
+
+		DestroyAllSpaceObjects();
+		//NA.DestroyPlayerObjects2();
         GetComponent<NetworkView>().RPC("DestroyAllSpaceObjects", RPCMode.OthersBuffered);
-		NAServer.Get(); //get the space description
+
+		DestroyCreatedPlayerObjects();
+		GetComponent<NetworkView>().RPC("DestroyCreatedPlayerObjects", RPCMode.OthersBuffered);
+
+		NAServer.Get(); //get the space description (will force update on clients)
 	}
 	
 
-
+	[RPC]
 	public void DestroyAllSpaceObjects()
 	{
 		foreach (NAObject o in listObjects) 
@@ -1199,9 +1207,22 @@ public class App : MonoBehaviour
 				o.go = null;
 			}
 		}
+
 		listObjects.Clear ();
+		NA.instanciables.Clear();
+
+
 	}
 
+	[RPC]
+	public void DestroyCreatedPlayerObjects()
+	{
+		foreach (GameObject go in NA.player_objects)
+		{
+			GameObject.Destroy(go);
+		}
+		NA.player_objects.Clear();
+	}
 
 	void Disconnect()
 	{
@@ -1363,10 +1384,16 @@ public class App : MonoBehaviour
 			{
 				GUI.skin.label.alignment = TextAnchor.MiddleCenter;
 				GUI.skin.font = NA.GetFont(3);
+				string strProgressCaption = "";
 				if (NA.CurrentSpace != null)
 				{
-					GUI.Label(new Rect(Screen.width/2-300, Screen.height/2-100, 600, 50), NA.CurrentSpace.name);
+					strProgressCaption = NA.CurrentSpace.name;
 				}
+				else
+				{
+					strProgressCaption = "Teleporting to a new Space...";
+				}
+				GUI.Label(new Rect(Screen.width/2-300, Screen.height/2-100, 600, 50), strProgressCaption);
 				GUI.skin.font = NA.GetFont(1);
 				string str = "loading " + NADownloader.current.name + " ... " + (int)(loading*1000f)/10f + "%";
 				GUI.Label(new Rect(Screen.width/2-300, Screen.height/2-15, 600, 30), str);
@@ -1398,6 +1425,10 @@ public class App : MonoBehaviour
                             GUI.skin.label.alignment = TextAnchor.MiddleCenter;
                             GUI.color = Color.white;
                             string strDisplay = a.name;
+							if (pos2d.x<-1 || pos2d.x>1 || pos2d.y<-1 || pos2d.y > 1)
+							{
+								GUI.color = Color.red;
+							}
                             pos2d.x = Mathf.Clamp(pos2d.x, -1,1);
                             pos2d.y = Mathf.Clamp(pos2d.y, -1,1);
                             int x = (int)(pos2d.x*Screen.width);
@@ -1438,7 +1469,7 @@ public class App : MonoBehaviour
 		//GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
 		GUI.color = Color.white;
 		//GUI.Label(new Rect(0,0,400,30), "NewAtlantisNew Client - SAIC workshop");
-		GUI.Label(new Rect(0,0,100,30), "New Atlantis v1.03");
+		GUI.Label(new Rect(0,0,100,30), "New Atlantis v1.04");
 		GUI.Label(new Rect(Screen.width-200, 0, 200, 30), strPick);
 
 		DrawChronometer();
@@ -1655,9 +1686,8 @@ public class App : MonoBehaviour
 		//Network.RemoveRPCs(player);
 		//Network.DestroyPlayerObjects(player); //destroys the player objects including avatar
 		DestroyNetworkAvatar(player);
+		GetComponent<NetworkView>().RPC("DestroyNetworkAvatar", RPCMode.OthersBuffered, player); //destroy on clients
 		LogManager.LogWarning("A new player just leaved the server.");
-
-
 	}
     
 	
@@ -2402,8 +2432,6 @@ public class App : MonoBehaviour
 
 		GUI.color = Color.white;
 
-
-
 		/*if (GUILayout.Button ("Clean objects", GUILayout.Width(100 ))) 
 		{
 			//Network.RemoveRPCs(Network.player);
@@ -2413,13 +2441,10 @@ public class App : MonoBehaviour
 		}
 		*/
 
-
-
 		GUILayout.EndHorizontal();
 		GUILayout.BeginHorizontal();
 		if (GUILayout.Button ("")){}
 		GUILayout.EndHorizontal();
-
 
 		GUILayout.BeginHorizontal();
 		GUILayout.Label ("SPACES LIBRARY");
@@ -2447,7 +2472,10 @@ public class App : MonoBehaviour
 		*/
 
 		GUI.color = Network.isServer ? Color.gray : Color.white;
-		
+
+		//=============
+		//START SERVER
+		//=============
 		if (GUILayout.Button ("start server with selected space", GUILayout.Width(200 )) && !Network.isServer) 
 		{
 			ResetViewerPosition();
@@ -2457,15 +2485,14 @@ public class App : MonoBehaviour
 			string strGameName = strSpace + " [" + NAServer.strLogin + "]";
 			MasterServer.RegisterHost("NewAtlantis", strGameName, "created : " + System.DateTime.Now + " on " + SystemInfo.deviceModel + " running " + SystemInfo.operatingSystem);
 			CreateNetworkAvatar();
-			//if (strSpace != "")
-			//	ConnectToSpace(strSpace);
 			NAServer.Get(); //le Get avec un selected space forcera la création des objets : à revoir...
-
 			refreshHostList();
-			//bNetwork = false;
 			state = AppState.Game;
-			//bSpace = false;
 		}
+
+		//=============
+		//STOP SERVER
+		//=============
 		GUI.color = !Network.isServer ? Color.gray : Color.white;
 		if (GUILayout.Button ("stop server", GUILayout.Width(200 )) && Network.isServer) 
 		{
@@ -2484,12 +2511,19 @@ public class App : MonoBehaviour
 			refreshHostList();
 		}
 
+		//=============
+		//SWITCH SPACE
+		//=============
+		GUI.color = !Network.isServer ? Color.gray : Color.white;
+		if (GUILayout.Button ("switch space", GUILayout.Width(200 )) && Network.isServer) 
+		{
+			NA.app.GoToSpace(NA.CurrentSpace.id);
+			tab = AppTab.None; //hide windows
+			state = AppState.Game;
+		}
 		GUILayout.EndHorizontal();
-			
 		GUILayout.Space(20);
-		//GUILayout.EndArea();
 		GUI.color = Color.white;
-			
 	}
 
 
@@ -3194,7 +3228,7 @@ public class App : MonoBehaviour
 	{
 		LogManager.LogWarning("Failed to connect : " + err);
 	}
-
+	[RPC]
 	void ResetViewerPosition()
 	{
 		

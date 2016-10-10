@@ -26,11 +26,12 @@ public class NASyncTransform : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
+		timer+=Time.deltaTime;
 		if (nv.owner == Network.player)
 		{
 			current_speed = (transform.position-last_position)/Time.deltaTime;
 			last_position = transform.position;
-			timer+=Time.deltaTime;
+
 			if (timer > interval)
 			{
 				timer -= interval;
@@ -51,11 +52,19 @@ public class NASyncTransform : MonoBehaviour {
 			//position += last_received_velocity*Time.deltaTime;
 			transform.position = position;
 			transform.rotation = rotation;
+
+			if (timer > 30)
+			{
+				//10 seconds without update means a dead avatar
+				gameObject.SetActive(false);
+				NA.RemoveAvatar(gameObject);
+			}
 		}
 	}
 	[RPC]
 	void SetTransformState(Vector3 position, Quaternion rotation, Vector3 velocity) 
 	{
+		timer = 0;
 		last_received_position 	= position;
 		last_received_rotation 	= rotation;
 		last_received_velocity 	= velocity;

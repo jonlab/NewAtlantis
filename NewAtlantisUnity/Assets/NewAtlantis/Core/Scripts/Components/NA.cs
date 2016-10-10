@@ -205,6 +205,8 @@ public static class NA
 		goAvatar = null;
 	}
 
+
+
 	public static void GC()
 	{
 		//lock(player_objects)

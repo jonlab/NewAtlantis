@@ -228,6 +228,14 @@ public class NAObject
 						listSync.Add(nb.gameObject);
 					}
 
+					CrazyTaxi[] cts = go.GetComponentsInChildren<CrazyTaxi>();
+					foreach (CrazyTaxi ct in cts)
+					{
+						listSync.Add(ct.gameObject);
+					}
+
+
+
 					//Oct 2016 : get the objects to be custom synced and add to the list
 					NASync[] nasyncs = go.GetComponentsInChildren<NASync>();
 					foreach (NASync nasync in nasyncs)
@@ -264,7 +272,6 @@ public class NAObject
 							NetworkViewID id = Network.AllocateViewID();
 							//LogManager.Log("PrepareAsServer " + path + " id=" + id);
 							go.GetComponent<NetworkView>().RPC("AttachNetworkView", RPCMode.AllBuffered, path, id);
-
 						}
 					}
 					else if (NA.isClient())
