@@ -43,7 +43,7 @@ public class NetworkSync : MonoBehaviour
 
 		if (Input.GetKeyDown(KeyCode.S))
 		{
-			GetComponent<NetworkView>().RPC("sync", RPCMode.AllBuffered);
+			//GetComponent<NetworkView>().RPC("sync", RPCMode.AllBuffered); //ATTENTION
 		}
 	}
 

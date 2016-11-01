@@ -2,21 +2,13 @@ using UnityEngine;
 using System.Collections;
 
 
-
-public enum SpawnMode
-{
-	Raycast,
-	InFront
-	
-}
-
 public class NAToolSpawner : NAToolBase {
 
 
 	public GameObject 	prefab; 
 	public float 		distance = 1f;
 	public Vector3 		localForce = Vector3.forward;
-	public string 		objectName = "cube";
+	public string 		objectName = "dopplertrunk";// TEST 
 	public SpawnMode 	mode = SpawnMode.InFront;
 	/*public NAToolSpawner ()
 	{
@@ -143,7 +135,9 @@ public class NAToolSpawner : NAToolBase {
 		}
 		else if (name.Contains("trunk"))
 		{
-			clone = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            //Debug.LogError("ADD DOPPLER TRUNK in NATOOLSPAWNER" + name);
+
+            clone = GameObject.CreatePrimitive(PrimitiveType.Cube);
 			clone.transform.position = location;
 			clone.transform.localScale = new Vector3(1f,0.4f, 0.6f);
 			AudioSource src = clone.AddComponent<AudioSource>();
@@ -151,7 +145,7 @@ public class NAToolSpawner : NAToolBase {
             src.spatialBlend = 1f;
             clone.AddComponent<NAPhysicsAudioSource>();
 			clone.AddComponent<NAPlayOnCollide>();
-			clone.AddComponent<NAAudioRecorder>();
+            if (name != "dopplertrunk") { clone.AddComponent<NAAudioRecorder>(); } else { clone.AddComponent<NAAudioDopplerRecorder>(); }
 			NA.DecorateAudioSource(src); //FIXME
 			clone.AddComponent<NetworkSync>(); //FIXME
 		}

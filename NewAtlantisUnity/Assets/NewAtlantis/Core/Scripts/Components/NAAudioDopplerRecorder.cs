@@ -3,13 +3,17 @@ using System.Collections;
 
 
 
-public class NAAudioRecorder : NAObjectBase 
+public class NAAudioDopplerRecorder : NAObjectBase 
 {
 	AudioClip record 			= null;
 	public int SampleRate 		= 22050;
 	public int Duration 		= 10;
 	private bool bShowGUI		= true;
-
+    //GameObject go;
+    GameObject aDopplerBall;
+    GameObject aDopplerSpawner;
+   
+    //
 	// Use this for initialization
 	void Start () 
 	{
@@ -17,6 +21,8 @@ public class NAAudioRecorder : NAObjectBase
 		{
 			gameObject.AddComponent<AudioSource>();
 		}
+
+        aDopplerSpawner = Resources.Load("aDopplerSpawner") as GameObject;
 	}
 	
 	// Update is called once per frame
@@ -30,6 +36,17 @@ public class NAAudioRecorder : NAObjectBase
 		record = Microphone.Start("", false, Duration, SampleRate);
 		GetComponent<AudioSource>().clip = record;
 	}
+
+    void BuildDopplerSpawner()
+    {
+
+        GameObject dS = GameObject.Instantiate(aDopplerSpawner);
+        dS.transform.position = transform.position;
+        NADopplerSpawner dpS = dS.GetComponent<NADopplerSpawner>();
+        dpS.Init(GetComponent<AudioSource>().clip);
+
+
+    }
 
 	void RecorderStop()
 	{
@@ -60,7 +77,7 @@ public class NAAudioRecorder : NAObjectBase
 
 
 			SendAudioDataToServer();
-            
+
 
 
 		}
@@ -101,6 +118,7 @@ public class NAAudioRecorder : NAObjectBase
 		if (GetComponent<AudioSource>().clip != null)
 		{
 			GetComponent<AudioSource>().Play ();
+            BuildDopplerSpawner();
 		}
 
 		NetworkSync ns = GetComponent<NetworkSync>();
