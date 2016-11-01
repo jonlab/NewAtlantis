@@ -40,15 +40,63 @@ public class NAAudioDopplerRecorder : NAObjectBase
     void BuildDopplerSpawner()
     {
 
+
+        Vector3 localForce = Vector3.forward;
+        float distance = 1f;
+        Vector3 worldforce = transform.rotation * localForce;
+        Vector3 position = transform.position + transform.forward * distance;
+
+
+        if (Network.isServer)
+        {
+            ServerSpawnDopplerSpawner("dopplerSpawner", position, worldforce, NA.colorAvatar);
+        }
+        else
+        {
+            //we send to the server
+            GetComponent<NetworkView>().RPC("ServerSpawnDopplerSpawner", RPCMode.Server, "dopplerSpawner", position, worldforce, NA.colorAvatar);
+        }
+
+
+
+      
+
+    }
+
+    [RPC]
+    void ServerSpawnDopplerSpawner(string name, Vector3 position, Vector3 forward, Vector3 color)
+    {
+
+        if (!Network.isServer)
+        {
+            return;
+        }
+
+
+        LogManager.Log("ServerSpawnDopplerSpawner");
+        GetComponent<NetworkView>().RPC("SpawnDopplerSpawner", RPCMode.AllBuffered, name, Network.AllocateViewID(), position, forward, color);
+
+    }
+
+
+    [RPC]
+    void SpawnDopplerSpawner(string name, NetworkViewID viewID, Vector3 location, Vector3 forward, Vector3 color)
+    {
+
         GameObject dS = GameObject.Instantiate(aDopplerSpawner);
         dS.transform.position = transform.position;
         NADopplerSpawner dpS = dS.GetComponent<NADopplerSpawner>();
         dpS.Init(GetComponent<AudioSource>().clip);
 
+        NA.player_objects.Add(dS);
+
+
 
     }
 
-	void RecorderStop()
+
+
+    void RecorderStop()
 	{
 		if (Microphone.IsRecording(""))
 		{
