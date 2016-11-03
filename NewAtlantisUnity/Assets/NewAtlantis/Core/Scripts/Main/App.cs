@@ -478,7 +478,7 @@ public class App : MonoBehaviour
 			bool bIgnore = false;
 			if (c.transform.parent)
 			{
-				if (c.transform.parent.name == "TRS Gizmo" || c.transform.name == "Depth Camera" || c.transform.name == "AvatarEditorCamera" || c.transform.tag == "ActiveCamera" || c.transform.tag == "StereoCamera")
+				if (c.transform.parent.name == "TRS Gizmo" || c.transform.name == "Depth Camera" || c.transform.name == "AvatarEditorCamera" || c.transform.tag == "ActiveCamera" || c.transform.tag == "StereoCamera" )
 				{
 					bIgnore = true; //patch pour éviter que la caméra Gizmo soit désactivée
 				}
@@ -2956,7 +2956,7 @@ public class App : MonoBehaviour
 					else
 					{
 						currentSelection = o;
-						goGizmo.SetActive(true);
+                        goGizmo.SetActive(true);
 						trs.startTRSGizmo(currentSelection.go);
 						NA.PausePhysics();
 					}
