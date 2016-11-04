@@ -899,6 +899,7 @@ public class App : MonoBehaviour
 			//touche menu
 			if (NAInput.GetControlDown(NAControl.Menu))
 			{
+				NA.PatchAllMaterials(goRootSpace);
 				bToolPanel = false;
 				bGUI = !bGUI;
 				if (bGUI)
