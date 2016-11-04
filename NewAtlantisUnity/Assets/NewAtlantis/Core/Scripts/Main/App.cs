@@ -149,6 +149,7 @@ public class App : MonoBehaviour
 	string strObjectName = "object_name";
 
 	static Vector2 WindowSize 	= new Vector2(1024-10, 768-70);
+	static Vector2 WindowSizePerf 	= new Vector2(1024-10, 1080-70);
 	//Rect mGuiWinRectChat 		= new Rect(Screen.width-300, 200, 300, Screen.height-200);
 	Rect mGuiWinRectNetwork 	= new Rect(Screen.width/2-200, Screen.height/2-250, 400, 500);
 	Rect mGuiWinRectScene 		= new Rect(Screen.width/2-WindowSize.x/2, Screen.height/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
@@ -165,6 +166,7 @@ public class App : MonoBehaviour
 	//float sh = Mathf.Max(Screen.height, 768);
 	//float sw = Screen.width;
 	Rect mGuiWinRectWindows;// 		= null;//new Rect(sw/2-WindowSize.x/2, sw/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
+	Rect mGuiWinRectWindowsPerf;
 	Rect mGuiWinRectChat;// 		= null;//new Rect(sw/2-WindowSize.x/2, sw/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
 
 	private Vector2 scrollPos 	= Vector2.zero;
@@ -192,6 +194,10 @@ public class App : MonoBehaviour
     GameObject goGizmo;
     TRS_Gizmo trs;
 
+	private string config = "";
+	private int current_host = -1;
+	private int current_space = -1;
+	private bool validate = false;
 
 	void TestAB()
 	{
@@ -281,17 +287,30 @@ public class App : MonoBehaviour
 		Debug.Log("app OnDestroy");
 		NA.PlayPhysics();
 		PlayerPrefs.SetString("spacefilter", SpaceFilter);
-
 	}
+
+
+
     // Use this for initialization
     void Start () 
 	{
+		try
+		{
+			config = File.ReadAllText("config.txt");
+		}
+		catch (System.Exception e)
+		{
+			
+		}
+		Debug.Log("config = " + config);
+
 		AudioListener.volume = 0.50f;
 		strIP = PlayerPrefs.GetString("ip");
 		SpaceFilter = PlayerPrefs.GetString("spacefilter");
 		float sh = Mathf.Max(Screen.height, 768);
 		float sw = Screen.width;
 		mGuiWinRectWindows 		= new Rect(sw/2-WindowSize.x/2, sh/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
+		mGuiWinRectWindowsPerf 		= new Rect(sw/2-WindowSizePerf.x/2, Screen.height/2-WindowSizePerf.y/2, WindowSizePerf.x, WindowSizePerf.y);
 		mGuiWinRectChat			= new Rect(sw-400, sh/2-WindowSize.y/2, 400, WindowSize.y);
 		NA.fonts[0] = font0;
 		NA.fonts[1] = font1;
@@ -651,7 +670,29 @@ public class App : MonoBehaviour
 		{
 			if ((padx != 0 || pady != 0) && !bToolPanel)
 			{
-				bToolPanel = true;
+				if (bGUI)
+				{
+					if (padx > 0 && NAInput.PadHorizontalPressed)
+					{
+						GUI_Right();
+					}
+					else if (padx < 0 && NAInput.PadHorizontalPressed)
+					{
+						GUI_Left();
+					}
+					if (pady > 0 && NAInput.PadVerticalPressed)
+					{
+						GUI_Down();
+					}
+					else if (pady < 0 && NAInput.PadVerticalPressed)
+					{
+						GUI_Up();
+					}
+				}
+				else
+				{
+					bToolPanel = true;
+				}
 			}
 			else
 			{
@@ -664,42 +705,70 @@ public class App : MonoBehaviour
 				//Debug.Log("nx=" + nx + " ny=" + ny);
 				if (padx > 0 && NAInput.PadHorizontalPressed)
 				{
-					//RIGHT
-					nx = (nx+1)%6;
-					//current_tool = (current_tool + 1)%tools.Length;
-					current_tool = ny*6+nx;
-					current_tool = Mathf.Clamp(current_tool, 0, tools.Length-1);
-					SetCurrentTool(tools[current_tool]);
+					//if (bGUI)
+					//{
+					//	GUI_Right();
+					//}
+					//else
+					{
+						//RIGHT
+						nx = (nx+1)%6;
+						//current_tool = (current_tool + 1)%tools.Length;
+						current_tool = ny*6+nx;
+						current_tool = Mathf.Clamp(current_tool, 0, tools.Length-1);
+						SetCurrentTool(tools[current_tool]);
+					}
 				}
 				else if (padx < 0 && NAInput.PadHorizontalPressed)
 				{
-					//LEFT
-					nx = (nx+6-1)%6;
+					//if (bGUI)
+					//{
+					//	GUI_Left();
+					//}
+					//else
+					{
+						//LEFT
+						nx = (nx+6-1)%6;
 
-					//current_tool = (current_tool + tools.Length-1)%tools.Length;
-					current_tool = ny*6+nx;
-					current_tool = Mathf.Clamp(current_tool, 0, tools.Length-1);
-					SetCurrentTool(tools[current_tool]);
+						//current_tool = (current_tool + tools.Length-1)%tools.Length;
+						current_tool = ny*6+nx;
+						current_tool = Mathf.Clamp(current_tool, 0, tools.Length-1);
+						SetCurrentTool(tools[current_tool]);
+					}
 					
 				}
 
 				if (pady > 0 && NAInput.PadVerticalPressed)
 				{
-					//DOWN
-					ny = (ny+1) % linecount;
-					//current_tool = (current_tool + 6)%tools.Length;
-					current_tool = ny*6+nx;
-					current_tool = Mathf.Clamp(current_tool, 0, tools.Length-1);
-					SetCurrentTool(tools[current_tool]);
+					//if (bGUI)
+					//{
+					//	GUI_Down();
+					//}
+					//else
+					{
+						//DOWN
+						ny = (ny+1) % linecount;
+						//current_tool = (current_tool + 6)%tools.Length;
+						current_tool = ny*6+nx;
+						current_tool = Mathf.Clamp(current_tool, 0, tools.Length-1);
+						SetCurrentTool(tools[current_tool]);
+					}
 				}
 				else if (pady < 0 && NAInput.PadVerticalPressed)
 				{
-					//UP
-					ny = (ny+linecount-1) % linecount;
-					//current_tool = (current_tool + tools.Length-6)%tools.Length;
-					current_tool = ny*6+nx;
-					current_tool = Mathf.Clamp(current_tool, 0, tools.Length-1);
-					SetCurrentTool(tools[current_tool]);
+					//if (bGUI)
+					//{
+					//	GUI_Up();
+					//}
+					//else
+					{
+						//UP
+						ny = (ny+linecount-1) % linecount;
+						//current_tool = (current_tool + tools.Length-6)%tools.Length;
+						current_tool = ny*6+nx;
+						current_tool = Mathf.Clamp(current_tool, 0, tools.Length-1);
+						SetCurrentTool(tools[current_tool]);
+					}
 
 				}
 			}
@@ -746,13 +815,32 @@ public class App : MonoBehaviour
 				o.SetGUI(false);
 			}
 		}
-		if (r1) //Extended tool mode
+		if (bGUI)
+		{
+			if (NAInput.GetControlDown(NAControl.Action))
+			{
+				GUI_Validate();
+			}
+			//touche menu
+			if (NAInput.GetControlDown(NAControl.Menu))
+			{
+				bToolPanel = false;
+				bGUI = !bGUI;
+				if (bGUI)
+				{
+					refreshHostList();
+				}
+				//Cursor.visible = bGUI;
+			}
+
+
+		}
+		else if (r1) //Extended tool mode
 		{
 			NAToolBase t = tools[current_tool];
 			//extended control if R1 is maintained
 			t.ExtendedControl();
 		}
-
 		else if (l1)
 		{
 			
@@ -811,7 +899,12 @@ public class App : MonoBehaviour
 			//touche menu
 			if (NAInput.GetControlDown(NAControl.Menu))
 			{
+				bToolPanel = false;
 				bGUI = !bGUI;
+				if (bGUI)
+				{
+					refreshHostList();
+				}
 				//Cursor.visible = bGUI;
 			}
 		}
@@ -970,6 +1063,131 @@ public class App : MonoBehaviour
 	}
 
 	
+
+
+	public void GUI_SpaceNavigate(int n)
+	{
+		current_space = current_space+n;
+		current_space = Mathf.Max(current_space, 0);
+		int index = 0;
+		foreach (Space space in listSpaces)
+		{
+			bool userfilter = false;
+			bool bShow = userfilter && (tabSpaces == TypeTab.Mine && space.creator == NAServer.strLogin || tabSpaces == TypeTab.SharedWithMe && space.type == "public" && space.creator != NAServer.strLogin && space.objectCount > 0);
+			if (config == "server")
+			{
+				if (space.texture != null)
+				{
+					bShow = true;
+				}
+				else
+				{
+					bShow = false;
+				}
+			}
+			if (bShow)
+			{
+				if (index == current_space)
+				{
+					strSpace = space.name;
+					NA.CurrentSpace = space;
+				}
+				index++;
+			}
+		}
+		current_space = Mathf.Min(current_space, index-1);
+	}
+
+
+	public void GUI_HostNavigate(int n)
+	{
+		HostData[] hosts = MasterServer.PollHostList();
+		if (hosts == null || hosts.Length == 0)
+			return;
+
+		if (currentHost == null)
+		{
+			currentHost = hosts[0];
+		}
+		else
+		{
+			for( int i = 0; i < hosts.Length; i++ )
+			{
+				HostData d = hosts[i];
+				if (d.guid == currentHost.guid)
+				{
+					current_host = i;
+				}
+			}
+		}
+		current_host = current_host+n;
+		if (current_host < 0)
+		{
+			current_host = 0;
+		}
+		if (current_host > hosts.Length-1)
+		{
+			current_host = hosts.Length-1;
+		}
+			
+		currentHost = hosts[current_host];
+		
+	}
+
+	public void GUI_Left()
+	{
+		if (config == "client")
+		{
+			GUI_HostNavigate(-1);
+		}
+		else if (config == "server")
+		{
+			GUI_SpaceNavigate(-1);
+		}
+
+	}
+
+	public void GUI_Right()
+	{
+		if (config == "client")
+		{
+			GUI_HostNavigate(+1);
+		}
+		else if (config == "server")
+		{
+			GUI_SpaceNavigate(+1);
+		}
+	}
+	public void GUI_Up()
+	{
+		if (config == "client")
+		{
+			GUI_HostNavigate(-1);
+		}
+		else if (config == "server")
+		{
+			GUI_SpaceNavigate(-1);
+		}
+	}
+	public void GUI_Down()
+	{
+
+		if (config == "client")
+		{
+			GUI_HostNavigate(+1);
+		}
+		else if (config == "server")
+		{
+			GUI_SpaceNavigate(+1);
+		}
+	}
+
+	public void GUI_Validate()
+	{
+		validate = true;
+		
+	}
+
 
 	//Parse incoming server XML
 	public void ParseXML(string str)
@@ -1290,8 +1508,9 @@ public class App : MonoBehaviour
 			GUI.color = Color.white;
 			GUI.Label(new Rect(Screen.width/2-150, Screen.height/2-100, 300, 100), currentError.str);
 
-			if (GUI.Button(new Rect(Screen.width/2-50, Screen.height/2, 100, 30), "OK"))
+			if (GUI.Button(new Rect(Screen.width/2-50, Screen.height/2, 100, 30), "OK") || validate)
 			{
+				validate = false;
 				lastError = currentError;
 			}
 			GUI.skin.label.alignment= TextAnchor.UpperLeft;
@@ -1462,144 +1681,163 @@ public class App : MonoBehaviour
 			return;
 		}
 
-
-
-
-		GUI.color = new Color (0, 0, 0, 0.5f);
-		//GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
-		GUI.color = Color.white;
-		//GUI.Label(new Rect(0,0,400,30), "NewAtlantisNew Client - SAIC workshop");
-		GUI.Label(new Rect(0,0,100,30), "New Atlantis v1.05");
-		GUI.Label(new Rect(Screen.width-200, 0, 200, 30), strPick);
-
-		DrawChronometer();
-
-		GUI.skin.font = NA.GetFont(0);
-
-		//general loading bar
-		float progress_val = 0;
-		float progress_count = 0;
-		foreach (NAObject o in listObjects) 
+		if (config == "client")
 		{
-			progress_count += 1f;
+			//mode client exhibition
+			GUI.color = Color.white;
+			GUIScaleMatrix();
+			GUI.Window(12, mGuiWinRectWindowsPerf, WindowFunctionPerformance, "New Atlantis Performance");
+			GUIIdentityMatrix();
 
 		}
-		/*
-		if (progress_count>0)
+		else if (config == "server")
 		{
-			//Debug.Log ("val="+progress_val+"/" + progress_count);
-			GUI.HorizontalScrollbar(new Rect(Screen.width-200, 0, 200, 30), 0, progress_val, 0, progress_count);
+			//mode client exhibition
+			GUI.color = Color.white;
+			GUIScaleMatrix();
+			GUI.Window(13, mGuiWinRectWindowsPerf, WindowFunctionPerformanceServer, "New Atlantis Performance");
+			GUIIdentityMatrix();
+
 		}
-		*/
-
-		string strInteractionMode = "normal - R1:extended tool - L1:object interaction";
-		if (r1)
+		else if (config == "")
 		{
-			strInteractionMode = "extended tool";
-		}
-			
-		else if (l1)
-		{
-			strInteractionMode = "object interaction";
-		}
-		GUI.Label(new Rect(Screen.width-300, 0, 300, 30), strInteractionMode);
 
+			GUI.color = new Color (0, 0, 0, 0.5f);
+			//GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
+			GUI.color = Color.white;
+			//GUI.Label(new Rect(0,0,400,30), "NewAtlantisNew Client - SAIC workshop");
+			GUI.Label(new Rect(0,0,100,30), "New Atlantis v1.05");
+			GUI.Label(new Rect(Screen.width-200, 0, 200, 30), strPick);
 
+			DrawChronometer();
 
-		if (state == AppState.Register)
-		{
-			mGuiWinRectRegister = GUI.Window(11, mGuiWinRectRegister, WindowFunctionRegister, "Register");
-			return;
-		}
-		if (state == AppState.Space)
-		{
-			mGuiWinRectSpace = GUI.Window(1, mGuiWinRectSpace, WindowFunctionSpace, "Space");
-			return;
-		}
-		if (state == AppState.Asset)
-		{
-			mGuiWinRectAsset = GUI.Window(12, mGuiWinRectAsset, WindowFunctionAsset, "Asset");
-            return;
-        }
+			GUI.skin.font = NA.GetFont(0);
 
-
-
-
-		//bottom toolbar 
-		int bottomy = Screen.height - 30;
-		GUI.color = new Color (0, 0, 0, 0.5f);
-		//GUI.DrawTexture (new Rect (0, bottomy, Screen.width, 30), texWhite);
-		GUI.color = Color.white;
-
-
-		//tabs
-		int tabx = 200;
-		foreach (AppTab t in tabs)
-		{
-			GUI.color = t==tab?Color.red:Color.white;
-
-			string caption = ""+t;
-			if (t == AppTab.User)
-				caption = "MyNA";
-			if (GUI.Button (new Rect(tabx, 0, 80, 30), caption))
+			//general loading bar
+			float progress_val = 0;
+			float progress_count = 0;
+			foreach (NAObject o in listObjects) 
 			{
-				if (tab == t)
-				{
-					tab = AppTab.None;
-				}
-				else
-				{
-					tab = t;
-				}
+				progress_count += 1f;
+
 			}
-			tabx += 80;
+			/*
+			if (progress_count>0)
+			{
+				//Debug.Log ("val="+progress_val+"/" + progress_count);
+				GUI.HorizontalScrollbar(new Rect(Screen.width-200, 0, 200, 30), 0, progress_val, 0, progress_count);
+			}
+			*/
+
+			string strInteractionMode = "normal - R1:extended tool - L1:object interaction";
+			if (r1)
+			{
+				strInteractionMode = "extended tool";
+			}
+				
+			else if (l1)
+			{
+				strInteractionMode = "object interaction";
+			}
+			GUI.Label(new Rect(Screen.width-300, 0, 300, 30), strInteractionMode);
+
+
+
+			if (state == AppState.Register)
+			{
+				mGuiWinRectRegister = GUI.Window(11, mGuiWinRectRegister, WindowFunctionRegister, "Register");
+				return;
+			}
+			if (state == AppState.Space)
+			{
+				mGuiWinRectSpace = GUI.Window(1, mGuiWinRectSpace, WindowFunctionSpace, "Space");
+				return;
+			}
+			if (state == AppState.Asset)
+			{
+				mGuiWinRectAsset = GUI.Window(12, mGuiWinRectAsset, WindowFunctionAsset, "Asset");
+	            return;
+	        }
+
+
+
+
+			//bottom toolbar 
+			int bottomy = Screen.height - 30;
+			GUI.color = new Color (0, 0, 0, 0.5f);
+			//GUI.DrawTexture (new Rect (0, bottomy, Screen.width, 30), texWhite);
+			GUI.color = Color.white;
+
+
+			//tabs
+			int tabx = 200;
+			foreach (AppTab t in tabs)
+			{
+				GUI.color = t==tab?Color.red:Color.white;
+
+				string caption = ""+t;
+				if (t == AppTab.User)
+					caption = "MyNA";
+				if (GUI.Button (new Rect(tabx, 0, 80, 30), caption))
+				{
+					if (tab == t)
+					{
+						tab = AppTab.None;
+					}
+					else
+					{
+						tab = t;
+					}
+				}
+				tabx += 80;
+			}
+
+			GUI.color = Color.white;
+			//remove ?
+			if (GUI.Button(new Rect(tabx+80, 0, 200, 30), "Fix all materials"))
+			{
+				NA.PatchAllMaterials(goRootSpace);
+			}
+
+
+
+	        
+	        //to do : list of objects ?
+	        
+	        GUI.color = Color.white;
+			GUIScaleMatrix();
+			switch (tab)
+			{
+			case AppTab.Chat:
+				mGuiWinRectChat 	= GUI.Window(1, mGuiWinRectChat, WindowFunctionChat, "Chat");
+				break;
+			case AppTab.About:
+				mGuiWinRectAbout 	= GUI.Window(7, mGuiWinRectWindows, WindowFunctionAbout, "About");
+				break;
+			case AppTab.Options:
+				mGuiWinRectOptions 	= GUI.Window(6, mGuiWinRectWindows, WindowFunctionOptions, "Options");
+				break;
+			case AppTab.Space:
+				mGuiWinRectSpaces 	= GUI.Window(8, mGuiWinRectWindows, WindowFunctionSpaces, "Space");
+				break;
+			case AppTab.Scene:
+				mGuiWinRectScene = GUI.Window(3, mGuiWinRectWindows, WindowFunctionScene, "Scene");
+				break;
+			case AppTab.Lobby:
+				GUI.Window(2, mGuiWinRectWindows, WindowFunctionLobby, "Lobby");
+				break;
+
+			case AppTab.Performance:
+				GUI.Window(12, mGuiWinRectWindows, WindowFunctionPerformance, "Performance");
+				break;
+			case AppTab.User:
+				GUI.Window(10, mGuiWinRectWindows, WindowFunctionUser, "MyNA");
+				break;
+			}
+			GUIIdentityMatrix();
+
+	        
 		}
-
-		GUI.color = Color.white;
-		//remove ?
-		if (GUI.Button(new Rect(tabx+80, 0, 200, 30), "Fix all materials"))
-		{
-			NA.PatchAllMaterials(goRootSpace);
-		}
-
-
-
-        
-        //to do : list of objects ?
-        
-        GUI.color = Color.white;
-		GUIScaleMatrix();
-		switch (tab)
-		{
-		case AppTab.Chat:
-			mGuiWinRectChat 	= GUI.Window(1, mGuiWinRectChat, WindowFunctionChat, "Chat");
-			break;
-		case AppTab.About:
-			mGuiWinRectAbout 	= GUI.Window(7, mGuiWinRectWindows, WindowFunctionAbout, "About");
-			break;
-		case AppTab.Options:
-			mGuiWinRectOptions 	= GUI.Window(6, mGuiWinRectWindows, WindowFunctionOptions, "Options");
-			break;
-		case AppTab.Space:
-			mGuiWinRectSpaces 	= GUI.Window(8, mGuiWinRectWindows, WindowFunctionSpaces, "Space");
-			break;
-		case AppTab.Scene:
-			mGuiWinRectScene = GUI.Window(3, mGuiWinRectWindows, WindowFunctionScene, "Scene");
-			break;
-		case AppTab.Lobby:
-			GUI.Window(2, mGuiWinRectWindows, WindowFunctionLobby, "Lobby");
-			break;
-
-		case AppTab.Performance:
-			GUI.Window(12, mGuiWinRectWindows, WindowFunctionPerformance, "Performance");
-			break;
-		case AppTab.User:
-			GUI.Window(10, mGuiWinRectWindows, WindowFunctionUser, "MyNA");
-			break;
-		}
-		GUIIdentityMatrix();
-
-        
 	}
 
 
@@ -1696,7 +1934,7 @@ public class App : MonoBehaviour
 
     void OnDisconnectedFromServer(NetworkDisconnection info) 
 	{
-		LogManager.LogError("You have been disconnected from the server.");
+		LogManager.LogWarning("You have been disconnected from the server.");
 		Disconnect();
 		refreshHostList();
 
@@ -2118,6 +2356,17 @@ public class App : MonoBehaviour
 		{
 			
 			bool bShow = userfilter && (tabSpaces == TypeTab.Mine && space.creator == NAServer.strLogin || tabSpaces == TypeTab.SharedWithMe && space.type == "public" && space.creator != NAServer.strLogin && space.objectCount > 0);
+			if (config == "server")
+			{
+				if (space.texture != null)
+				{
+					bShow = true;
+				}
+				else
+				{
+					bShow = false;
+				}
+			}
 
 			if ((bShow || !userfilter /*&& space.objectCount > 0*/ ) && (SpaceFilter == "" || space.name.Contains(SpaceFilter) || space.creator.Contains (SpaceFilter)))
 			{
@@ -2176,16 +2425,7 @@ public class App : MonoBehaviour
 		GUILayout.Label ("Join an existing performance...");
 		GUILayout.EndHorizontal();
 
-		GUILayout.BeginHorizontal();
-		GUILayout.Label ("ACTIVE SESSIONS");
-		if (GUILayout.Button ("Refresh", GUILayout.Width(100 ))) 
-		{
-			refreshHostList();
-		}
-		GUILayout.EndHorizontal();
-
-
-		scrollPos = GUILayout.BeginScrollView( scrollPos, GUILayout.Height( 500 ) ); //150
+		scrollPos = GUILayout.BeginScrollView( scrollPos, GUILayout.Height( 100+500+312 ) ); //150
 		if( loading )
 		{
 			GUILayout.BeginHorizontal();
@@ -2260,37 +2500,69 @@ public class App : MonoBehaviour
 						break;
 					}
 				}
+				if (t == null)
+					t = texWhite;
 				if (t != null)
 				{
 					GUILayout.BeginHorizontal();
-					if (GUILayout.Button(t, GUILayout.Width(192), GUILayout.Height(108)))
+					if (GUILayout.Button(t, GUILayout.Width(192), GUILayout.Height(108)) || validate)
 					{
+						validate = false;
 						//HERE
 						currentHost = d;
 						LogManager.Log("try to join " + currentHost.gameName + " at " + currentHost.ip + ":" + currentHost.port);
 						Network.Connect(currentHost);
 						tab = AppTab.None; //hide windows
+						bGUI = false;	
 					}
 					GUILayout.EndHorizontal();
 				}
-
-
 			}
 
 			if( hosts.Length == 0 )
 			{
-				GUILayout.Label( "No servers running, you can start one below !" );
+				GUILayout.Label( "No servers running..." );
 			}
 		}
 		GUILayout.EndScrollView();
-		GUI.color = Color.white;
-
-
-
-
 
 		GUI.color = Color.white;
 	}
+
+
+
+
+
+	void WindowFunctionPerformanceServer (int windowID)
+	{
+		GUI.color = Color.white;
+
+		GUILayout.BeginHorizontal();
+		GUILayout.Label ("Create a performance...");
+		GUILayout.EndHorizontal();
+
+		GUISpacesHeader();
+		scrollPosLobbySpaces = GUILayout.BeginScrollView( scrollPosLobbySpaces, GUILayout.Height( 100+500+312 ) ); //150
+		GUISpaces(true);
+		GUILayout.EndScrollView();
+			
+		if (validate)
+		{
+			validate = false;
+			if (Network.isServer)
+			{
+				StopServer();
+			}
+			StartServerWithSelectedSpace();
+			bGUI = false;
+		}
+		GUI.color = Color.white;
+	}
+
+
+
+
+
 
 	void WindowFunctionLobby (int windowID)
 	{
@@ -2509,16 +2781,7 @@ public class App : MonoBehaviour
 		//=============
 		if (GUILayout.Button ("start server with selected space", GUILayout.Width(200 )) && !Network.isServer) 
 		{
-			ResetViewerPosition();
-			TransitionManager.Start(TransitionManager.FadeIn,3f,Color.white, null);
-			tab = AppTab.None; //hide windows
-			Network.InitializeServer(32, 7890, true);
-			string strGameName = strSpace + " [" + NAServer.strLogin + "]";
-			MasterServer.RegisterHost("NewAtlantis", strGameName, "created : " + System.DateTime.Now + " on " + SystemInfo.deviceModel + " running " + SystemInfo.operatingSystem);
-			CreateNetworkAvatar();
-			NAServer.Get(); //le Get avec un selected space forcera la création des objets : à revoir...
-			refreshHostList();
-			state = AppState.Game;
+			StartServerWithSelectedSpace();
 		}
 
 		//=============
@@ -2527,19 +2790,7 @@ public class App : MonoBehaviour
 		GUI.color = !Network.isServer ? Color.gray : Color.white;
 		if (GUILayout.Button ("stop server", GUILayout.Width(200 )) && Network.isServer) 
 		{
-			foreach (NetworkPlayer player in Network.connections)
-			{
-				//if (Network.player.guid == player.guid)
-				{
-					Network.DestroyPlayerObjects(player); 
-					Network.RemoveRPCs(player);
-				}
-			}
-			NA.DestroyPlayerObjects2();
-			Disconnect();
-			Network.Disconnect();
-			MasterServer.UnregisterHost();
-			refreshHostList();
+			StopServer();
 		}
 
 		//=============
@@ -2558,8 +2809,36 @@ public class App : MonoBehaviour
 	}
 
 
-    
+	void StopServer()
+	{
+		foreach (NetworkPlayer player in Network.connections)
+		{
+			//if (Network.player.guid == player.guid)
+			{
+				Network.DestroyPlayerObjects(player); 
+				Network.RemoveRPCs(player);
+			}
+		}
+		NA.DestroyPlayerObjects2();
+		Disconnect();
+		Network.Disconnect();
+		MasterServer.UnregisterHost();
+		refreshHostList();
+	}
 
+	void StartServerWithSelectedSpace()
+	{
+		ResetViewerPosition();
+		TransitionManager.Start(TransitionManager.FadeIn,3f,Color.white, null);
+		tab = AppTab.None; //hide windows
+		Network.InitializeServer(32, 7890, true);
+		string strGameName = strSpace + " [" + NAServer.strLogin + "]";
+		MasterServer.RegisterHost("NewAtlantis", strGameName, "created : " + System.DateTime.Now + " on " + SystemInfo.deviceModel + " running " + SystemInfo.operatingSystem);
+		CreateNetworkAvatar();
+		NAServer.Get(); //le Get avec un selected space forcera la création des objets : à revoir...
+		refreshHostList();
+		state = AppState.Game;
+	}
 
 	void WindowFunctionScene (int windowID)
 	{
@@ -2898,9 +3177,11 @@ public class App : MonoBehaviour
 			state = AppState.Register;
 			return;
 		}
-		if (GUILayout.Button ("Connect"))
+		if (GUILayout.Button ("Connect") || validate)
 		{
+			validate = false;
 			NAServer.UserConnect();
+			GUILayout.EndHorizontal();
 			return;
 		}
 		GUILayout.EndHorizontal();
