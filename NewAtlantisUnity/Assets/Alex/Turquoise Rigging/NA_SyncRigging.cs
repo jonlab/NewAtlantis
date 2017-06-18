@@ -15,14 +15,14 @@ public class NA_SyncRigging : MonoBehaviour {
 
         if (NA.isServer() || NA.isStandalone())
         {
-            time = (float)anim.GetTime();
-
+            //time = (float)anim.GetTime();
+			time = (float)anim.playbackTime; //JT : API change in Unity 5.6.1
             GetComponent<NetworkView>().RPC("setTime", RPCMode.All, time);
            // setTime(time);
         }
 
-        anim.SetTime(time);
-
+        //anim.SetTime(time);
+		anim.playbackTime = time; //JT : API change in Unity 5.6.1
         if (Input.GetKeyDown(KeyCode.Return))
         {
 
@@ -43,7 +43,8 @@ public class NA_SyncRigging : MonoBehaviour {
         if (NA.isServer() || NA.isStandalone())
         {
             time = 0;
-            anim.SetTime(0);
+            //anim.SetTime(0);
+			anim.playbackTime = 0; //JT : API change in Unity 5.6.1
             GetComponent<NetworkView>().RPC("setTime", RPCMode.All, time);
         }
 
