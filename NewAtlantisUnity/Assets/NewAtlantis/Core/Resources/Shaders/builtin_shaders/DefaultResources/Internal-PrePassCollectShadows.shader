@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // Upgrade NOTE: commented out 'float4x4 _CameraToWorld', a built-in variable
 // Upgrade NOTE: replaced '_CameraToWorld' with 'unity_CameraToWorld'
 // Upgrade NOTE: replaced 'unity_World2Shadow' with 'unity_WorldToShadow'
@@ -50,7 +52,7 @@ v2f vert (appdata v)
 	v2f o;
 	o.uv = v.texcoord;
 	o.ray = v.normal;
-	float4 clipPos = mul(UNITY_MATRIX_MVP, v.vertex);
+	float4 clipPos = UnityObjectToClipPos(v.vertex);
 	o.pos = clipPos;
 
 	// To compute view space position from Z buffer for orthographic case,

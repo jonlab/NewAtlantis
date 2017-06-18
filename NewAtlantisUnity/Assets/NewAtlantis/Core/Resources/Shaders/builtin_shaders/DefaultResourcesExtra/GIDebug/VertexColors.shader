@@ -1,4 +1,6 @@
-﻿Shader "Hidden/GIDebug/VertexColors" {
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Hidden/GIDebug/VertexColors" {
 	Properties {
 		_MainTex ("Base (RGB)", 2D) = "white" {}
 	}
@@ -21,7 +23,7 @@
 			v2f_surf vert_surf (appdata_full v)
 			{
 				v2f_surf o;
-				o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
+				o.pos = UnityObjectToClipPos (v.vertex);
 				o.color = v.color;
 				return o;
 			}

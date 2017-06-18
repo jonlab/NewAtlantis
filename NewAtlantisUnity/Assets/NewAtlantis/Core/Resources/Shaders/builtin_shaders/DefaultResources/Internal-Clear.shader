@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // Only used on D3D11 for non-fullscreen clears
 Shader "Hidden/InternalClear" {
 
@@ -19,7 +21,7 @@ Shader "Hidden/InternalClear" {
 	v2f vert (appdata_t v)
 	{
 		v2f o;
-		o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+		o.vertex = UnityObjectToClipPos(v.vertex);
 		o.color = v.color;
 		return o;
 	}

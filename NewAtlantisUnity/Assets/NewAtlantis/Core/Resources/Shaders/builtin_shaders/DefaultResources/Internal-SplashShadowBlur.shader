@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Hidden/InternalSplashShadowBlur" {
 
 	CGINCLUDE
@@ -21,7 +23,7 @@ Shader "Hidden/InternalSplashShadowBlur" {
 	v2f vert (appdata_t v)
 	{
 		v2f output;
-		output.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+		output.vertex = UnityObjectToClipPos(v.vertex);
 		output.texcoord = v.texcoord;
 		return output;
 	}

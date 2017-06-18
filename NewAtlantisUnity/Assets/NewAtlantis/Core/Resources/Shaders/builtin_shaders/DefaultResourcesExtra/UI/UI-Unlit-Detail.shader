@@ -1,4 +1,6 @@
-﻿Shader "UI/Unlit/Detail"
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "UI/Unlit/Detail"
 {
 	Properties
 	{
@@ -94,7 +96,7 @@
 			{
 				v2f o;
 				o.worldPosition = v.vertex;			
-				o.vertex = mul(UNITY_MATRIX_MVP, o.worldPosition);
+				o.vertex = UnityObjectToClipPos(o.worldPosition);
 
 				o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 				o.texcoord2 = TRANSFORM_TEX(v.texcoord2 * _DetailTex_TexelSize.xy, _DetailTex);

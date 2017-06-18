@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Legacy Shaders/Reflective/VertexLit" {
 Properties {
 	_Color ("Main Color", Color) = (1,1,1,1)
@@ -33,7 +35,7 @@ uniform float4 _MainTex_ST;
 v2f vert(appdata_tan v)
 {
 	v2f o;
-	o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
+	o.pos = UnityObjectToClipPos (v.vertex);
 	o.uv = TRANSFORM_TEX(v.texcoord,_MainTex);
 
 	// calculate world space reflection vector	
@@ -88,7 +90,7 @@ uniform fixed4 _ReflectColor;
 v2f vert (appdata_base v)
 {
 	v2f o;
-	o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+	o.pos = UnityObjectToClipPos(v.vertex);
 	o.uv = TRANSFORM_TEX(v.texcoord,_MainTex);
 	float4 lighting = float4(ShadeVertexLightsFull(v.vertex, v.normal, 4, true),_ReflectColor.w);
 	o.diff = lighting * _Color;
@@ -137,7 +139,7 @@ ENDCG
 			v2f vert (float4 vertex : POSITION, float2 uv : TEXCOORD0, float2 uv2: TEXCOORD1)
 			{
 				v2f o;
-				o.pos = mul(UNITY_MATRIX_MVP, vertex);
+				o.pos = UnityObjectToClipPos(vertex);
 				o.uv = TRANSFORM_TEX(uv,_MainTex);
 				o.uv2 = mul(unity_LightmapMatrix, float4(uv2,0,1)).xy;
 				UNITY_TRANSFER_FOG(o,o.pos);
@@ -185,7 +187,7 @@ ENDCG
 			v2f vert (float4 vertex : POSITION, float2 uv : TEXCOORD0, float2 uv2: TEXCOORD1)
 			{
 				v2f o;
-				o.pos = mul(UNITY_MATRIX_MVP, vertex);
+				o.pos = UnityObjectToClipPos(vertex);
 				o.uv = TRANSFORM_TEX(uv,_MainTex);
 				o.uv2 = mul(unity_LightmapMatrix, float4(uv2,0,1)).xy;
 				UNITY_TRANSFER_FOG(o,o.pos);

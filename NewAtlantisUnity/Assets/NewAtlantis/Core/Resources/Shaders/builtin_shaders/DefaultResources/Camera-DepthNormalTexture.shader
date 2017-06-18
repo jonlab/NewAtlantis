@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Hidden/Camera-DepthNormalTexture" {
 Properties {
 	_MainTex ("", 2D) = "white" {}
@@ -18,7 +20,7 @@ struct v2f {
 };
 v2f vert( appdata_base v ) {
     v2f o;
-    o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+    o.pos = UnityObjectToClipPos(v.vertex);
     o.nz.xyz = COMPUTE_VIEW_NORMAL;
     o.nz.w = COMPUTE_DEPTH_01;
     return o;
@@ -45,7 +47,7 @@ struct v2f {
 uniform float4 _MainTex_ST;
 v2f vert( appdata_base v ) {
     v2f o;
-    o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+    o.pos = UnityObjectToClipPos(v.vertex);
 	o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);
     o.nz.xyz = COMPUTE_VIEW_NORMAL;
     o.nz.w = COMPUTE_DEPTH_01;
@@ -81,7 +83,7 @@ v2f vert( appdata_full v ) {
     v2f o;
     TreeVertBark(v);
 	
-	o.pos = mul( UNITY_MATRIX_MVP, v.vertex );
+	o.pos = UnityObjectToClipPos( v.vertex );
 	o.uv = v.texcoord.xy;
     o.nz.xyz = COMPUTE_VIEW_NORMAL;
     o.nz.w = COMPUTE_DEPTH_01;
@@ -112,7 +114,7 @@ v2f vert( appdata_full v ) {
     v2f o;
     TreeVertLeaf(v);
 	
-	o.pos = mul( UNITY_MATRIX_MVP, v.vertex );
+	o.pos = UnityObjectToClipPos( v.vertex );
 	o.uv = v.texcoord.xy;
     o.nz.xyz = COMPUTE_VIEW_NORMAL;
     o.nz.w = COMPUTE_DEPTH_01;
@@ -150,7 +152,7 @@ struct appdata {
 v2f vert( appdata v ) {
 	v2f o;
 	TerrainAnimateTree(v.vertex, v.color.w);
-	o.pos = mul( UNITY_MATRIX_MVP, v.vertex );
+	o.pos = UnityObjectToClipPos( v.vertex );
     o.nz.xyz = COMPUTE_VIEW_NORMAL;
     o.nz.w = COMPUTE_DEPTH_01;
 	return o;
@@ -186,7 +188,7 @@ struct appdata {
 v2f vert( appdata v ) {
 	v2f o;
 	TerrainAnimateTree(v.vertex, v.color.w);
-	o.pos = mul( UNITY_MATRIX_MVP, v.vertex );
+	o.pos = UnityObjectToClipPos( v.vertex );
 	o.uv = v.texcoord.xy;
     o.nz.xyz = COMPUTE_VIEW_NORMAL;
     o.nz.w = COMPUTE_DEPTH_01;
@@ -224,7 +226,7 @@ struct appdata {
 v2f vert( appdata v ) {
 	v2f o;
 	TerrainAnimateTree(v.vertex, v.color.w);
-	o.pos = mul( UNITY_MATRIX_MVP, v.vertex );
+	o.pos = UnityObjectToClipPos( v.vertex );
 	o.uv = v.texcoord.xy;
     o.nz.xyz = -COMPUTE_VIEW_NORMAL;
     o.nz.w = COMPUTE_DEPTH_01;
@@ -259,7 +261,7 @@ struct v2f {
 v2f vert (appdata_tree_billboard v) {
 	v2f o;
 	TerrainBillboardTree(v.vertex, v.texcoord1.xy, v.texcoord.y);
-	o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
+	o.pos = UnityObjectToClipPos (v.vertex);
 	o.uv.x = v.texcoord.x;
 	o.uv.y = v.texcoord.y > 0;
     o.nz.xyz = float3(0,0,1);
@@ -297,7 +299,7 @@ v2f vert (appdata_full v) {
 	v2f o;
 	WavingGrassBillboardVert (v);
 	o.color = v.color;
-	o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
+	o.pos = UnityObjectToClipPos (v.vertex);
 	o.uv = v.texcoord.xy;
     o.nz.xyz = COMPUTE_VIEW_NORMAL;
     o.nz.w = COMPUTE_DEPTH_01;
@@ -335,7 +337,7 @@ v2f vert (appdata_full v) {
 	v2f o;
 	WavingGrassVert (v);
 	o.color = v.color;
-	o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
+	o.pos = UnityObjectToClipPos (v.vertex);
 	o.uv = v.texcoord;
     o.nz.xyz = COMPUTE_VIEW_NORMAL;
     o.nz.w = COMPUTE_DEPTH_01;

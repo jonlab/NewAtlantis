@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Hidden/CubeCopy" {
 	Properties {
 		_MainTex ("Main", CUBE) = "" {}
@@ -19,7 +21,7 @@ Shader "Hidden/CubeCopy" {
 	v2f vert(appdata_base v)
 	{
 		v2f o;
-		o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+		o.pos = UnityObjectToClipPos(v.vertex);
 		o.uvw = v.texcoord;
 		return o;
 	}

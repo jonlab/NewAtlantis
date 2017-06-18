@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // Upgrade NOTE: replaced '_CameraToWorld' with 'unity_CameraToWorld'
 
 Shader "Hidden/Internal-DeferredReflections" {
@@ -122,7 +124,7 @@ Pass
 		v2f vert (float4 vertex : POSITION)
 		{
 			v2f o;
-			o.pos = mul(UNITY_MATRIX_MVP, vertex);
+			o.pos = UnityObjectToClipPos(vertex);
 			o.uv = ComputeScreenPos (o.pos).xy;
 			return o;
 		}

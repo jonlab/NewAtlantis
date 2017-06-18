@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // Upgrade NOTE: commented out 'float4x4 _WorldToCamera', a built-in variable
 // Upgrade NOTE: replaced '_WorldToCamera' with 'unity_WorldToCamera'
 
@@ -25,7 +27,7 @@ float4 _CameraNormalsTexture_ST;
 v2f vert (appdata v)
 {
 	v2f o;
-	o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+	o.pos = UnityObjectToClipPos(v.vertex);
 	o.uv = TRANSFORM_TEX(v.texcoord,_CameraNormalsTexture);
 	return o;
 }

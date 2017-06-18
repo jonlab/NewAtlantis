@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // Upgrade NOTE: commented out 'float4x4 _CameraToWorld', a built-in variable
 // Upgrade NOTE: replaced '_CameraToWorld' with 'unity_CameraToWorld'
 // Upgrade NOTE: replaced '_LightMatrix0' with 'unity_WorldToLight'
@@ -23,7 +25,7 @@ float _LightAsQuad;
 unity_v2f_deferred vert_deferred (float4 vertex : POSITION, float3 normal : NORMAL)
 {
 	unity_v2f_deferred o;
-	o.pos = mul(UNITY_MATRIX_MVP, vertex);
+	o.pos = UnityObjectToClipPos(vertex);
 	o.uv = ComputeScreenPos (o.pos);
 	o.ray = mul (UNITY_MATRIX_MV, vertex).xyz * float3(-1,-1,1);
 	

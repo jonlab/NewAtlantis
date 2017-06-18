@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Skybox/6 Sided" {
 Properties {
 	_Tint ("Tint Color", Color) = (.5, .5, .5, .5)
@@ -42,7 +44,7 @@ SubShader {
 	v2f vert (appdata_t v)
 	{
 		v2f o;
-		o.vertex = mul(UNITY_MATRIX_MVP, RotateAroundYInDegrees(v.vertex, _Rotation));
+		o.vertex = UnityObjectToClipPos(RotateAroundYInDegrees(v.vertex, _Rotation));
 		o.texcoord = v.texcoord;
 		return o;
 	}

@@ -1,4 +1,6 @@
-﻿Shader "Nature/SpeedTree Billboard"
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Nature/SpeedTree Billboard"
 {
 	Properties
 	{
@@ -70,7 +72,7 @@
 					v2f o;
 					SpeedTreeBillboardVert(v, o.data);
 					o.data.color.rgb *= ShadeVertexLightsFull(v.vertex, v.normal, 4, true);
-					o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+					o.vertex = UnityObjectToClipPos(v.vertex);
 					UNITY_TRANSFER_FOG(o,o.vertex);
 					return o;
 				}
@@ -134,7 +136,7 @@
 					v2f o;
 					SpeedTreeBillboardVert(v, o.data);
 					o.data.color.rgb *= ShadeVertexLightsFull(v.vertex, v.normal, 2, false);
-					o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+					o.vertex = UnityObjectToClipPos(v.vertex);
 					UNITY_TRANSFER_FOG(o,o.vertex);
 					return o;
 				}

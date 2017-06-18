@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Hidden/Internal-Halo" { 
 	SubShader {
 		Tags {"RenderType"="Overlay"}
@@ -26,7 +28,7 @@ Shader "Hidden/Internal-Halo" {
 			v2f vert (appdata_t v)
 			{
 				v2f o;
-				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.color = v.color;
 				o.texcoord = TRANSFORM_TEX(v.texcoord,_HaloFalloff);
 				UNITY_TRANSFER_FOG(o,o.vertex);

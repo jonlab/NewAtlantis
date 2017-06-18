@@ -1,4 +1,6 @@
-﻿Shader "Cg shader using blending" {
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Cg shader using blending" {
 	SubShader{
 		Tags{ "Queue" = "Transparent" }
 		// draw after all opaque geometry has been drawn
@@ -16,7 +18,7 @@
 
 		float4 vert(float4 vertexPos : POSITION) : SV_POSITION
 	{
-		return mul(UNITY_MATRIX_MVP, vertexPos);
+		return UnityObjectToClipPos(vertexPos);
 	}
 
 		float4 frag(void) : COLOR
@@ -43,7 +45,7 @@
 
 		float4 vert(float4 vertexPos : POSITION) : SV_POSITION
 	{
-		return mul(UNITY_MATRIX_MVP, vertexPos);
+		return UnityObjectToClipPos(vertexPos);
 	}
 
 		float4 frag(void) : COLOR

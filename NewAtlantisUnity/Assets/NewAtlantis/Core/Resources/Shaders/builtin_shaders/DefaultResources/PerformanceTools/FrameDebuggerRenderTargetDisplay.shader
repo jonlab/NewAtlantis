@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Hidden/FrameDebuggerRenderTargetDisplay" {
 	Properties {
 		_MainTex ("", any) = "white" {}
@@ -17,7 +19,7 @@ Shader "Hidden/FrameDebuggerRenderTargetDisplay" {
 
 	v2f vert(appdata v) {
 		v2f o;
-		o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+		o.pos = UnityObjectToClipPos(v.vertex);
 		o.uv = v.uv;
 		return o;
 	}

@@ -1,4 +1,6 @@
-﻿Shader "Custom/A-Color" {
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Custom/A-Color" {
 	Properties{
 		//NO PROPERTIES
 		_MovePos("MovePos",Vector) = (1.0,1.0,1.0,1.0)
@@ -41,7 +43,7 @@
 		//o.pos = mul(UNITY_MATRIX_MVP, normalize(v.vertex * distance(v.vertex, v.normal) * sin(v.vertex)));
 
 		//COOL
-		o.pos = mul(UNITY_MATRIX_MVP, fmod(v.vertex , _LerpValue) );
+		o.pos = UnityObjectToClipPos(fmod(v.vertex , _LerpValue) );
 		
 
 		//o.pos = mul(UNITY_MATRIX_MVP, v.vertex);

@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // Upgrade NOTE: replaced 'unity_World2Shadow' with 'unity_WorldToShadow'
 
 Shader "Hidden/InternalSplashShadowReceiver" {
@@ -36,7 +38,7 @@ Shader "Hidden/InternalSplashShadowReceiver" {
 	v2f vert (appdata_t v)
 	{
 		v2f output;
-		output.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+		output.vertex = UnityObjectToClipPos(v.vertex);
 		output.normal = v.normal;
 		output.worldPos = float4(v.vertex.xyz, 1.0);
 		output.color = v.color;

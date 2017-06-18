@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Legacy Shaders/Reflective/Bumped Unlit" {
 Properties {
 	_Color ("Main Color", Color) = (1,1,1,1)
@@ -39,7 +41,7 @@ uniform float4 _MainTex_ST, _BumpMap_ST;
 v2f vert(appdata_tan v)
 {
 	v2f o;
-	o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
+	o.pos = UnityObjectToClipPos (v.vertex);
 	o.uv = TRANSFORM_TEX(v.texcoord,_MainTex);
 	o.uv2 = TRANSFORM_TEX(v.texcoord,_BumpMap);
 	

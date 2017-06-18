@@ -1,4 +1,6 @@
-﻿Shader "Custom/A" {
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Custom/A" {
 	Properties{
 		//NO PROPERTIES
 		_MovePos("MovePos",Vector) = (1.0,1.0,1.0,1.0)
@@ -28,7 +30,7 @@
 	vertexOutput vert(vertexInput v) {
 		vertexOutput o;
 		o.col = float4(v.normal, 1.0);
-		o.pos = mul(UNITY_MATRIX_MVP,  reflect(v.vertex,_MovePos) );
+		o.pos = UnityObjectToClipPos(reflect(v.vertex,_MovePos) );
 
 	   //if(distance(v.vertex,v.normal) > _LerpValue)o.pos = mul(UNITY_MATRIX_MVP, lerp(v.vertex, _MovePos, _LerpValue));
 

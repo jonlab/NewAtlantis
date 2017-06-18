@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 // Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
 // Upgrade NOTE: replaced 'unity_World2Shadow' with 'unity_WorldToShadow'
@@ -506,7 +508,7 @@ float2 MultiplyUV (float4x4 mat, float2 inUV) {
 v2f_img vert_img( appdata_img v )
 {
 	v2f_img o;
-	o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
+	o.pos = UnityObjectToClipPos (v.vertex);
 	o.uv = v.texcoord;
 	return o;
 }
@@ -722,7 +724,7 @@ float4 UnityClipSpaceShadowCasterPos(float3 vertex, float3 normal)
     }
     else
     {
-        clipPos = mul(UNITY_MATRIX_MVP, float4(vertex,1));
+        clipPos = UnityObjectToClipPos(float4(vertex,1));
     }
 	return clipPos;
 }
@@ -740,8 +742,8 @@ float4 UnityApplyLinearShadowBias(float4 clipPos)
 #ifdef SHADOWS_CUBE
 	// Rendering into point light (cubemap) shadows
 	#define V2F_SHADOW_CASTER_NOPOS float3 vec : TEXCOORD0;
-	#define TRANSFER_SHADOW_CASTER_NOPOS_LEGACY(o,opos) o.vec = mul(unity_ObjectToWorld, v.vertex).xyz - _LightPositionRange.xyz; opos = mul(UNITY_MATRIX_MVP, v.vertex);
-	#define TRANSFER_SHADOW_CASTER_NOPOS(o,opos) o.vec = mul(unity_ObjectToWorld, v.vertex).xyz - _LightPositionRange.xyz; opos = mul(UNITY_MATRIX_MVP, v.vertex);
+	#define TRANSFER_SHADOW_CASTER_NOPOS_LEGACY(o,opos) o.vec = mul(unity_ObjectToWorld, v.vertex).xyz - _LightPositionRange.xyz; opos = UnityObjectToClipPos(v.vertex);
+	#define TRANSFER_SHADOW_CASTER_NOPOS(o,opos) o.vec = mul(unity_ObjectToWorld, v.vertex).xyz - _LightPositionRange.xyz; opos = UnityObjectToClipPos(v.vertex);
 	#define SHADOW_CASTER_FRAGMENT(i) return UnityEncodeCubeShadowDepth ((length(i.vec) + unity_LightShadowBias.x) * _LightPositionRange.w);
 #else
 	// Rendering into directional or spot light shadows
@@ -749,7 +751,7 @@ float4 UnityApplyLinearShadowBias(float4 clipPos)
 		// Platform might not have actual depth textures, so output depth from pixel shader
 		#define V2F_SHADOW_CASTER_NOPOS float4 hpos : TEXCOORD0;
 		#define TRANSFER_SHADOW_CASTER_NOPOS_LEGACY(o,opos) \
-			opos = mul(UNITY_MATRIX_MVP, float4(v.vertex.xyz,1)); \
+			opos = UnityObjectToClipPos(float4(v.vertex.xyz,1)); \
 			opos = UnityApplyLinearShadowBias(opos); \
 			o.hpos = opos;
 		#define TRANSFER_SHADOW_CASTER_NOPOS(o,opos) \
@@ -762,7 +764,7 @@ float4 UnityApplyLinearShadowBias(float4 clipPos)
 		// empty structs that could possibly be produced.
 		#define V2F_SHADOW_CASTER_NOPOS_IS_EMPTY
 		#define TRANSFER_SHADOW_CASTER_NOPOS_LEGACY(o,opos) \
-			opos = mul(UNITY_MATRIX_MVP, float4(v.vertex.xyz,1)); \
+			opos = UnityObjectToClipPos(float4(v.vertex.xyz,1)); \
 			opos = UnityApplyLinearShadowBias(opos);
 		#define TRANSFER_SHADOW_CASTER_NOPOS(o,opos) \
 			opos = UnityClipSpaceShadowCasterPos(v.vertex.xyz, v.normal); \
@@ -865,7 +867,7 @@ float4 UnityApplyLinearShadowBias(float4 clipPos)
 #ifdef LOD_FADE_CROSSFADE
 	#define UNITY_DITHER_CROSSFADE_COORDS					half3 ditherScreenPos;
 	#define UNITY_DITHER_CROSSFADE_COORDS_IDX(idx)			half3 ditherScreenPos : TEXCOORD##idx;
-	#define UNITY_TRANSFER_DITHER_CROSSFADE(o,v)			o.ditherScreenPos = ComputeDitherScreenPos(mul(UNITY_MATRIX_MVP, v));
+	#define UNITY_TRANSFER_DITHER_CROSSFADE(o,v)			o.ditherScreenPos = ComputeDitherScreenPos(UnityObjectToClipPos(v));
 	#define UNITY_TRANSFER_DITHER_CROSSFADE_HPOS(o,hpos)	o.ditherScreenPos = ComputeDitherScreenPos(hpos);
 	half3 ComputeDitherScreenPos(float4 hPos)
 	{
@@ -905,7 +907,7 @@ UNITY_DECLARE_SHADOWMAP(_ShadowMapTexture);
 // Note: V2F_SHADOW_COLLECTOR and TRANSFER_SHADOW_COLLECTOR are deprecated
 #define V2F_SHADOW_COLLECTOR float4 pos : SV_POSITION; float3 _ShadowCoord0 : TEXCOORD0; float3 _ShadowCoord1 : TEXCOORD1; float3 _ShadowCoord2 : TEXCOORD2; float3 _ShadowCoord3 : TEXCOORD3; float4 _WorldPosViewZ : TEXCOORD4
 #define TRANSFER_SHADOW_COLLECTOR(o)	\
-	o.pos = mul(UNITY_MATRIX_MVP, v.vertex); \
+	o.pos = UnityObjectToClipPos(v.vertex); \
 	float4 wpos = mul(unity_ObjectToWorld, v.vertex); \
 	o._WorldPosViewZ.xyz = wpos; \
 	o._WorldPosViewZ.w = -mul( UNITY_MATRIX_MV, v.vertex ).z; \

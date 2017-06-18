@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Nature/Tree Creator Leaves Fast" {
 Properties {
 	_Color ("Main Color", Color) = (1,1,1,1)
@@ -56,7 +58,7 @@ SubShader {
 		{
 			v2f_leaf o;
 			TreeVertLeaf(v);
-			o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+			o.pos = UnityObjectToClipPos(v.vertex);
 
 			fixed ao = v.color.a;
 			ao += 0.1; ao = saturate(ao * ao * ao); // emphasize AO

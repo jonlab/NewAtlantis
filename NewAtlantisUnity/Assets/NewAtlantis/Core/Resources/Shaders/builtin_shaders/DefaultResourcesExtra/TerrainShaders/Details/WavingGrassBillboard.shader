@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Hidden/TerrainEngine/Details/BillboardWavingDoublePass" {
 	Properties {
 		_WavingTint ("Fade Color", Color) = (.7,.6,.5, 0)
@@ -22,7 +24,7 @@ v2f BillboardVert (appdata_full v) {
 	
 	o.color.rgb *= ShadeVertexLights (v.vertex, v.normal);
 		
-	o.pos = mul (UNITY_MATRIX_MVP, v.vertex);	
+	o.pos = UnityObjectToClipPos (v.vertex);	
 	o.uv = v.texcoord;
 	return o;
 }

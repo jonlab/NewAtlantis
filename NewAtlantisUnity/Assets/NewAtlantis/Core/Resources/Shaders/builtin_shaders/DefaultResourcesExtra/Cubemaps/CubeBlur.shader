@@ -1,4 +1,6 @@
-﻿Shader "Hidden/CubeBlur" {
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Hidden/CubeBlur" {
 	Properties {
 		_MainTex ("Main", CUBE) = "" {}
 		_Texel ("Texel", Float) = 0.0078125
@@ -20,7 +22,7 @@
 	v2f vert(appdata_base v)
 	{
 		v2f o;
-		o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+		o.pos = UnityObjectToClipPos(v.vertex);
 		o.uvw = v.texcoord;
 		return o;
 	}

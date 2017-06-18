@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // Upgrade NOTE: commented out 'float4x4 _CameraToWorld', a built-in variable
 // Upgrade NOTE: replaced '_CameraToWorld' with 'unity_CameraToWorld'
 
@@ -37,7 +39,7 @@ v2f leaves(appdata_tree v)
 	TerrainAnimateTree(v.vertex, v.color.w);
 	
 	float3 viewpos = mul(UNITY_MATRIX_MV, v.vertex);
-	o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+	o.pos = UnityObjectToClipPos(v.vertex);
 	o.uv = v.texcoord;
 	
 	float4 lightDir = 0;
@@ -82,7 +84,7 @@ v2f bark(appdata_tree v)
 	TerrainAnimateTree(v.vertex, v.color.w);
 	
 	float3 viewpos = mul(UNITY_MATRIX_MV, v.vertex);
-	o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+	o.pos = UnityObjectToClipPos(v.vertex);
 	o.uv = v.texcoord;
 	
 	float4 lightDir = 0;

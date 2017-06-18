@@ -1,4 +1,6 @@
-﻿Shader "Hidden/GIDebug/UV1sAsPositions" {
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Hidden/GIDebug/UV1sAsPositions" {
 Properties {
 	_Color ("Main Color", Color) = (1,1,1,1)
 }
@@ -38,7 +40,7 @@ SubShader {
 					uv = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;
 				else
 					uv = v.texcoord2.xy * unity_DynamicLightmapST.xy + unity_DynamicLightmapST.zw;
-				o.pos = mul (UNITY_MATRIX_MVP, float4 (uv, 0, 1));
+				o.pos = UnityObjectToClipPos (float4 (uv, 0, 1));
 				o.dummy = v.vertex; // make OpenGL happy
 				return o;
 			}
