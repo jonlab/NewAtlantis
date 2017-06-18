@@ -24,6 +24,8 @@ public class NAToolBase : MonoBehaviour
 	protected Texture2D 	white = null;
 	private bool			ExtendedGUI = true;
 
+
+
 	// Use this for initialization
 	void Start () 
 	{

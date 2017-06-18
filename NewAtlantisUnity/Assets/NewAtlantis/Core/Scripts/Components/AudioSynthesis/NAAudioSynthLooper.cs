@@ -158,7 +158,7 @@ public class NAAudioSynthLooper : NAObjectBase
 				ns = gameObject.GetComponentInParent<NetworkSync>();
 			if (ns == null)
 			{
-				LogManager.LogError("Looper sync NetworkSync not found");
+				LogManager.LogWarning("Looper sync NetworkSync not found");
 			}
 			if (ns)
 			{

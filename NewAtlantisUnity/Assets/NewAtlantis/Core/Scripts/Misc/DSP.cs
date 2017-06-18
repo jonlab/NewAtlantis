@@ -65,6 +65,44 @@ public class DSP
 	}
 
 
+	public static void AddNoise(float[] data, float chances)
+	{
+		for (int i = 0; i < data.Length; i++) 
+		{
+			float r = Random.value;
+			if (r<chances)
+			{
+				data[i] += Random.value*2f-1f;
+			}
+		}
+	}
+
+	public static void PoorManFIR(float[] data)
+	{
+		for (int i = 0; i < data.Length-4; i++) 
+		{
+			data[i] = (data[i]+data[i+1]+data[i+2]+data[i+3])/4f;
+		}
+	}
+
+
+
+
+
+	public static void Reverse(float[] data)
+	{
+		float[] dataout = new float[data.Length];
+		for (int i = 0; i < data.Length; i++) 
+		{
+			dataout[data.Length-1-i] = data[i];
+		}
+		for (int i = 0; i < data.Length; i++) 
+		{
+			data[i] = dataout[i];
+		}
+	}
+
+
 
 
 
@@ -395,5 +433,37 @@ public class DSP
 
 		return data;
 	}
+
+	/*
+	public void MaxCallback(float[] buffer)
+	{
+		DSP.Process(buffer);
+	}
+
+	public void UnityCallback(float[] buffer)
+	{
+		DSP.Process(buffer);
+	}
+
+	public void main()
+	{
+		buffer = fread(sqdsqd);
+		DSP.Process(buffer);
+		fwrite(buffer);
+
+	}
+
+
+
+	//DSP
+	public void Process(float[] buffer)
+	{
+		DSP.GenerateNoise(buffer);
+		DSP.Lowpass(buffer, 4000);
+		DSP.Normalize(buffer, -0.5, +0.5);
+
+	}
+
+*/
 	
 }

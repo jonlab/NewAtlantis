@@ -298,8 +298,14 @@ public static class NA
 				{
 					if (m.shader != null)
 					{
-					
+						Debug.Log("try to patch material : " + m.name + " -> " + m.shader.name);
+
+							
 						Shader s = Shader.Find(m.shader.name);
+						if (m.shader.name == "")
+						{
+							s = Shader.Find("Standard");
+						}
 						if (s != null)
 						{
 							m.shader = s;
@@ -324,50 +330,53 @@ public static class NA
 		Terrain[] terrains = root.GetComponentsInChildren<Terrain>();
 		foreach (Terrain t in terrains)
 		{
-			t.terrainData.RefreshPrototypes();
-
-			//t.terrainData.
-			foreach (TreePrototype tp in t.terrainData.treePrototypes)
+			if (t.terrainData != null)
 			{
-				if (tp.prefab != null)
+				t.terrainData.RefreshPrototypes();
+
+				//t.terrainData.
+				foreach (TreePrototype tp in t.terrainData.treePrototypes)
 				{
-					Renderer[] trenderers = tp.prefab.GetComponentsInChildren<Renderer>();
-					foreach (Renderer r in trenderers)
+					if (tp.prefab != null)
 					{
-						Debug.Log("=>patching " + r.name);
-						foreach (Material m in r.sharedMaterials)
+						Renderer[] trenderers = tp.prefab.GetComponentsInChildren<Renderer>();
+						foreach (Renderer r in trenderers)
 						{
-							
-							try
+							Debug.Log("=>patching " + r.name);
+							foreach (Material m in r.sharedMaterials)
 							{
-								if (m.shader != null)
+								
+								try
 								{
+									if (m.shader != null)
+									{
 
-									string sname = m.shader.name;
+										string sname = m.shader.name;
 
-									if (m.shader.name.Contains("Bark"))
-									{
-										sname = "Nature/Tree Creator Bark";
-									}
-									else if (m.shader.name.Contains("Leaves"))
-									{
-										sname = "Nature/Tree Creator Leaves";
-									}
-									Shader s = Shader.Find(sname);
-									if (s != null)
-									{
-										m.shader = s;
-										//   LogManager.LogError("Shader name : " + m.shader.name);
-									}
-									else
-									{
-										LogManager.LogWarning("can't find shader : " + m.shader.name);
+										if (m.shader.name.Contains("Bark"))
+										{
+											sname = "Nature/Tree Creator Bark";
+										}
+										else if (m.shader.name.Contains("Leaves"))
+										{
+											sname = "Nature/Tree Creator Leaves";
+										}
+										Shader s = Shader.Find(sname);
+										if (s != null)
+										{
+											m.shader = s;
+											//   LogManager.LogError("Shader name : " + m.shader.name);
+										}
+										else
+										{
+											LogManager.LogWarning("can't find shader : " + m.shader.name);
+										}
 									}
 								}
-							}
-							catch (System.Exception e)
-							{
-								LogManager.LogWarning("shader exception");
+								catch (System.Exception e)
+								{
+									LogManager.LogWarning("shader exception");
+								}
 							}
 						}
 					}

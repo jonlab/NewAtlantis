@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using System.Xml.XPath;
+using MidiJack;
 
 
 
@@ -82,6 +83,8 @@ public class App : MonoBehaviour
 	XPathNavigator  	xpn			= null;
 	XmlNamespaceManager xnm 		= null;
 	Texture2D			texWhite 	= null;
+	Texture2D			texBlack70 	= null;
+
 	Texture2D			texSoundHouses 	= null;
 
 	Camera 				mainCamera 	= null;
@@ -99,18 +102,14 @@ public class App : MonoBehaviour
 
 	List<GameObject> 	cameras 	= new List<GameObject>();
 	//List<GameObject>	player_objects = new List<GameObject>();
-
-
 	//Vector3				colorAvatar = Vector3.zero;
 	string				strPick = "";
-
-
 	private bool				bStartPopup = true;
-
 	private string 				strIP = "88.178.228.172";
 	private string 				strFile = "DummyObject.unity3d";
 
 	GameObject goMainLight = null;
+	public GameObject goReticle = null;
 	//GameObject goAvatar = null;
 	GameObject goGrab = null;
 	Vector3		PreviousMousePosition = Vector3.zero;
@@ -294,6 +293,12 @@ public class App : MonoBehaviour
     // Use this for initialization
     void Start () 
 	{
+
+
+
+
+
+		MidiMaster.GetKeyDown(60);
 		try
 		{
 			config = File.ReadAllText("config.txt");
@@ -356,8 +361,10 @@ public class App : MonoBehaviour
 		NA.listener 	= GetComponent<AudioListener>();
 		cameras.Add (Camera.main.gameObject);
 		texWhite 		= Resources.Load ("white") as Texture2D;
+		texBlack70 		= Resources.Load ("black70") as Texture2D;
 		texSoundHouses 		= Resources.Load ("bacon_soundhouses1") as Texture2D;
 		goMainLight 	= GameObject.Find ("MainLightViewer");
+		goReticle 		= GameObject.Find ("reticule");
 		ChatManager.Log("system", "welcome to New Atlantis", Color.blue);
 		NAToolBase[] _tools = GetComponents<NAToolBase>();
 
@@ -373,7 +380,7 @@ public class App : MonoBehaviour
 #endif
 
 
-
+		CameraBackgroundColor();
 
         /*
 
@@ -600,6 +607,12 @@ public class App : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+		//test
+
+		//bool v1 = MidiMaster.GetKeyDown(60);
+		//bool v2 = MidiMaster.GetKeyDown(60);
+		//Debug.Log("keys 60 = " + v1 + " " + v2);
+
 		ObjectUploader.Process();
 		NADownloader.Process();
 		TransitionManager.Process();
@@ -666,7 +679,66 @@ public class App : MonoBehaviour
 			
 		float padx = NAInput.GetAxis(NAControl.PadHorizontal);
 		float pady = NAInput.GetAxis(NAControl.PadVertical);
-		if (!r1 && !l1)
+
+		//on scanne les objects interactifs de la scene
+		NAObjectBase[] interactive_objects = GameObject.FindObjectsOfType(typeof(NAObjectBase)) as NAObjectBase[];
+		NAObjectBase closest = null;
+		//if (l1)
+		if (true) //no need to hold R1	
+		{
+			//recherche du plus proche
+
+			float distance = 2f;
+			foreach (NAObjectBase o in interactive_objects)
+			{
+				float d = (o.gameObject.transform.position-gameObject.transform.position).magnitude;
+				if (d<distance)
+				{
+					distance = d;
+					closest = o;
+				}
+			}
+
+			foreach (NAObjectBase o in interactive_objects)
+			{
+				NAPlayOnMidi midi = o.GetComponent<NAPlayOnMidi>();
+				o.SetGUI(true);
+				o.SetExtendedGUI(false);
+				if (midi)
+					midi.Enabled = false;
+			}
+			if (closest != null)
+			{
+				FlyCamera fc = GetComponent<FlyCamera>();
+				fc.JumpEnabled = false;
+				closest.SetExtendedGUI(true);
+				NAPlayOnMidi midi = closest.GetComponent<NAPlayOnMidi>();
+				if (midi)
+					midi.Enabled = true;
+			}
+			else
+			{
+				FlyCamera fc = GetComponent<FlyCamera>();
+				fc.JumpEnabled = true;
+			}
+
+
+			//closest.
+			if (closest != null)
+			{
+				closest.ExtendedControl();
+			}
+
+		}
+		else
+		{
+			foreach (NAObjectBase o in interactive_objects)
+			{
+				o.SetGUI(false);
+			}
+		}
+
+		if (!r1 && !l1 && !closest)
 		{
 			if ((padx != 0 || pady != 0) && !bToolPanel)
 			{
@@ -774,47 +846,7 @@ public class App : MonoBehaviour
 			}
 		}
 
-		//on scanne les objects interactifs de la scene
-		NAObjectBase[] interactive_objects = GameObject.FindObjectsOfType(typeof(NAObjectBase)) as NAObjectBase[];
-		NAObjectBase closest = null;
-		if (l1)
-		{
-			//recherche du plus proche
 
-			float distance = 20f;
-			foreach (NAObjectBase o in interactive_objects)
-			{
-				float d = (o.gameObject.transform.position-gameObject.transform.position).magnitude;
-				if (d<distance)
-				{
-					distance = d;
-					closest = o;
-				}
-			}
-			foreach (NAObjectBase o in interactive_objects)
-			{
-				o.SetGUI(true);
-				o.SetExtendedGUI(false);
-			}
-			if (closest != null)
-			{
-				closest.SetExtendedGUI(true);
-			}
-
-			//closest.
-			if (closest != null)
-			{
-				closest.ExtendedControl();
-			}
-
-		}
-		else
-		{
-			foreach (NAObjectBase o in interactive_objects)
-			{
-				o.SetGUI(false);
-			}
-		}
 		if (bGUI)
 		{
 			if (NAInput.GetControlDown(NAControl.Action))
@@ -845,7 +877,7 @@ public class App : MonoBehaviour
 		{
 			
 		}
-		else
+		else if (!closest)
 		{
 
 			//ACTION
@@ -1444,6 +1476,21 @@ public class App : MonoBehaviour
 		NA.player_objects.Clear();
 	}
 
+
+	void CameraBackgroundColor()
+	{
+		Camera.main.clearFlags = CameraClearFlags.Color;
+		Camera.main.backgroundColor = Color.black;
+		NAToolBase ToolSelected = tools[current_tool];
+		ToolSelected.enabled = false;
+	}
+	void CameraBackgroundSkybox()
+	{
+		Camera.main.clearFlags = CameraClearFlags.Skybox;
+		NAToolBase ToolSelected = tools[current_tool];
+		ToolSelected.enabled = true;
+	}
+
 	void Disconnect()
 	{
 		//bStartPopup = true;
@@ -1476,15 +1523,22 @@ public class App : MonoBehaviour
 
 	void GUIIdentityMatrix()
 	{
+		
 		GUI.matrix = Matrix4x4.identity;
 	}
 
 
+
     void OnGUI()
     {
+		
+		//style
+		//GUI.skin.button.normal.textColor = Color.blue;
+		GUI.skin.scrollView.normal.background = texBlack70;
+		//GUI.skin.scrollView
+
 		GUIIdentityMatrix();
         GUI.skin.font = NA.GetFont(0);
-
 
 		GUI.skin.label.alignment = TextAnchor.MiddleLeft;
 		float scale = 1f;
@@ -1525,61 +1579,67 @@ public class App : MonoBehaviour
 			return;
 		}
 
-		//gestion du panel à la souris avec un dummy button
-		if (GUI.Button(new Rect((Screen.width/2-32),(Screen.height-64),64,64), "", new GUIStyle()))
-		{
-			bToolPanel = !bToolPanel;
-		}
-		
-
 		bool l1 = NAInput.GetControl(NAControl.PreviousTool) || Input.GetKey(KeyCode.LeftShift);
 		bool r1 = NAInput.GetControl(NAControl.NextTool) || Input.GetKey(KeyCode.RightShift);
 
-		if (bToolPanel)
+
+		if (state == AppState.Game)
 		{
-			float inter = 64+10;
-			GUI.color = new Color(0,0,0,0.2f);
-			float panelh = 256+64;
-			GUI.DrawTexture (new Rect (Screen.width/2-inter*3f-5f, Screen.height-panelh-inter/2f-5f, inter*6f+10f, inter*4f+10f), texWhite);
-			GUI.color = Color.white;
-			//we draw the tools
-			int x = 0;
-			int y = 0;
-			NAToolBase ToolSelected = tools[current_tool];
-			foreach (NAToolBase t in tools)
+			//gestion du panel à la souris avec un dummy button
+			if (GUI.Button(new Rect((Screen.width/2-32),(Screen.height-64),64,64), "", new GUIStyle()))
 			{
-				bool selected = (t==ToolSelected) ? true : false;
-				Vector3 pos = new Vector3(Screen.width/2-inter*2.5f+x*inter, Screen.height-panelh+y*inter, 0);
-				bool bClicked = t.DrawBaseGUI(pos, selected);
-				if (bClicked)
+				bToolPanel = !bToolPanel;
+			}
+		
+
+
+
+			if (bToolPanel)
+			{
+				float inter = 64+10;
+				GUI.color = new Color(0,0,0,0.2f);
+				float panelh = 256+64;
+				GUI.DrawTexture (new Rect (Screen.width/2-inter*3f-5f, Screen.height-panelh-inter/2f-5f, inter*6f+10f, inter*4f+10f), texWhite);
+				GUI.color = Color.white;
+				//we draw the tools
+				int x = 0;
+				int y = 0;
+				NAToolBase ToolSelected = tools[current_tool];
+				foreach (NAToolBase t in tools)
 				{
-					//change tool
-					for (int i=0;i<tools.Length;++i)
+					bool selected = (t==ToolSelected) ? true : false;
+					Vector3 pos = new Vector3(Screen.width/2-inter*2.5f+x*inter, Screen.height-panelh+y*inter, 0);
+					bool bClicked = t.DrawBaseGUI(pos, selected);
+					if (bClicked)
 					{
-						if (t == tools[i])
+						//change tool
+						for (int i=0;i<tools.Length;++i)
 						{
-							if (current_tool == i)
+							if (t == tools[i])
 							{
-								//already selected
-								bToolPanel = false;
-							}
-							else
-							{
-								current_tool = i;
-								SetCurrentTool(tools[current_tool]);
+								if (current_tool == i)
+								{
+									//already selected
+									bToolPanel = false;
+								}
+								else
+								{
+									current_tool = i;
+									SetCurrentTool(tools[current_tool]);
+								}
 							}
 						}
 					}
+					x++;
+					if (x > 5)
+					{
+						y++;
+						x = 0;
+					}
 				}
-				x++;
-				if (x > 5)
-				{
-					y++;
-					x = 0;
-				}
-			}
 
-			
+				
+			}
 		}
     
 
@@ -1707,7 +1767,7 @@ public class App : MonoBehaviour
 			//GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
 			GUI.color = Color.white;
 			//GUI.Label(new Rect(0,0,400,30), "NewAtlantisNew Client - SAIC workshop");
-			GUI.Label(new Rect(0,0,100,30), "New Atlantis v1.05");
+			GUI.Label(new Rect(0,0,100,30), "New Atlantis v1.09");
 			GUI.Label(new Rect(Screen.width-200, 0, 200, 30), strPick);
 
 			DrawChronometer();
@@ -1935,6 +1995,7 @@ public class App : MonoBehaviour
 
     void OnDisconnectedFromServer(NetworkDisconnection info) 
 	{
+		CameraBackgroundColor();
 		LogManager.LogWarning("You have been disconnected from the server.");
 		Disconnect();
 		refreshHostList();
@@ -1987,8 +2048,6 @@ public class App : MonoBehaviour
 		GetComponent<NetworkView>().RPC("Chat", RPCMode.AllBuffered, strName, _message/*, NA.colorAvatar*/);
 	}
 	
-
-
 
 
 
@@ -2105,7 +2164,7 @@ public class App : MonoBehaviour
 
 
 
-
+	//window managing the user account
 	void WindowFunctionUser (int windowID)
 	{
 		GUI.color = Color.white;
@@ -2122,19 +2181,11 @@ public class App : MonoBehaviour
 
 		GUILayout.BeginHorizontal();
 		GUILayout.Label ("Assets");
-		//GUILayout.EndHorizontal();
 
-		/*
-		GUILayout.BeginHorizontal();
-		GUILayout.Label ("My Assets :");
-		GUILayout.EndHorizontal();
-		*/
-
-		//GUILayout.BeginHorizontal();
 		if (GUILayout.Button ("Import a new asset to my library", GUILayout.Width(200 ))) 
 		{
 			CurrentAsset = null;
-			strObjectName = "object_name";
+			strObjectName = "object_name"; //default name
 			RefreshBundles();
 			state = AppState.Asset;
 		}
@@ -2206,19 +2257,11 @@ public class App : MonoBehaviour
 						CurrentAsset = asset;
 					}
 				}
-
 				GUILayout.Label(asset.creator, GUILayout.Width(100));
-
-
 				GUI.color = Color.white;
-
-
-
-
 				GUILayout.EndHorizontal();
 			}
 		}
-		
 
 		GUILayout.EndScrollView();
 
@@ -2278,10 +2321,6 @@ public class App : MonoBehaviour
 		GUI.color = Color.white;
 		GUILayout.EndHorizontal();
 
-		/*GUILayout.BeginHorizontal();
-		if (GUILayout.Button ("")){}
-		GUILayout.EndHorizontal();
-		*/
 
 		GUILayout.BeginHorizontal();
 		GUILayout.Label ("Spaces");
@@ -2513,6 +2552,7 @@ public class App : MonoBehaviour
 						currentHost = d;
 						LogManager.Log("try to join " + currentHost.gameName + " at " + currentHost.ip + ":" + currentHost.port);
 						Network.Connect(currentHost);
+						CameraBackgroundSkybox();
 						tab = AppTab.None; //hide windows
 						bGUI = false;	
 					}
@@ -2581,8 +2621,11 @@ public class App : MonoBehaviour
 			GUILayout.Label ("[CLIENT CONNECTED]");
 		GUILayout.EndHorizontal();
 	
+
+		//GUILayout.BeginVertical(GUILayout.Width(300)); //new
+
 		GUILayout.BeginHorizontal();
-		GUILayout.Label ("ACTIVE SESSIONS");
+		GUILayout.Label ("ACTIVE SESSIONS (worldwide)");
 		if (GUILayout.Button ("Refresh", GUILayout.Width(100 ))) 
 		{
 			refreshHostList();
@@ -2689,6 +2732,7 @@ public class App : MonoBehaviour
 			
 			LogManager.Log("try to join " + currentHost.gameName + " at " + currentHost.ip + ":" + currentHost.port);
 			Network.Connect(currentHost);
+			CameraBackgroundSkybox();
 			//Network.SetReceivingEnabled(Network.player, 0, false);
 			tab = AppTab.None; //hide windows
 		}
@@ -2717,21 +2761,24 @@ public class App : MonoBehaviour
 		}
 		*/
 
-		if (GUILayout.Button ("Join Localhost", GUILayout.Width(150 )) && !Network.isClient) 
+		/*
+		if (GUILayout.Button ("JOIN Localhost", GUILayout.Width(150 )) && !Network.isClient) 
 		{
 
 			LogManager.Log("try to join 127.0.0.1:7890");
 			Network.Connect("127.0.0.1", 7890);
 			//Network.Connect(
 		}
+		*/
 		GUILayout.Space(50);
 		strIP = GUILayout.TextField(strIP);
-		if (GUILayout.Button ("Join", GUILayout.Width(100 )) && !Network.isClient) 
+		if (GUILayout.Button ("JOIN this IP", GUILayout.Width(100 )) && !Network.isClient) 
 		{
 			PlayerPrefs.SetString("ip", strIP);
 
 			LogManager.Log("try to join "+strIP+":7890");
 			Network.Connect(strIP, 7890);
+			CameraBackgroundSkybox();
 		}
 
 		GUI.color = Color.white;
@@ -2749,6 +2796,10 @@ public class App : MonoBehaviour
 		GUILayout.BeginHorizontal();
 		if (GUILayout.Button ("")){}
 		GUILayout.EndHorizontal();
+
+		//GUILayout.EndVertical(); //new
+
+		//GUILayout.BeginVertical(GUILayout.Width(300)); //new
 
 		GUILayout.BeginHorizontal();
 		GUILayout.Label ("SPACES LIBRARY");
@@ -2780,8 +2831,9 @@ public class App : MonoBehaviour
 		//=============
 		//START SERVER
 		//=============
-		if (GUILayout.Button ("start server with selected space", GUILayout.Width(200 )) && !Network.isServer) 
+		if (GUILayout.Button ("HOST server with selected space", GUILayout.Width(200 )) && !Network.isServer) 
 		{
+			CameraBackgroundSkybox();
 			StartServerWithSelectedSpace();
 		}
 
@@ -2807,6 +2859,8 @@ public class App : MonoBehaviour
 		GUILayout.EndHorizontal();
 		GUILayout.Space(20);
 		GUI.color = Color.white;
+
+		//GUILayout.EndVertical(); //new
 	}
 
 
@@ -3158,10 +3212,8 @@ public class App : MonoBehaviour
 		GUILayout.Label("Welcome to the New Atlantis. New Atlantis is a shared (multi-user) online virtual world dedicated to audio experimentation and practice. Unlike most online worlds where image is the primary concern, in New Atlantis sound comes first.");
 		GUILayout.EndHorizontal();
 
-		/*GUILayout.BeginHorizontal();
-		GUILayout.Label(texSoundHouses, GUILayout.ExpandWidth(true));//GUILayout.Width(100));
-		GUILayout.EndHorizontal();
-		*/
+
+
 		GUILayout.BeginHorizontal();
 		GUILayout.Label("Login", GUILayout.Width(100));
 		NAServer.strLogin = GUILayout.TextField (NAServer.strLogin);
@@ -3186,6 +3238,16 @@ public class App : MonoBehaviour
 			return;
 		}
 		GUILayout.EndHorizontal();
+
+		Debug.Log("offset = " +GUI.skin.window.contentOffset.x);
+		Debug.Log("border left = " +GUI.skin.window.border.left);
+		Debug.Log("margin left = " +GUI.skin.window.margin.left);
+
+		GUILayout.BeginHorizontal();
+		//float w = mGuiWinRectLogin.width-(GUI.skin.window.margin.left+GUI.skin.window.margin.right);
+		float w = mGuiWinRectLogin.width-(GUI.skin.window.border.left+GUI.skin.window.border.right);
+		GUILayout.Label(texSoundHouses, GUILayout.Width(w));//GUILayout.Width(100));
+		GUILayout.EndHorizontal();
 		//GUI.DragWindow();
 	}
 
@@ -3206,7 +3268,7 @@ public class App : MonoBehaviour
 		GUILayout.Label("Click on an object to modify it.", GUILayout.Width(200));
 		GUILayout.EndHorizontal();
 
-		scrollPosSpace = GUILayout.BeginScrollView( scrollPosSpace, GUILayout.Height( 400 ) );
+		scrollPosSpace = GUILayout.BeginScrollView( scrollPosSpace, GUILayout.Height( 600 ) );
 
         //HERE
         foreach (NAObject o in listObjects) 

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using System.IO;
 
 
 public class NAAudioRecorder : NAObjectBase 
@@ -9,13 +9,23 @@ public class NAAudioRecorder : NAObjectBase
 	public int SampleRate 		= 22050;
 	public int Duration 		= 10;
 	private bool bShowGUI		= true;
-
+	private  FileInfo[] 		info = null;
+	private static int 			index = 0;
+	public bool 				AutoLoad = false;
 	// Use this for initialization
 	void Start () 
 	{
 		if (GetComponent<AudioSource>() == null)
 		{
 			gameObject.AddComponent<AudioSource>();
+		}
+		RefreshSoundfiles();
+
+		if (AutoLoad)
+		{
+			LoadSoundFileAtIndex(index);
+			GetComponent<AudioSource>().loop = true;
+			index++;
 		}
 	}
 	
@@ -54,15 +64,10 @@ public class NAAudioRecorder : NAObjectBase
 
             GetComponent<AudioSource>().clip = clip;
 
-			
-
             //clamp
-
-
 			SendAudioDataToServer();
-            
 
-
+			UpdateWaveform();
 		}
 		else
 		{
@@ -78,6 +83,19 @@ public class NAAudioRecorder : NAObjectBase
 			ns.SyncAudioSource();
 		}
 	}
+
+
+	void UpdateWaveform()
+	{
+		AudioSource source = GetComponent<AudioSource>();
+		Texture2D texWaveform = AudioUtils.ComputeWaveForm(source.clip, 512,256);
+		Renderer renderer = gameObject.GetComponent<Renderer>();
+		if (renderer != null)
+		{
+			renderer.material.mainTexture = texWaveform;
+		}
+	}
+
 
 	void SendAudioDataToServer()
 	{
@@ -185,6 +203,57 @@ public class NAAudioRecorder : NAObjectBase
 		{
 			GetComponent<AudioSource>().loop = !GetComponent<AudioSource>().loop;
 		}
+		GUI.color = Color.white;
+		if (GUI.Button (new Rect(x,y+60,60,20), "rand"))
+		{
+			float[] src = GetAudioData();
+			DSP.AddNoise(src, 0.001f);
+			UpdateAudioData(src);
+		}
+
+		if (GUI.Button (new Rect(x+60,y+60,60,20), "rev"))
+		{
+			float[] src = GetAudioData();
+			DSP.Reverse(src);
+			UpdateAudioData(src);
+		}
+
+		if (GUI.Button (new Rect(x+120,y+60,60,20), "lp"))
+		{
+			float[] src = GetAudioData();
+			DSP.PoorManFIR(src);
+			UpdateAudioData(src);
+		}
+
+
+		if (GUI.Button (new Rect(x+180,y+60,60,20), "load"))
+		{
+			string strFile = "boulez_end.wav";
+			//string strFile = "synths/beats_at_110_bpm_matching/(110) Declare War.wav";
+			byte[] data = System.IO.File.ReadAllBytes("SoundFiles/"+strFile);
+			AudioSource audio = GetComponent<AudioSource>();
+			audio.clip = WavUtility.ToAudioClip(data, 0, "wav");
+			UpdateWaveform();
+			SendAudioDataToServer();
+		}
+
+		if (info != null)
+		{
+			foreach (FileInfo f in info) 
+			{
+				GUILayout.BeginHorizontal();
+				if (GUILayout.Button(f.Name, GUILayout.Width(200)))
+				{
+					string strFile = f.Name;
+					byte[] data = System.IO.File.ReadAllBytes("SoundFiles/"+strFile);
+					AudioSource audio = GetComponent<AudioSource>();
+					audio.clip = WavUtility.ToAudioClip(data, 0, "wav");
+					UpdateWaveform();
+					SendAudioDataToServer();
+				}
+				GUILayout.EndHorizontal();
+			}
+		}
 
 		/*
 		if (GUI.Button (new Rect(x+200,y+30,50,30), "sync"))
@@ -195,7 +264,50 @@ public class NAAudioRecorder : NAObjectBase
 
 	}
 
+	void LoadSoundFileAtIndex(int i)
+	{
+		i = i%info.Length;
+		FileInfo f = info[i];
+		string strFile = f.Name;
+		byte[] data = System.IO.File.ReadAllBytes("SoundFiles/"+strFile);
+		AudioSource audio = GetComponent<AudioSource>();
+		audio.clip = WavUtility.ToAudioClip(data, 0, "wav");
+		UpdateWaveform();
+		SendAudioDataToServer();
+	}
 
+
+	float[] GetAudioData()
+	{
+		AudioSource audio = GetComponent<AudioSource>();
+		float[] src = new float[audio.clip.samples];
+		audio.clip.GetData(src, 0);
+		return src;
+	}
+
+	void UpdateAudioData(float[] data)
+	{
+		AudioSource audio = GetComponent<AudioSource>();
+		audio.clip.SetData(data, 0);
+		UpdateWaveform();
+		SendAudioDataToServer();
+	}
+
+	public  void RefreshSoundfiles()
+	{
+		try
+		{
+			#if UNITY_WEBPLAYER
+			#else
+			DirectoryInfo dir = new DirectoryInfo("SoundFiles");
+			info = dir.GetFiles("*.*");
+			#endif
+		}
+		catch (System.Exception e)
+		{
+
+		}
+	}
 
 
 

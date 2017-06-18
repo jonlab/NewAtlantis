@@ -9,14 +9,19 @@ public class NAAudioStream : MonoBehaviour {
 	//private string url = "http://locus.creacast.com:9001/wave_farm_pond_station_new_york.mp3"; //not supported
 	//private string url = "http://locus.creacast.com:9001/mrs_splitsoundscape1.ogg";
 	//private string url = "http://locus.creacast.com:9001/london_camberwell.ogg";
-	private string url = "http://ia902707.us.archive.org/11/items/NearlyCompleteHPLovecraftCollection/01_The_Whisperer_in_Darkness_01.mp3";
+	//private string url = "http://ia902707.us.archive.org/11/items/NearlyCompleteHPLovecraftCollection/01_The_Whisperer_in_Darkness_01.mp3";
+	//private string url = "http://locus.creacast.com:9001/suffolk_coast_Walberswick.ogg";
+	private string url = "http://locus.creacast.com:9001/amsterdam_Patapoe.mp3";
+
 	float t = 0;
 	bool playing = false;
 	// Use this for initialization
 	void Start () 
 	{
+		Debug.Log("try to load from " + url);
 		//StartCoroutine(DownloadAndPlay("http://api.ispeech.org/api/rest?apikey=...&action=convert&voice=eurspanishfemale&text=Hola+que+tal"));  
-		StartCoroutine(DownloadAndPlay(url));  
+		//StartCoroutine(DownloadAndPlay(url));  
+		Download();
 		/*www = new WWW(url);
 		yield www;
 
@@ -39,21 +44,37 @@ public class NAAudioStream : MonoBehaviour {
 	IEnumerator DownloadAndPlay(string url)
 	{
 		www = new WWW(url);
-		yield return www;
 		AudioSource audio = GetComponent<AudioSource>();
+		audio.clip = www.GetAudioClip(false, true);
+		yield return www;
+
 		Debug.Log ("GetAudioClip");
-		audio.clip = www.GetAudioClip(false, true);//, AudioType.MPEG);
+		//audio.clip = www.GetAudioClip(false, true);//, AudioType.MPEG);
 		audio.Play();
+		Debug.Log("DownloadAndPlay end");
+	}
+
+
+	void Download()
+	{
+		www = new WWW(url);
+		AudioSource source = GetComponent<AudioSource>();
+		source.clip = www.GetAudioClip(false, true);
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
-		Debug.Log("error=" + www.error);
+		Debug.Log ("progress=" + www.progress);
+		AudioSource source = GetComponent<AudioSource>();
+		if (!source.isPlaying && source.clip.isReadyToPlay)
+			source.Play();
+		/*Debug.Log("error=" + www.error);
 		AudioSource audio = GetComponent<AudioSource>();
 		Debug.Log("audio playing=" + audio.isPlaying);
 		if (!audio.isPlaying)
 			audio.Play ();
+			*/
 		
 		//Debug.Log ("bytes=" + www.bytesDownloaded);
 		/*

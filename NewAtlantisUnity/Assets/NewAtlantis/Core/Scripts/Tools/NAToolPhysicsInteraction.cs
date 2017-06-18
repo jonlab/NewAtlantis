@@ -15,7 +15,7 @@ public class NAToolPhysicsInteraction : NAToolBase {
 	public PhysicsInteraction interaction = PhysicsInteraction.Push;
 	// Use this for initialization
 	private GameObject current = null;
-
+	private Quaternion current_rotation = Quaternion.identity;
 	private Vector3 dir;
 	void Start () 
 	{
@@ -25,6 +25,22 @@ public class NAToolPhysicsInteraction : NAToolBase {
 	// Update is called once per frame
 	void Update () 
 	{
+		Debug.Log("current="+current);
+		if (current != null)
+		{
+			//Vector3 newposition = transform.position+dir;
+			Vector3 newposition = transform.position+transform.forward*dir.magnitude;
+
+
+			Vector3 velocity = (newposition-current.transform.position)/Time.deltaTime;
+			current.transform.position = newposition;
+			Rigidbody rb = current.GetComponent<Rigidbody>();
+			if (rb != null)
+			{
+				rb.velocity = velocity;
+			}
+
+		}
 	
 	}
 
@@ -74,12 +90,22 @@ public class NAToolPhysicsInteraction : NAToolBase {
 	{
 		if (interaction == PhysicsInteraction.Drag)
 		{
-			RaycastHit hit;
-			GameObject go = PickObject(new Ray(transform.position, transform.forward), out hit);
-			if (go != null)
+			if (current == null)
 			{
-				current = go;
-				dir = go.transform.position-transform.position;
+				NA.app.goReticle.GetComponent<Renderer>().material.SetColor("_TintColor", Color.red);
+				RaycastHit hit;
+				GameObject go = PickObject(new Ray(transform.position, transform.forward), out hit);
+				if (go != null)
+				{
+					current = go;
+					dir = go.transform.position-transform.position; //offset
+					current_rotation = transform.rotation;
+				}
+			}
+			else
+			{
+				NA.app.goReticle.GetComponent<Renderer>().material.SetColor("_TintColor", Color.white);
+				current = null;
 			}
 		}
 
@@ -87,7 +113,7 @@ public class NAToolPhysicsInteraction : NAToolBase {
 
 	public override void Maintain() 
 	{
-		if (current != null)
+		/*if (current != null)
 		{
 			Vector3 newposition = transform.position+dir;
 			Vector3 velocity = (newposition-current.transform.position)/Time.deltaTime;
@@ -98,11 +124,12 @@ public class NAToolPhysicsInteraction : NAToolBase {
 				rb.velocity = velocity;
 			}
 		}
+		*/
 	}
 
 	public override void Release() 
 	{
-		current = null;
+		//current = null;
 
 	}
 

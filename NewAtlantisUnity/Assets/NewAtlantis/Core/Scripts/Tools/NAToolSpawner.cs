@@ -145,13 +145,33 @@ public class NAToolSpawner : NAToolBase {
             src.spatialBlend = 1f;
             clone.AddComponent<NAPhysicsAudioSource>();
 			clone.AddComponent<NAPlayOnCollide>();
-            if (name != "dopplertrunk") { clone.AddComponent<NAAudioRecorder>(); } else { clone.AddComponent<NAAudioDopplerRecorder>(); }
+            if (name != "dopplertrunk") 
+			{ 
+				NAAudioRecorder trunk = clone.AddComponent<NAAudioRecorder>(); 
+				if (name.Contains("auto"))
+				{
+					//auto trunk loads automatically
+					trunk.AutoLoad = true;
+				}
+			} 
+			else 
+			{ 
+				clone.AddComponent<NAAudioDopplerRecorder>(); 
+			}
 			NA.DecorateAudioSource(src); //FIXME
+			clone.AddComponent<NAPlayOnMidi>();
 			clone.AddComponent<NetworkSync>(); //FIXME
+
+
 		}
 		else if (name == "cube")
 		{
 			clone = GameObject.CreatePrimitive(PrimitiveType.Cube);
+		}
+		else if (name == "lmacube")
+		{
+			clone = GameObject.CreatePrimitive(PrimitiveType.Cube);
+			clone.AddComponent<NAPlayImpactOnCollide>();
 		}
 
 		else if (name == "CubeColor")

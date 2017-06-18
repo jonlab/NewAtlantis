@@ -166,7 +166,7 @@ public class NAObjectBase : MonoBehaviour {
 				ns = gameObject.GetComponentInParent<NetworkSync>();
 			if (ns == null)
 			{
-				LogManager.LogError("NAObjectBase Play no NetworkSync found !");
+				LogManager.LogWarning("NAObjectBase Play no NetworkSync found !");
 			}
 			if (ns)
 			{
@@ -187,7 +187,7 @@ public class NAObjectBase : MonoBehaviour {
 				ns = gameObject.GetComponentInParent<NetworkSync>();
 			if (ns == null)
 			{
-				LogManager.LogError("NAObjectBase Stop no NetworkSync found !");
+				LogManager.LogWarning("NAObjectBase Stop no NetworkSync found !");
 			}
 			if (ns)
 			{

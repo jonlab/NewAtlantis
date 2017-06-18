@@ -8,6 +8,7 @@ public class FlyCamera : MonoBehaviour {
 	private bool bGravity = false;
 
 	public float timerFly = 0;
+	public bool JumpEnabled = true;
 	// Use this for initialization
 	void Start () 
 	{
@@ -76,7 +77,7 @@ public class FlyCamera : MonoBehaviour {
 		}
 
 
-		if (NAInput.GetControl(NAControl.Jump) && x == 0 && y == 0 )
+		if (JumpEnabled && NAInput.GetControl(NAControl.Jump) && x == 0 && y == 0 )
 		{
 			timerFly += Time.deltaTime;
 
@@ -112,7 +113,7 @@ public class FlyCamera : MonoBehaviour {
 			//transform.position += transform.right * joy_speed * dt*x;
 			//transform.position += transform.forward * joy_speed * dt*y;
 
-			if (jump)
+			if (JumpEnabled && jump)
 			{
 				//question do use world up or local up ?
 				//mix 
