@@ -50,7 +50,7 @@ public class TRS_Gizmo : MonoBehaviour {
 		gizmoChild.SetActive (true);
 		gizmoCamera.SetActive (true);
 		gizmoScript.startGizmoAttachment (o);
-		Transform mainCamera = transform.FindChild ("Main Camera");
+		Transform mainCamera = transform.Find ("Main Camera");
 
 		ScaleCamera scale = (ScaleCamera)mainCamera.GetComponent (typeof(ScaleCamera));
 		RotateCamera rotate = (RotateCamera)mainCamera.GetComponent (typeof(RotateCamera));

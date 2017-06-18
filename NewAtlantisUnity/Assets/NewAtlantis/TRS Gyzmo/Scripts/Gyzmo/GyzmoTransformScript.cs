@@ -121,8 +121,8 @@ public class GyzmoTransformScript : MonoBehaviour {
 
 		//transform.GetChild (9).gameObject.SetActive (true);
 		//transform.GetChild (10).gameObject.SetActive (true);
-		transform.FindChild ("Modes").gameObject.SetActive (true);
-		transform.FindChild ("Selector").gameObject.SetActive (true);
+		transform.Find ("Modes").gameObject.SetActive (true);
+		transform.Find ("Selector").gameObject.SetActive (true);
 
       //  if (parentNode != null) Destroy(parentNode);
 
