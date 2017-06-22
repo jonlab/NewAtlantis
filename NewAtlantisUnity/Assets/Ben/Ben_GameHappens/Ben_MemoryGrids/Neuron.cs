@@ -79,9 +79,8 @@ public class Neuron : MonoBehaviour {
 	{
 		if (!NA.isClient())
 		{
-			if (other.gameObject.tag == "Player")
+			//if (other.gameObject.tag == "Player")
 			{
-
 				// trigger other nearby neurons through synapses
 				Fire(0.9f);
 			}

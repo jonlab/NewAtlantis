@@ -54,18 +54,17 @@ public class SoundNodeWithDelay : MonoBehaviour {
 		{
 			Invoke("Bang",eventTime-timeCounter);
 		}
-
 	}
+
 	void OnTriggerEnter(Collider other) 
 	{
 		Debug.Log("OnTriggerEnter");
 		if (!NA.isClient())
 		{
-			if (other.gameObject.tag == "Player")
+			//if (other.gameObject.tag == "Player")
 			{
 				// play sound
 				// remember the timing delay, and schedule it to play again
-
 				Bang();
 				eventTime = timeCounter;
 			}
