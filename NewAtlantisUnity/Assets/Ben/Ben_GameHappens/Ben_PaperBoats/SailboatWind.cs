@@ -56,7 +56,7 @@ public class SailboatWind : MonoBehaviour
 
 		if (!NA.isClient())
 		{
-			if (other.gameObject.tag == "Player")
+			//if (other.gameObject.tag == "Player")
 			{
 				GameObject go = other.gameObject;
 				Vector3 windVec = transform.position - go.transform.position;
