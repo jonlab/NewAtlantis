@@ -21,7 +21,7 @@ public static class NA
 	public static Space PreviousSpace = null;
 	public static Font[] fonts = new Font[4];
 
-	public static SyncMode syncMode = SyncMode.NoInDepthSync;
+	public static SyncMode syncMode = SyncMode.RigibodiesAndAudioSources;
 
     public static float JoystickSmoothing = 0.92f;
 

@@ -260,22 +260,25 @@ public class NAObject
 						{
 							listSync.Add(rb.gameObject);
 						}
+						*/
 						AudioSource[] audios = go.GetComponentsInChildren<AudioSource>();
 						foreach (AudioSource audio in audios)
 						{
 							listSync.Add(audio.gameObject);
 						}
-						*/
 
-						Collider[] colliders = go.GetComponentsInChildren<Collider>();
+
+						/*Collider[] colliders = go.GetComponentsInChildren<Collider>();
 						foreach (Collider collider in colliders)
 						{
 							listSync.Add(collider.gameObject);
-						}
+						}*/
 					}
 
 					if (NA.isServer())
 					{
+						//listSync is the list containing the objects to sync
+						//we synchronize the wanted objects on the server
 						foreach (GameObject o in listSync)
 						{
 							string path = NA.GetGameObjectPath(o.transform);
