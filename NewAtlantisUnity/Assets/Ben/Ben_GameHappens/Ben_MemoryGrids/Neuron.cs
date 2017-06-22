@@ -33,7 +33,7 @@ public class Neuron : MonoBehaviour {
 	List<Synapse> synapses;
 
 	Vector3 baseScale; 
-	GridSpawner gridSpawner;
+	NeuronCollection neuronCollection;
 	public float distanceThreshold = 7.0f;
 
 	 Instrument instrument;
@@ -47,13 +47,14 @@ public class Neuron : MonoBehaviour {
 	void Start () {
 		baseScale = transform.localScale;
 		synapses = new List<Synapse>();
-		gridSpawner = GameObject.FindObjectOfType<GridSpawner>();
+		neuronCollection = GameObject.FindObjectOfType<NeuronCollection> ();
+
 		instrument = GetComponent<Instrument> ();
 		audioSource = GetComponent<AudioSource> ();
 
 		if (!NA.isClient())
 		{
-			foreach (GameObject g in gridSpawner.nodes)
+			foreach (GameObject g in neuronCollection.Nodes())
 			{
 				float d = Vector3.Distance (g.transform.position, transform.position);
 				if (d < distanceThreshold)
