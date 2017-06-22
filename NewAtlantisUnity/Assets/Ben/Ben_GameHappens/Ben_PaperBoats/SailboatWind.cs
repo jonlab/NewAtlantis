@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SailboatWind : MonoBehaviour {
+public class SailboatWind : MonoBehaviour 
+{
 
 	public float windStrength = 10.0f;
 	public float turningSpeed = 1.0f;
@@ -19,17 +20,20 @@ public class SailboatWind : MonoBehaviour {
 	// add in some kind of up/down wave motion
 	void FixedUpdate() {
 		// bobbing
+		if (!NA.isClient())
+		{
 
-		float upDown = Mathf.Sin(Time.time);
+			float upDown = Mathf.Sin(Time.time);
 
-		rb.AddForce(new Vector3(0,upDown*waveMagnitude,0),ForceMode.Force);
+			rb.AddForce(new Vector3(0,upDown*waveMagnitude,0),ForceMode.Force);
 
-		// update turning 
+			// update turning 
 
-		float step = turningSpeed * Time.deltaTime;
-        Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDirection, step, 0.0F);
-        Debug.DrawRay(transform.position, newDir, Color.red);
-        transform.rotation = Quaternion.LookRotation(newDir);	
+			float step = turningSpeed * Time.deltaTime;
+	        Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDirection, step, 0.0F);
+	        Debug.DrawRay(transform.position, newDir, Color.red);
+	        transform.rotation = Quaternion.LookRotation(newDir);
+		}
 	}
 	void Update () {
 		UpdateAudioVolume ();
@@ -49,16 +53,20 @@ public class SailboatWind : MonoBehaviour {
 
 
 	void OnTriggerEnter(Collider other) {
-		if (other.gameObject.tag == "Player")
-		{
-			GameObject go = other.gameObject;
-			Vector3 windVec = transform.position - go.transform.position;
-			windVec.y=0;
-			windVec.Normalize();
-			Rigidbody rb = go.GetComponent<Rigidbody>();
 
-	        ApplyWind(windVec);
-	    }
+		if (!NA.isClient())
+		{
+			if (other.gameObject.tag == "Player")
+			{
+				GameObject go = other.gameObject;
+				Vector3 windVec = transform.position - go.transform.position;
+				windVec.y=0;
+				windVec.Normalize();
+				Rigidbody rb = go.GetComponent<Rigidbody>();
+
+		        ApplyWind(windVec);
+		    }
+		}
     }
 
 	// control audio volume by velocity

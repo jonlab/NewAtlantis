@@ -50,15 +50,19 @@ public class Neuron : MonoBehaviour {
 		gridSpawner = GameObject.FindObjectOfType<GridSpawner>();
 		instrument = GetComponent<Instrument> ();
 		audioSource = GetComponent<AudioSource> ();
-		foreach (GameObject g in gridSpawner.nodes)
-		{
-			float d = Vector3.Distance (g.transform.position, transform.position);
-			if (d < distanceThreshold)
-			{
-				Synapse s = new Synapse (this, g.GetComponent<Neuron>(), 0.2f);
-				synapses.Add(s);
-			}
 
+		if (!NA.isClient())
+		{
+			foreach (GameObject g in gridSpawner.nodes)
+			{
+				float d = Vector3.Distance (g.transform.position, transform.position);
+				if (d < distanceThreshold)
+				{
+					Synapse s = new Synapse (this, g.GetComponent<Neuron>(), 0.2f);
+					synapses.Add(s);
+				}
+
+			}
 		}
 
 	}
@@ -71,23 +75,48 @@ public class Neuron : MonoBehaviour {
 	{
 
 	}
-	void OnTriggerEnter(Collider other) {
-		if (other.gameObject.tag == "Player")
+	void OnTriggerEnter(Collider other) 
+	{
+		if (!NA.isClient())
 		{
+			if (other.gameObject.tag == "Player")
+			{
 
-			// trigger other nearby neurons through synapses
-			Fire(0.9f);
-
+				// trigger other nearby neurons through synapses
+				Fire(0.9f);
+			}
 		}
 	}
 
 
+
+
+
+
+	[RPC]
+	public void Play(float signal)
+	{
+		if (instrument != null)
+		{
+			audioSource.volume=signal;
+			instrument.PlayNote(midiNote);
+
+		}
+		StartCoroutine(DoScaleAnimation(signal));
+	}
+
+
+
 	public void Fire(float signal)
 	{
+		//only on server
 		// play sound
 		// play sound
-		audioSource.volume=signal;
-		instrument.PlayNote(midiNote);
+		if (NA.isServer())
+		{
+			GetComponent<NetworkView>().RPC("Play", RPCMode.Others, signal);
+		}
+		Play(signal);
 
 		if (synapses.Count>0)
 			{

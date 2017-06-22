@@ -19,21 +19,31 @@ public class SoundNodeWithDelay : MonoBehaviour {
 	}
 
 	// Use this for initialization
-	void Start () {
-		baseScale = transform.localScale;
-		timeCounter=Time.time;
-		instrument = GetComponent<Instrument> ();
-		restartLoop();
+	void Start () 
+	{
+		Debug.Log("start");
+		if (!NA.isClient())
+		{
+			baseScale = transform.localScale;
+			timeCounter=Time.time;
+			instrument = GetComponent<Instrument> ();
+			Debug.Log("instrument =" + instrument);
+			restartLoop();
+		}
 	}
 
 
 	// Update is called once per frame
-	void Update () {
-		timeCounter+=Time.deltaTime;
-
-		if (timeCounter > loopTime)
+	void Update () 
+	{
+		if (!NA.isClient())
 		{
-			restartLoop();
+			timeCounter+=Time.deltaTime;
+
+			if (timeCounter > loopTime)
+			{
+				restartLoop();
+			}
 		}
 	}
 
@@ -46,14 +56,19 @@ public class SoundNodeWithDelay : MonoBehaviour {
 		}
 
 	}
-	void OnTriggerEnter(Collider other) {
-		if (other.gameObject.tag == "Player")
+	void OnTriggerEnter(Collider other) 
+	{
+		Debug.Log("OnTriggerEnter");
+		if (!NA.isClient())
 		{
-			// play sound
-			// remember the timing delay, and schedule it to play again
+			if (other.gameObject.tag == "Player")
+			{
+				// play sound
+				// remember the timing delay, and schedule it to play again
 
-			Bang();
-			eventTime = timeCounter;
+				Bang();
+				eventTime = timeCounter;
+			}
 
 		}
 	}
@@ -61,7 +76,22 @@ public class SoundNodeWithDelay : MonoBehaviour {
 
 	public void Bang()
 	{
-		instrument.PlayNote(midiNote);
+		//Debug.Log("NA.isServer() = " + NA.isServer());
+		if (NA.isServer())
+		{
+			GetComponent<NetworkView>().RPC("Play", RPCMode.Others);
+		}
+		Play(); //server and standalone
+	}
+
+	[RPC]
+	public void Play()
+	{
+		Debug.Log("instrument=" + instrument);
+		if (instrument != null)
+		{
+			instrument.PlayNote(midiNote);
+		}
 		StartCoroutine(DoScaleAnimation());
 	}
 
