@@ -58,6 +58,11 @@ public class NANetwork : MonoBehaviour {
 
 		clone.name = name;
 		Collider.Destroy(clone.GetComponent<Collider>());
+		//clone.GetComponent<Collider>().isTrigger = true;
+
+		SphereCollider sc = clone.AddComponent<SphereCollider>();
+		sc.isTrigger = true;
+
 		NetworkView nView = clone.AddComponent<NetworkView>();
 		nView.viewID = viewID;
 

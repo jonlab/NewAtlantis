@@ -285,7 +285,7 @@ public static class NA
 
 	public static void PatchAllMaterials(GameObject root)
 	{
-		
+		Debug.Log("patch all materials");
 		Renderer[] renderers = root.GetComponentsInChildren<Renderer>();
 		foreach (Renderer r in renderers)
 		{
@@ -305,6 +305,11 @@ public static class NA
 						if (m.shader.name == "")
 						{
 							s = Shader.Find("Standard");
+						}
+
+						if (m.name.Contains("Water"))
+						{
+							s = Shader.Find("FX/Water");
 						}
 						if (s != null)
 						{
@@ -400,7 +405,7 @@ public static class NA
 						(r.sharedMaterial.shader.name == "Standard") ||
 						(r.sharedMaterial.shader.name == "Diffuse") ||
 						 (r.sharedMaterial.shader.name == "Specular") ||
-						(r.sharedMaterial.shader.name == "FX/Water") ||
+						//(r.sharedMaterial.shader.name == "FX/Water") ||
 						(r.sharedMaterial.shader.name.Contains("Custom")) ||
 						(r.sharedMaterial.shader.name.Contains("Particles")) ||
 							(r.sharedMaterial.shader.name.Contains("Legacy"))

@@ -105,7 +105,7 @@ public class App : MonoBehaviour
 	//Vector3				colorAvatar = Vector3.zero;
 	string				strPick = "";
 	private bool				bStartPopup = true;
-	private string 				strIP = "88.178.228.172";
+	private string 				strIP = "92.223.149.93"; //
 	private string 				strFile = "DummyObject.unity3d";
 
 	GameObject goMainLight = null;
@@ -148,7 +148,8 @@ public class App : MonoBehaviour
 	string strObjectName = "object_name";
 
 	static Vector2 WindowSize 	= new Vector2(1024-10, 768-70);
-	static Vector2 WindowSizePerf 	= new Vector2(1024-10, 1080-70);
+	//static Vector2 WindowSizePerf 	= new Vector2(1024-10, 1080-70);
+	static Vector2 WindowSizePerf 	= new Vector2(1024-10, 768-70);
 	//Rect mGuiWinRectChat 		= new Rect(Screen.width-300, 200, 300, Screen.height-200);
 	Rect mGuiWinRectNetwork 	= new Rect(Screen.width/2-200, Screen.height/2-250, 400, 500);
 	Rect mGuiWinRectScene 		= new Rect(Screen.width/2-WindowSize.x/2, Screen.height/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
@@ -931,7 +932,7 @@ public class App : MonoBehaviour
 			//touche menu
 			if (NAInput.GetControlDown(NAControl.Menu))
 			{
-				NA.PatchAllMaterials(goRootSpace);
+				//NA.PatchAllMaterials(goRootSpace); //NEW
 				bToolPanel = false;
 				bGUI = !bGUI;
 				if (bGUI)
@@ -2398,7 +2399,7 @@ public class App : MonoBehaviour
 			bool bShow = userfilter && (tabSpaces == TypeTab.Mine && space.creator == NAServer.strLogin || tabSpaces == TypeTab.SharedWithMe && space.type == "public" && space.creator != NAServer.strLogin && space.objectCount > 0);
 			if (config == "server")
 			{
-				if (space.texture != null)
+				/*if (space.texture != null)
 				{
 					bShow = true;
 				}
@@ -2406,6 +2407,7 @@ public class App : MonoBehaviour
 				{
 					bShow = false;
 				}
+				*/
 			}
 
 			if ((bShow || !userfilter /*&& space.objectCount > 0*/ ) && (SpaceFilter == "" || space.name.Contains(SpaceFilter) || space.creator.Contains (SpaceFilter)))
@@ -2583,7 +2585,8 @@ public class App : MonoBehaviour
 		GUILayout.EndHorizontal();
 
 		GUISpacesHeader();
-		scrollPosLobbySpaces = GUILayout.BeginScrollView( scrollPosLobbySpaces, GUILayout.Height( 100+500+312 ) ); //150
+		//scrollPosLobbySpaces = GUILayout.BeginScrollView( scrollPosLobbySpaces, GUILayout.Height( 100+500+312 ) ); //150
+		scrollPosLobbySpaces = GUILayout.BeginScrollView( scrollPosLobbySpaces, GUILayout.Height( 100+500 ) ); //150
 		GUISpaces(true);
 		GUILayout.EndScrollView();
 			
@@ -3239,15 +3242,16 @@ public class App : MonoBehaviour
 		}
 		GUILayout.EndHorizontal();
 
-		Debug.Log("offset = " +GUI.skin.window.contentOffset.x);
-		Debug.Log("border left = " +GUI.skin.window.border.left);
-		Debug.Log("margin left = " +GUI.skin.window.margin.left);
+		//Debug.Log("offset = " +GUI.skin.window.contentOffset.x);
+		//Debug.Log("border left = " +GUI.skin.window.border.left);
+		//Debug.Log("margin left = " +GUI.skin.window.margin.left);
 
-		GUILayout.BeginHorizontal();
+		/*GUILayout.BeginHorizontal();
 		//float w = mGuiWinRectLogin.width-(GUI.skin.window.margin.left+GUI.skin.window.margin.right);
 		float w = mGuiWinRectLogin.width-(GUI.skin.window.border.left+GUI.skin.window.border.right);
 		GUILayout.Label(texSoundHouses, GUILayout.Width(w));//GUILayout.Width(100));
 		GUILayout.EndHorizontal();
+		*/
 		//GUI.DragWindow();
 	}
 
@@ -3601,8 +3605,12 @@ public class App : MonoBehaviour
 
 	void OnFailedToConnect(NetworkConnectionError  err)
 	{
-		LogManager.LogWarning("Failed to connect : " + err);
+		
+		LogManager.LogWarning("Failed to connect : " + err );
+		//LogManager.LogError("The server does not appear to be reachable. Please contact it or come back later if you are sure that a New Atlantis server is running there.");
 	}
+
+
 	[RPC]
 	void ResetViewerPosition()
 	{
