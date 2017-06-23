@@ -22,11 +22,12 @@ public class SoundNodeWithDelay : MonoBehaviour {
 	void Start () 
 	{
 		Debug.Log("start");
+		instrument = GetComponent<Instrument> ();
 		if (!NA.isClient())
 		{
 			baseScale = transform.localScale;
 			timeCounter=Time.time;
-			instrument = GetComponent<Instrument> ();
+
 			Debug.Log("instrument =" + instrument);
 			restartLoop();
 		}
@@ -78,6 +79,7 @@ public class SoundNodeWithDelay : MonoBehaviour {
 		//Debug.Log("NA.isServer() = " + NA.isServer());
 		if (NA.isServer())
 		{
+			StartCoroutine(DoScaleAnimation()); //only on server, animation will be synced with standard Transform sync
 			GetComponent<NetworkView>().RPC("Play", RPCMode.Others);
 		}
 		Play(); //server and standalone
@@ -89,9 +91,10 @@ public class SoundNodeWithDelay : MonoBehaviour {
 		Debug.Log("instrument=" + instrument);
 		if (instrument != null)
 		{
+			LogManager.Log("play " + midiNote);
 			instrument.PlayNote(midiNote);
 		}
-		StartCoroutine(DoScaleAnimation());
+
 	}
 
 	IEnumerator DoScaleAnimation()

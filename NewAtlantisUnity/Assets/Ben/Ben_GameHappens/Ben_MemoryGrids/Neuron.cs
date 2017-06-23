@@ -96,13 +96,13 @@ public class Neuron : MonoBehaviour {
 	[RPC]
 	public void Play(float signal)
 	{
+		LogManager.Log("neuron play");
 		if (instrument != null)
 		{
 			audioSource.volume=signal;
 			instrument.PlayNote(midiNote);
 
 		}
-		StartCoroutine(DoScaleAnimation(signal));
 	}
 
 
@@ -119,11 +119,10 @@ public class Neuron : MonoBehaviour {
 		Play(signal);
 
 		if (synapses.Count>0)
-			{
+		{
 			int r = Random.Range(0, synapses.Count);
 			StartCoroutine ("FireSynapse", signal);
-			}
-
+		}
 		StartCoroutine(DoScaleAnimation(signal));
 	}
 
