@@ -183,7 +183,10 @@ public class NANetwork : MonoBehaviour {
 			}
 		}
 		//instead of cloning the root, we clone the first child (for synchronization purpose on physicallized objects)
-		if (model.transform.childCount > 0)
+		//this is where we have an issue (Island animals vs Coffe pot)
+		NAAnimalBehavior animal = model.GetComponentInChildren<NAAnimalBehavior>();
+
+		if (model.transform.childCount > 0 && animal)
 		{
 			model = model.transform.GetChild(0).gameObject;
 		}
@@ -193,7 +196,7 @@ public class NANetwork : MonoBehaviour {
 		LogManager.Log("clone " + name);
 
 		//reset position of main child
-		if (clone.transform.childCount>0)
+		if (clone.transform.childCount>0 && animal)
 		{
 			clone.transform.GetChild(0).gameObject.transform.localPosition = Vector3.zero;
 		}	

@@ -1603,8 +1603,8 @@ public class App : MonoBehaviour
 		bool l1 = NAInput.GetControl(NAControl.PreviousTool) || Input.GetKey(KeyCode.LeftShift);
 		bool r1 = NAInput.GetControl(NAControl.NextTool) || Input.GetKey(KeyCode.RightShift);
 
-
-		if (state == AppState.Game)
+		//Debug.Log("state=" + state);
+		if (state == AppState.Game || NA.isClient())
 		{
 			//gestion du panel à la souris avec un dummy button
 			if (GUI.Button(new Rect((Screen.width/2-32),(Screen.height-64),64,64), "", new GUIStyle()))
@@ -2512,6 +2512,7 @@ public class App : MonoBehaviour
 			LogManager.Log("try to join Game Happens at 92.223.149.93:7890");
 			Network.Connect("92.223.149.93", 7890);
 			CameraBackgroundSkybox();
+			state = AppState.Game;
 		}
 
 		if (GUILayout.Button ("Join Game Happens (local)", GUILayout.Width(250 ), GUILayout.Height(100 )) && !Network.isClient) 
@@ -2521,6 +2522,7 @@ public class App : MonoBehaviour
 			Network.Connect("10.11.11.254", 7890);
 			//10.11.11.254 dans skype, 252 dans le mail
 			CameraBackgroundSkybox();
+			state = AppState.Game;
 		}
 
 
@@ -2532,6 +2534,7 @@ public class App : MonoBehaviour
 			LogManager.Log("try to join "+strIP+":7890");
 			Network.Connect(strIP, 7890);
 			CameraBackgroundSkybox();
+			state = AppState.Game;
 		}
 
 		GUILayout.EndHorizontal();
@@ -2626,6 +2629,7 @@ public class App : MonoBehaviour
 						LogManager.Log("try to join " + currentHost.gameName + " at " + currentHost.ip + ":" + currentHost.port);
 						Network.Connect(currentHost);
 						CameraBackgroundSkybox();
+						state = AppState.Game;
 						tab = AppTab.None; //hide windows
 						bGUI = false;	
 					}
@@ -2853,6 +2857,7 @@ public class App : MonoBehaviour
 			LogManager.Log("try to join "+strIP+":7890");
 			Network.Connect(strIP, 7890);
 			CameraBackgroundSkybox();
+			state = AppState.Game;
 		}
 
 		GUI.color = Color.white;
