@@ -11,7 +11,12 @@ public class NASkyBox : MonoBehaviour
 		previous = RenderSettings.skybox; //backup previous skybox
 		RenderSettings.skybox = skybox;
 		//patch
-		skybox.shader = Shader.Find(skybox.shader.name);
+		//skybox.shader = Shader.Find(skybox.shader.name);
+		//patch
+		skybox.shader = Shader.Find("Skybox/6 Sided");
+
+		//if (skybox.shader.name == null)
+		//	skybox.shader = Shader.Find("Skybox/6 Sided");
 	
 	}
 	

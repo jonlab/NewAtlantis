@@ -96,6 +96,7 @@ public class NAAudioSynthLooper : NAObjectBase
 	}
 
 
+
 	public void Generate ()
 	{
 		AudioSource audio = GetComponent<AudioSource>();

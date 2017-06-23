@@ -311,6 +311,18 @@ public static class NA
 						{
 							s = Shader.Find("FX/Water");
 						}
+						else if (m.name.Contains("Skybox"))
+						{
+							s = Shader.Find("Skybox/6 Sided");
+						}
+						else if (m.name.Contains("Particles"))
+						{
+							s = Shader.Find("Particles/Additive");
+						}
+						else if (m.name.Contains("Default"))
+						{
+							s = Shader.Find("Standard");
+						}
 						if (s != null)
 						{
 							m.shader = s;
@@ -318,13 +330,13 @@ public static class NA
 						}
 						else
 						{
-							LogManager.LogWarning("can't find shader : " + m.shader.name);
+							LogManager.LogWarning("can't find shader : " + m.shader.name + " - material : " + m.name);
 						}
 					}
 				}
 				catch (System.Exception e)
 				{
-					LogManager.LogWarning("shader exception");
+					LogManager.LogWarning("shader exception for material");
 				}
 			}
 			/*foreach (Material m in r.materials)
@@ -366,6 +378,18 @@ public static class NA
 										{
 											sname = "Nature/Tree Creator Leaves";
 										}
+										else
+										{
+											if (m.name.Contains("Bark"))
+											{
+												sname = "Nature/Tree Creator Bark";
+											}
+											else if (m.name.Contains("Leaf"))
+											{
+												sname = "Nature/Tree Creator Leaves";
+											}
+										}
+
 										Shader s = Shader.Find(sname);
 										if (s != null)
 										{
@@ -374,13 +398,13 @@ public static class NA
 										}
 										else
 										{
-											LogManager.LogWarning("can't find shader : " + m.shader.name);
+											LogManager.LogWarning("can't find shader : " + m.shader.name + " - material : " + m.name);
 										}
 									}
 								}
 								catch (System.Exception e)
 								{
-									LogManager.LogWarning("shader exception");
+									LogManager.LogWarning("shader exception for material");
 								}
 							}
 						}

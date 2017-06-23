@@ -319,6 +319,10 @@ public class NetworkSync : MonoBehaviour
 			audio.loop = loop;
 			audio.time = time;
 		}
+		else
+		{
+			LogManager.LogWarning("can't find AudioSource on receiver !");
+		}
 	}
 
 	public void ServerSyncAudio()

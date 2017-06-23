@@ -188,6 +188,7 @@ public class App : MonoBehaviour
 	Asset 			CurrentAsset = null;
 	string			AssetFilter = "";
 	string			SpaceFilter = "";
+	bool			SpaceFilterFeatured = true;
 	HostData 		currentHost = null;
 
 
@@ -287,6 +288,7 @@ public class App : MonoBehaviour
 		Debug.Log("app OnDestroy");
 		NA.PlayPhysics();
 		PlayerPrefs.SetString("spacefilter", SpaceFilter);
+		PlayerPrefs.SetInt("spacefilterfeatured", SpaceFilterFeatured ? 1 : 0);
 	}
 
 
@@ -313,6 +315,8 @@ public class App : MonoBehaviour
 		AudioListener.volume = 0.50f;
 		strIP = PlayerPrefs.GetString("ip");
 		SpaceFilter = PlayerPrefs.GetString("spacefilter");
+		int sff = PlayerPrefs.GetInt("spacefilterfeatured");
+		SpaceFilterFeatured = (sff == 1)? true : false;
 		float sh = Mathf.Max(Screen.height, 768);
 		float sw = Screen.width;
 		mGuiWinRectWindows 		= new Rect(sw/2-WindowSize.x/2, sh/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
@@ -847,13 +851,16 @@ public class App : MonoBehaviour
 			}
 		}
 
-
+		//removed for Game Happens
+		/*
 		if (bGUI)
 		{
+			
 			if (NAInput.GetControlDown(NAControl.Action))
 			{
 				GUI_Validate();
 			}
+
 			//touche menu
 			if (NAInput.GetControlDown(NAControl.Menu))
 			{
@@ -868,7 +875,8 @@ public class App : MonoBehaviour
 
 
 		}
-		else if (r1) //Extended tool mode
+		*/
+		if (r1) //Extended tool mode
 		{
 			NAToolBase t = tools[current_tool];
 			//extended control if R1 is maintained
@@ -932,7 +940,7 @@ public class App : MonoBehaviour
 			//touche menu
 			if (NAInput.GetControlDown(NAControl.Menu))
 			{
-				//NA.PatchAllMaterials(goRootSpace); //NEW
+				NA.PatchAllMaterials(goRootSpace); //NEW
 				bToolPanel = false;
 				bGUI = !bGUI;
 				if (bGUI)
@@ -1110,7 +1118,19 @@ public class App : MonoBehaviour
 			bool bShow = userfilter && (tabSpaces == TypeTab.Mine && space.creator == NAServer.strLogin || tabSpaces == TypeTab.SharedWithMe && space.type == "public" && space.creator != NAServer.strLogin && space.objectCount > 0);
 			if (config == "server")
 			{
+				/*
+				//only show the spaces with a texture ?
 				if (space.texture != null)
+				{
+					bShow = true;
+				}
+				else
+				{
+					bShow = false;
+				}
+				*/
+
+				if (space.id == 189)
 				{
 					bShow = true;
 				}
@@ -1768,7 +1788,7 @@ public class App : MonoBehaviour
 			//GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
 			GUI.color = Color.white;
 			//GUI.Label(new Rect(0,0,400,30), "NewAtlantisNew Client - SAIC workshop");
-			GUI.Label(new Rect(0,0,100,30), "New Atlantis v1.09");
+			GUI.Label(new Rect(0,0,100,30), "New Atlantis v1.11");
 			GUI.Label(new Rect(Screen.width-200, 0, 200, 30), strPick);
 
 			DrawChronometer();
@@ -1791,7 +1811,7 @@ public class App : MonoBehaviour
 			}
 			*/
 
-			string strInteractionMode = "normal - R1:extended tool - L1:object interaction";
+			/*string strInteractionMode = "normal - R1:extended tool - L1:object interaction";
 			if (r1)
 			{
 				strInteractionMode = "extended tool";
@@ -1802,6 +1822,7 @@ public class App : MonoBehaviour
 				strInteractionMode = "object interaction";
 			}
 			GUI.Label(new Rect(Screen.width-300, 0, 300, 30), strInteractionMode);
+			*/
 
 
 
@@ -2084,8 +2105,6 @@ public class App : MonoBehaviour
 			//GUILayout.BeginHorizontal();
 			//GUILayout.Label ("Player="+player.guid + " ip="+player.ipAddress + " port=" + player.port + " ping=" + Network.GetAveragePing(player) + "ms");
 			//GUILayout.EndHorizontal();
-
-
         }
 
 		GUILayout.Space(20);
@@ -2115,11 +2134,9 @@ public class App : MonoBehaviour
 		GUILayout.BeginHorizontal();
 		GUILayout.Label(strName, GUILayout.Width(100));
 
-
 		strCurrentChatMessage = GUILayout.TextArea(strCurrentChatMessage, GUILayout.Width(220));
 		if (strCurrentChatMessage.Length>0)
 		{
-
 			bool enter = false;
 			if (Event.current.keyCode == KeyCode.Return) 
 			{
@@ -2348,6 +2365,7 @@ public class App : MonoBehaviour
         }
 		GUI.color = Color.white;
 		SpaceFilter = GUILayout.TextField (SpaceFilter, GUILayout.Width(200));
+		SpaceFilterFeatured = GUILayout.Toggle (SpaceFilterFeatured, "only featured", GUILayout.Width(200));
         GUILayout.EndHorizontal();
 		GUISpacesHeader();
         scrollPosMySpaces = GUILayout.BeginScrollView( scrollPosMySpaces, GUILayout.Height( 230 ) ); //150
@@ -2385,7 +2403,7 @@ public class App : MonoBehaviour
 		GUILayout.Label("creator", 		GUILayout.Width(100));
 		//GUILayout.Label("creation date", GUILayout.Width(100));
 		//GUILayout.Label("last change", 	GUILayout.Width(100));
-		GUILayout.Label("image", 		GUILayout.Width(192));
+		GUILayout.Label("image", 		GUILayout.Width(192/2));
 		GUILayout.Label("objects", 		GUILayout.Width(50));
 		GUILayout.EndHorizontal();
 	}
@@ -2410,7 +2428,26 @@ public class App : MonoBehaviour
 				*/
 			}
 
-			if ((bShow || !userfilter /*&& space.objectCount > 0*/ ) && (SpaceFilter == "" || space.name.Contains(SpaceFilter) || space.creator.Contains (SpaceFilter)))
+			bool featured = false;
+			//Debug.Log("SpaceFilterFeatured="+SpaceFilterFeatured);
+			if (SpaceFilterFeatured)
+			{
+				
+				if ((space.id == 189 ||
+					space.id == 228 ||
+					space.id == 229 ||
+					space.id == 230 ||
+					space.id == 111 ||
+					space.id == 139 ||
+					space.id == 161 ||
+					space.id == 125 ||
+					space.id == 39 ))
+				{
+					featured = true;
+				}
+			}
+
+			if ((!SpaceFilterFeatured || featured) && ((bShow || !userfilter /*&& space.objectCount > 0*/ ) && (SpaceFilter == "" || space.name.Contains(SpaceFilter) || space.creator.Contains (SpaceFilter))))
 			{
 				/*if (space.id == 161)
 				{
@@ -2446,7 +2483,7 @@ public class App : MonoBehaviour
 				//GUILayout.Label("", GUILayout.Width(100)); //last change?
 				if (space.texture != null)
 				{
-					GUILayout.Label(space.texture, GUILayout.Width(192), GUILayout.Height(108));
+					GUILayout.Label(space.texture, GUILayout.Width(192/2), GUILayout.Height(108/2));
 				}
 				else
 				{
@@ -2467,7 +2504,41 @@ public class App : MonoBehaviour
 		GUILayout.Label ("Join an existing performance...");
 		GUILayout.EndHorizontal();
 
-		scrollPos = GUILayout.BeginScrollView( scrollPos, GUILayout.Height( 100+500+312 ) ); //150
+		GUILayout.BeginHorizontal();
+		//HERE55
+		if (GUILayout.Button ("Join Game Happens (worldwide)", GUILayout.Width(250 ), GUILayout.Height(100 )) && !Network.isClient) 
+		{
+
+			LogManager.Log("try to join Game Happens at 92.223.149.93:7890");
+			Network.Connect("92.223.149.93", 7890);
+			CameraBackgroundSkybox();
+		}
+
+		if (GUILayout.Button ("Join Game Happens (local)", GUILayout.Width(250 ), GUILayout.Height(100 )) && !Network.isClient) 
+		{
+
+			LogManager.Log("try to join Game Happens at 10.11.11.254:7890");
+			Network.Connect("10.11.11.254", 7890);
+			//10.11.11.254 dans skype, 252 dans le mail
+			CameraBackgroundSkybox();
+		}
+
+
+		GUILayout.Space(100);
+		strIP = GUILayout.TextField(strIP);
+		if (GUILayout.Button ("JOIN this IP", GUILayout.Width(100 )) && !Network.isClient) 
+		{
+			PlayerPrefs.SetString("ip", strIP);
+			LogManager.Log("try to join "+strIP+":7890");
+			Network.Connect(strIP, 7890);
+			CameraBackgroundSkybox();
+		}
+
+		GUILayout.EndHorizontal();
+
+
+
+		scrollPos = GUILayout.BeginScrollView( scrollPos, GUILayout.Height( 100+420 ) ); //150
 		if( loading )
 		{
 			GUILayout.BeginHorizontal();
@@ -2807,6 +2878,7 @@ public class App : MonoBehaviour
 		GUILayout.BeginHorizontal();
 		GUILayout.Label ("SPACES LIBRARY");
 		SpaceFilter = GUILayout.TextField (SpaceFilter, GUILayout.Width(200));
+		SpaceFilterFeatured = GUILayout.Toggle (SpaceFilterFeatured, "only featured", GUILayout.Width(200));
 		GUILayout.EndHorizontal();
 
 		GUISpacesHeader();

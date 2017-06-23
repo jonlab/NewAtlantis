@@ -190,7 +190,7 @@ public class NANetwork : MonoBehaviour {
 
 		clone = GameObject.Instantiate(model, Vector3.zero, Quaternion.identity) as GameObject;
 
-		LogManager.LogWarning("clone " + name);
+		LogManager.Log("clone " + name);
 
 		//reset position of main child
 		if (clone.transform.childCount>0)
