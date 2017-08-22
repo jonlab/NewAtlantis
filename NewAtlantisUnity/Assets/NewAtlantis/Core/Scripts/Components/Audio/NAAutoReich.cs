@@ -25,48 +25,6 @@ public class NAAutoReich : NAObjectBase
 		
 	}
 		
-	public override void DrawSimpleGUI(Vector3 pos2d)
-	{
-		GUI.color = Color.white;
-		string strDisplay = name;
-		int x = (int)(pos2d.x*Screen.width);
-		int y = (int)(Screen.height-pos2d.y*Screen.height);
-		GUI.Box (new Rect(x,y,100,30), "AutoReich");
-	}
-
-	public override void DrawExtendedGUI(Vector3 pos2d)
-	{
-		GUI.color = Color.white;
-		string strDisplay = name;
-		int x = (int)(pos2d.x*Screen.width);
-		int y = (int)(Screen.height-pos2d.y*Screen.height);
-		GUI.Box (new Rect(x,y,200,100), "AutoReich");
-		
-		if (GUI.Button (new Rect(x,y+30, 100, 30), "next!"))
-		{
-            Change();
-		}
-
-        //auto-behaviour on server ?
-        if (!NA.isClient())
-        {
-
-
-        }
-	}
-
-	// this is supposed to happen when the clip ends, not from collision
-	// should be event from the audioclip reaching the end
-
-	void OnCollisionEnter(Collision collision) 
-	{
-		if (NA.isClient())
-			return;
-
-		Change();
-	}
-
-
     void Change()
     {
 		if (CurrentIndex == -1)
@@ -98,8 +56,6 @@ public class NAAutoReich : NAObjectBase
 		}
 
     }
-
-	
 
 	[RPC]
 	void PatternSamplerPlay(int _index)
