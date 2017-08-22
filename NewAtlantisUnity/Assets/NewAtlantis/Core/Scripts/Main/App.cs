@@ -6,8 +6,6 @@ using System.Xml;
 using System.Xml.XPath;
 using MidiJack;
 
-
-
 public enum AppState
 {
 	Login,
@@ -24,10 +22,7 @@ public enum NavigationMode
 	Flying,
 	Walking
 };
-
-
-
-
+	
 public enum AppTab
 {
 	Performance,
@@ -72,12 +67,6 @@ public class App : MonoBehaviour
 	private Color ColorSelected = Color.white;
 
 	LogEntry lastError = null;
-	
-	/*
-	WWW www = null;
-	WWW wwwPost = null;
-	List<WWW> 			requests 	= new List<WWW>();
-	*/
 
 	XmlDocument 		xml 		= null;
 	XPathNavigator  	xpn			= null;
@@ -101,8 +90,7 @@ public class App : MonoBehaviour
 	private  FileInfo[] 	info = null;
 
 	List<GameObject> 	cameras 	= new List<GameObject>();
-	//List<GameObject>	player_objects = new List<GameObject>();
-	//Vector3				colorAvatar = Vector3.zero;
+
 	string				strPick = "";
 	private bool				bStartPopup = true;
 	private string 				strIP = "92.223.149.93"; //
@@ -110,7 +98,6 @@ public class App : MonoBehaviour
 
 	GameObject goMainLight = null;
 	public GameObject goReticle = null;
-	//GameObject goAvatar = null;
 	GameObject goGrab = null;
 	Vector3		PreviousMousePosition = Vector3.zero;
 	
@@ -190,7 +177,7 @@ public class App : MonoBehaviour
 	string			SpaceFilter = "";
 	bool			SpaceFilterFeatured = true;
 	HostData 		currentHost = null;
-
+	bool			autoLoad = false;
 
     GameObject goGizmo;
     TRS_Gizmo trs;
@@ -223,21 +210,12 @@ public class App : MonoBehaviour
 		//byte[] bytes = System.IO.File.ReadAllBytes("Bundles/MagicFountain.unity3d");
 		AssetBundle b = AssetBundle.LoadFromMemory(bytes);
 
-
 		string[] strAssets = b.GetAllAssetNames();
-
 
 		foreach (string s in strAssets)
 		{
 			LogManager.Log ("Asset = " + s);
 		}
-					
-
-
-
-
-
-
 
 		Object[] objs = b.LoadAllAssets();
 		foreach (Object o in objs)
@@ -292,15 +270,9 @@ public class App : MonoBehaviour
 	}
 
 
-
     // Use this for initialization
     void Start () 
 	{
-
-
-
-
-
 		MidiMaster.GetKeyDown(60);
 		try
 		{
@@ -317,6 +289,14 @@ public class App : MonoBehaviour
 		SpaceFilter = PlayerPrefs.GetString("spacefilter");
 		int sff = PlayerPrefs.GetInt("spacefilterfeatured");
 		SpaceFilterFeatured = (sff == 1)? true : false;
+
+		if (PlayerPrefs.GetInt ("autoload") > 0) {
+			autoLoad = true;
+			strSpace = PlayerPrefs.GetString ("defaultspace");
+		}
+		else
+			autoLoad = false;
+
 		float sh = Mathf.Max(Screen.height, 768);
 		float sw = Screen.width;
 		mGuiWinRectWindows 		= new Rect(sw/2-WindowSize.x/2, sh/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
@@ -329,6 +309,7 @@ public class App : MonoBehaviour
 		//TestAB();
         goGizmo = GameObject.Find("TRS Gizmo");
         trs = goGizmo.GetComponent<TRS_Gizmo>();
+
 		//QualitySettings.
 
         Debug.Log ("IP="+MasterServer.ipAddress);
@@ -384,56 +365,24 @@ public class App : MonoBehaviour
 		LogManager.LogError("You are in Web Player build settings ! You will not be able to upload files from your computer. Please change your build settings to standalone in File->Build Settings.");
 #endif
 
-
 		CameraBackgroundColor();
 
-        /*
+		// this doesn't actually work -why?
+		// the XML of the scene gets returned just the same as doing a regular load, but it doesn't load anything
+		if (autoLoad && config=="server") {
+			NAServer.UserConnect();
 
-        // DESACTIVE CAR IMPOSSIBLE DE PARAMETRER L'INPUT MANAGER VIA DU SCRIPT
-        // Alex
-
-        string[] spl = SystemInfo.operatingSystem.Split(' ');
-        string os = spl[0];
-
-
-        //  Debug.LogError(spl[0]);
-
-        if (os == "Windows")
-        {
-
-           // Input.GetAxis("DPadX").
-        }
-
-        if (os == "Mac")
-        {
-
-          //  Debug.LogError(spl[0]);
-        }
-
-        if (os == "Linux")
-        {
-
-            //  Debug.LogError(spl[0]);
-        }
-*/
+			Debug.Log ("auto loading space " + strSpace);
+			StartServerWithSelectedSpace ();
+		}
 
     }
 
-
-
     void Init()
 	{
-		//tools = GetComponents<NAToolBase>();
 		tools = GetComponentsInChildren<NAToolBase>();
 		current_tool = 0;
 		SetCurrentTool(tools[current_tool]);
-		/*
-		foreach (NAToolBase t in tools)
-		{
-
-		}
-		*/
-		//camerascripts = GetComponents<NACamera>();
 		camerascripts = GetComponentsInChildren<NACamera>();
 		current_camera = 0;
 		SetCurrentCamera(camerascripts[current_camera]);
@@ -456,12 +405,7 @@ public class App : MonoBehaviour
 		}
 		
 	}
-
-
-
-
-
-
+		
 	[RPC]
 	void DestroyNetworkAvatar(NetworkPlayer player)
 	{
@@ -498,7 +442,6 @@ public class App : MonoBehaviour
 			//goAvatar = InstantiateObject(goPrefabAvatar, Vector3.zero, Quaternion.identity, Vector3.one, 0);
 		}
 	}
-
 
 
 	void UnactivateCameras()
@@ -539,8 +482,6 @@ public class App : MonoBehaviour
 		}
 		*/
 	}
-
-
 
 	void LateUpdate()
 	{
@@ -588,8 +529,6 @@ public class App : MonoBehaviour
 	}
 
 
-
-
 	void UpdateSpacesThumbnails()
 	{
 		foreach (RemoteTexture rt in dicImages.Values)
@@ -608,8 +547,7 @@ public class App : MonoBehaviour
 			}
 		}
 	}
-
-	// Update is called once per frame
+		
 	void Update () 
 	{
 		//test
@@ -726,8 +664,7 @@ public class App : MonoBehaviour
 				FlyCamera fc = GetComponent<FlyCamera>();
 				fc.JumpEnabled = true;
 			}
-
-
+				
 			//closest.
 			if (closest != null)
 			{
@@ -888,7 +825,6 @@ public class App : MonoBehaviour
 		}
 		else if (!closest)
 		{
-
 			//ACTION
 			if (bToolPanel)
 			{
@@ -919,16 +855,7 @@ public class App : MonoBehaviour
 				{
 					t.Release();
 				}
-
-
-
-
-
-
-
 			}
-
-
 
 			//camera change
 			if (NAInput.GetControlDown(NAControl.Camera))
@@ -1103,10 +1030,7 @@ public class App : MonoBehaviour
 
         }
 	}
-
-	
-
-
+		
 	public void GUI_SpaceNavigate(int n)
 	{
 		current_space = current_space+n;
@@ -1151,8 +1075,7 @@ public class App : MonoBehaviour
 		}
 		current_space = Mathf.Min(current_space, index-1);
 	}
-
-
+		
 	public void GUI_HostNavigate(int n)
 	{
 		HostData[] hosts = MasterServer.PollHostList();
@@ -1297,11 +1220,6 @@ public class App : MonoBehaviour
 			}
 		}
 
-
-
-
-		//
-
 		XPathNodeIterator xpni_spaces = xpn.Select("/spaces");
 		xpni_spaces.MoveNext();
 		if (xpni_spaces.Current != null)
@@ -1415,26 +1333,18 @@ public class App : MonoBehaviour
 		}
 	}
 
-
-
 	void NetworkLoadObject(string _name, Vector3 _pos, Vector3 _angles, Vector3 _scale, string _filename, string _id)
 	{
 		GetComponent<NetworkView>().RPC("LoadObject", RPCMode.AllBuffered, _name, Network.AllocateViewID(), _pos, _angles, _scale, _filename, _id);
 	}
-
-
-
-
-
-
+		
 	void Connect(string space)
 	{
 		Disconnect();
 		NAServer.GetSpaceDescription(space);
 		bStartPopup = false;
 	}
-
-
+		
 	public void GoToSpace(int spaceid)
 	{
 		foreach (Space space in listSpaces)
@@ -1446,8 +1356,7 @@ public class App : MonoBehaviour
 			}
 		}
 	}
-
-
+		
 	public void GoToSpace(Space space)
 	{
 		//fade black screen ?
@@ -1496,8 +1405,7 @@ public class App : MonoBehaviour
 		}
 		NA.player_objects.Clear();
 	}
-
-
+		
 	void CameraBackgroundColor()
 	{
 		Camera.main.clearFlags = CameraClearFlags.Color;
@@ -1547,8 +1455,7 @@ public class App : MonoBehaviour
 		
 		GUI.matrix = Matrix4x4.identity;
 	}
-
-
+		
 
     void OnGUI()
     {
@@ -1612,9 +1519,6 @@ public class App : MonoBehaviour
 				bToolPanel = !bToolPanel;
 			}
 		
-
-
-
 			if (bToolPanel)
 			{
 				float inter = 64+10;
@@ -1663,10 +1567,8 @@ public class App : MonoBehaviour
 			}
 		}
     
-
 		//TransitionManager.DrawGUI();
         
-
 		float loading = GetLoadingProgress();
 		if (loading != -1f && loading != 1f)
 		{
@@ -1755,14 +1657,10 @@ public class App : MonoBehaviour
             }
         }
 
-
-
-
 		if (!bGUI)
 		{
 			return;
 		}
-
 		if (config == "client")
 		{
 			//mode client exhibition
@@ -1778,6 +1676,7 @@ public class App : MonoBehaviour
 			GUI.color = Color.white;
 			GUIScaleMatrix();
 			GUI.Window(13, mGuiWinRectWindowsPerf, WindowFunctionPerformanceServer, "New Atlantis Performance");
+
 			GUIIdentityMatrix();
 
 		}
@@ -1923,21 +1822,6 @@ public class App : MonoBehaviour
 		}
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	public GameObject PickObject(Vector2 screenpos, out RaycastHit hit)
 	{
 		Vector3 v = screenpos;
@@ -1970,15 +1854,6 @@ public class App : MonoBehaviour
 	*/
 
 
-
-
-
-
-
-
-
-
-
 	void OnConnectedToServer() 
 	{
 		Debug.Log("Connected to server");
@@ -1986,7 +1861,6 @@ public class App : MonoBehaviour
 		ResetViewerPosition();
 		PlayEvent(2);
 	}
-
 
 
 	void OnPlayerConnected(NetworkPlayer player) 
@@ -2010,10 +1884,6 @@ public class App : MonoBehaviour
 		GetComponent<NetworkView>().RPC("DestroyNetworkAvatar", RPCMode.OthersBuffered, player); //destroy on clients
 		LogManager.LogWarning("A new player just leaved the server.");
 	}
-    
-	
-
-
 
     void OnDisconnectedFromServer(NetworkDisconnection info) 
 	{
@@ -2069,25 +1939,6 @@ public class App : MonoBehaviour
 		_message = _message.Replace('\n', ' ');
 		GetComponent<NetworkView>().RPC("Chat", RPCMode.AllBuffered, strName, _message/*, NA.colorAvatar*/);
 	}
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	void WindowFunctionChat (int windowID)
 	{
@@ -2661,21 +2512,55 @@ public class App : MonoBehaviour
 
 		GUISpacesHeader();
 		//scrollPosLobbySpaces = GUILayout.BeginScrollView( scrollPosLobbySpaces, GUILayout.Height( 100+500+312 ) ); //150
-		scrollPosLobbySpaces = GUILayout.BeginScrollView( scrollPosLobbySpaces, GUILayout.Height( 100+500 ) ); //150
+		scrollPosLobbySpaces = GUILayout.BeginScrollView( scrollPosLobbySpaces, GUILayout.Height( 100+300 ) ); //150
 		GUISpaces(true);
 		GUILayout.EndScrollView();
 			
-		if (validate)
-		{
-			validate = false;
-			if (Network.isServer)
-			{
-				StopServer();
+		// toggle auto-load
+
+		bool newAutoLoad = GUILayout.Toggle (autoLoad, "Autoload");
+		if (newAutoLoad != autoLoad) {
+			PlayerPrefs.SetInt ("autoload",newAutoLoad ?  1:0);
+			autoLoad=newAutoLoad;
+			if (autoLoad) {
+				PlayerPrefs.SetString ("defaultspace", strSpace);
+				Debug.Log ("setting defaultspace pref to " + strSpace);
 			}
+		}
+		//=============
+		//START SERVER
+		//=============
+		if (GUILayout.Button ("HOST server with selected space", GUILayout.Width(200 )) && !Network.isServer) 
+		{
+			CameraBackgroundSkybox();
 			StartServerWithSelectedSpace();
 			bGUI = false;
 		}
+
+		//=============
+		//STOP SERVER
+		//=============
+		GUI.color = !Network.isServer ? Color.gray : Color.white;
+		if (GUILayout.Button ("stop server", GUILayout.Width(200 )) && Network.isServer) 
+		{
+			StopServer();
+		}
+
+		//=============
+		//SWITCH SPACE
+		//=============
+		GUI.color = !Network.isServer ? Color.gray : Color.white;
+		if (GUILayout.Button ("switch space", GUILayout.Width(200 )) && Network.isServer) 
+		{
+			NA.app.GoToSpace(NA.CurrentSpace.id);
+			tab = AppTab.None; //hide windows
+			state = AppState.Game;
+			bGUI = false;
+		}
+
+
 		GUI.color = Color.white;
+
 	}
 
 
@@ -2968,6 +2853,7 @@ public class App : MonoBehaviour
 		tab = AppTab.None; //hide windows
 		Network.InitializeServer(32, 7890, true);
 		string strGameName = strSpace + " [" + NAServer.strLogin + "]";
+		Debug.Log ("StartServerWithSelectedSpace: " + strGameName);
 		MasterServer.RegisterHost("NewAtlantis", strGameName, "created : " + System.DateTime.Now + " on " + SystemInfo.deviceModel + " running " + SystemInfo.operatingSystem);
 		CreateNetworkAvatar();
 		NAServer.Get(); //le Get avec un selected space forcera la création des objets : à revoir...
@@ -3292,8 +3178,6 @@ public class App : MonoBehaviour
 		GUILayout.Label("Welcome to the New Atlantis. New Atlantis is a shared (multi-user) online virtual world dedicated to audio experimentation and practice. Unlike most online worlds where image is the primary concern, in New Atlantis sound comes first.");
 		GUILayout.EndHorizontal();
 
-
-
 		GUILayout.BeginHorizontal();
 		GUILayout.Label("Login", GUILayout.Width(100));
 		NAServer.strLogin = GUILayout.TextField (NAServer.strLogin);
@@ -3331,14 +3215,6 @@ public class App : MonoBehaviour
 		*/
 		//GUI.DragWindow();
 	}
-
-
-
-
-
-
-
-
 
 	void WindowFunctionSpaces (int windowID)
 	{
