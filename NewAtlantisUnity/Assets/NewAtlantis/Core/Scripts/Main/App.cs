@@ -177,7 +177,7 @@ public class App : MonoBehaviour
 	string			SpaceFilter = "";
 	bool			SpaceFilterFeatured = true;
 	HostData 		currentHost = null;
-	bool			autoLoad = false;
+	bool			bAutoLoad = false;
 
     GameObject goGizmo;
     TRS_Gizmo trs;
@@ -291,11 +291,11 @@ public class App : MonoBehaviour
 		SpaceFilterFeatured = (sff == 1)? true : false;
 
 		if (PlayerPrefs.GetInt ("autoload") > 0) {
-			autoLoad = true;
-			strSpace = PlayerPrefs.GetString ("defaultspace");
+			bAutoLoad = true;
+
 		}
 		else
-			autoLoad = false;
+			bAutoLoad = false;
 
 		float sh = Mathf.Max(Screen.height, 768);
 		float sw = Screen.width;
@@ -367,16 +367,32 @@ public class App : MonoBehaviour
 
 		CameraBackgroundColor();
 
-		// this doesn't actually work -why?
-		// the XML of the scene gets returned just the same as doing a regular load, but it doesn't load anything
-		if (autoLoad && config=="server") {
-			NAServer.UserConnect();
-
-			Debug.Log ("auto loading space " + strSpace);
-			StartServerWithSelectedSpace ();
+		// if in server mode and the user pref for auto load is set
+		if (bAutoLoad && config=="server") {
+			AutoLoad ();
 		}
 
     }
+
+	// start server, load a scene,at launch
+	void AutoLoad ()
+	{
+		
+		Space s = new Space ();
+		int id = PlayerPrefs.GetInt ("defaultspace-id", -1);
+		string name = PlayerPrefs.GetString ("defaultspace-name","");
+		Debug.Log (string.Format("Auto loading space {0}:{1}",id,name));
+
+		if (id >= 0) {
+			s.id = id;
+			s.name = name;
+			strSpace = s.name;
+			NA.CurrentSpace = s;
+			CameraBackgroundSkybox();
+			StartServerWithSelectedSpace ();
+			bGUI = false;
+		}		
+	}
 
     void Init()
 	{
@@ -2518,12 +2534,14 @@ public class App : MonoBehaviour
 			
 		// toggle auto-load
 
-		bool newAutoLoad = GUILayout.Toggle (autoLoad, "Autoload");
-		if (newAutoLoad != autoLoad) {
+		bool newAutoLoad = GUILayout.Toggle (bAutoLoad, "Autoload");
+		if (newAutoLoad != bAutoLoad) {
 			PlayerPrefs.SetInt ("autoload",newAutoLoad ?  1:0);
-			autoLoad=newAutoLoad;
-			if (autoLoad) {
-				PlayerPrefs.SetString ("defaultspace", strSpace);
+			bAutoLoad=newAutoLoad;
+			if (bAutoLoad) {
+				PlayerPrefs.SetInt ("defaultspace-id", NA.CurrentSpace.id);
+
+				PlayerPrefs.SetString ("defaultspace-name", NA.CurrentSpace.name);
 				Debug.Log ("setting defaultspace pref to " + strSpace);
 			}
 		}
@@ -2532,6 +2550,13 @@ public class App : MonoBehaviour
 		//=============
 		if (GUILayout.Button ("HOST server with selected space", GUILayout.Width(200 )) && !Network.isServer) 
 		{
+			if (bAutoLoad) {
+				PlayerPrefs.SetInt ("defaultspace-id", NA.CurrentSpace.id);
+
+				PlayerPrefs.SetString ("defaultspace-name", NA.CurrentSpace.name);
+				Debug.Log ("setting defaultspace pref to " + strSpace);
+			}
+
 			CameraBackgroundSkybox();
 			StartServerWithSelectedSpace();
 			bGUI = false;
