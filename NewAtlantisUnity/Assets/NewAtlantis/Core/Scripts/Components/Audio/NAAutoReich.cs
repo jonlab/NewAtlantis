@@ -13,7 +13,9 @@ public class NAAutoReich : NAObjectBase
 	// Use this for initialization
 	void Start () 
 	{
-		
+		if (!NA.isClient ()) {
+			Change ();
+		}
 		
 	}
 	
@@ -22,9 +24,7 @@ public class NAAutoReich : NAObjectBase
 	{
 		
 	}
-
-	
-
+		
 	public override void DrawSimpleGUI(Vector3 pos2d)
 	{
 		GUI.color = Color.white;
@@ -55,6 +55,9 @@ public class NAAutoReich : NAObjectBase
         }
 	}
 
+	// this is supposed to happen when the clip ends, not from collision
+	// should be event from the audioclip reaching the end
+
 	void OnCollisionEnter(Collision collision) 
 	{
 		if (NA.isClient())
@@ -62,6 +65,8 @@ public class NAAutoReich : NAObjectBase
 
 		Change();
 	}
+
+
     void Change()
     {
 		if (CurrentIndex == -1)
@@ -84,6 +89,12 @@ public class NAAutoReich : NAObjectBase
 		if (NA.isClient() || NA.isServer())
 		{
 			GetComponent<NetworkView>().RPC("PatternSamplerPlay", RPCMode.Others, CurrentIndex);
+		}
+
+		// set timer to change again 
+		if (!NA.isClient ()) {
+			Invoke ("Change", clips [CurrentIndex].length);
+
 		}
 
     }
