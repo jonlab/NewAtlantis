@@ -368,16 +368,31 @@ public class App : MonoBehaviour
 		CameraBackgroundColor();
 
 		// if in server mode and the user pref for auto load is set
-		if (bAutoLoad && config=="server") {
-			AutoLoad ();
+		if (bAutoLoad) {
+			if (config == "server")
+				AutoLoad_Server ();
+			else if (config == "client")
+				AutoLoad_Client ();
 		}
+
 
     }
 
-	// start server, load a scene,at launch
-	void AutoLoad ()
+	// start client, automatically try to connect to host stored in preferences 
+
+	void AutoLoad_Client ()
 	{
-		
+		string strIP = PlayerPrefs.GetString("ip");
+		LogManager.Log("try to join "+strIP+":7890");
+		Network.Connect(strIP, 7890);
+		CameraBackgroundSkybox();
+		state = AppState.Game;
+	}
+
+	}
+	// start server, load a scene,at launch
+	void AutoLoad_Server ()
+	{
 		Space s = new Space ();
 		int id = PlayerPrefs.GetInt ("defaultspace-id", -1);
 		string name = PlayerPrefs.GetString ("defaultspace-name","");
