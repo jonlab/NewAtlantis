@@ -25,6 +25,8 @@ public static class NA
 
     public static float JoystickSmoothing = 0.92f;
 
+	public static int MAX_PLAYER_OBJECTS=10;
+
 	public static Vector3 colorAvatar;
 
 	public static List<NAObject>	instanciables = new List<NAObject>();
@@ -75,10 +77,6 @@ public static class NA
 
 	//public static bool bDisplayAudioSourceName = true;
 
-
-
-
-
 	public static void DecorateAudioSource(AudioSource s)
 	{
 		NAReverbEffector eff = s.gameObject.GetComponent<NAReverbEffector>();
@@ -96,8 +94,6 @@ public static class NA
 		
 		if (NA.bAugmentAudioSources)
 		{
-
-			
 			NAOcclusionFX occ = s.gameObject.GetComponent<NAOcclusionFX>();
 			if (occ == null)
 			{
@@ -106,7 +102,6 @@ public static class NA
 				NAOcclusionFX occ2 = s.gameObject.AddComponent<NAOcclusionFX>();
 				NAOcclusionFX.Destroy(occ2);
 			}
-
 		}
 
 		/*if (Network.isServer)
@@ -192,7 +187,6 @@ public static class NA
 
 	}
 
-
 	public static void DestroyPlayerObjects2()
 	{
 		foreach (GameObject go in player_objects)
@@ -204,7 +198,6 @@ public static class NA
 		GameObject.Destroy(goAvatar);
 		goAvatar = null;
 	}
-
 
 
 	public static void GC()
