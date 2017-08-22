@@ -382,14 +382,16 @@ public class App : MonoBehaviour
 
 	void AutoLoad_Client ()
 	{
+		bGUI = false;
 		string strIP = PlayerPrefs.GetString("ip");
 		LogManager.Log("try to join "+strIP+":7890");
 		Network.Connect(strIP, 7890);
 		CameraBackgroundSkybox();
 		state = AppState.Game;
-	}
 
 	}
+
+
 	// start server, load a scene,at launch
 	void AutoLoad_Server ()
 	{
@@ -2387,26 +2389,6 @@ public class App : MonoBehaviour
 		GUILayout.EndHorizontal();
 
 		GUILayout.BeginHorizontal();
-		//HERE55
-		if (GUILayout.Button ("Join Game Happens (worldwide)", GUILayout.Width(250 ), GUILayout.Height(100 )) && !Network.isClient) 
-		{
-
-			LogManager.Log("try to join Game Happens at 92.223.149.93:7890");
-			Network.Connect("92.223.149.93", 7890);
-			CameraBackgroundSkybox();
-			state = AppState.Game;
-		}
-
-		if (GUILayout.Button ("Join Game Happens (local)", GUILayout.Width(250 ), GUILayout.Height(100 )) && !Network.isClient) 
-		{
-
-			LogManager.Log("try to join Game Happens at 10.11.11.254:7890");
-			Network.Connect("10.11.11.254", 7890);
-			//10.11.11.254 dans skype, 252 dans le mail
-			CameraBackgroundSkybox();
-			state = AppState.Game;
-		}
-
 
 		GUILayout.Space(100);
 		strIP = GUILayout.TextField(strIP);
@@ -2419,6 +2401,11 @@ public class App : MonoBehaviour
 			state = AppState.Game;
 		}
 
+		bool newAutoLoad = GUILayout.Toggle (bAutoLoad, "Autoload");
+		if (newAutoLoad != bAutoLoad) {
+			PlayerPrefs.SetInt ("autoload",newAutoLoad ?  1:0);
+			bAutoLoad=newAutoLoad;
+		}
 		GUILayout.EndHorizontal();
 
 
