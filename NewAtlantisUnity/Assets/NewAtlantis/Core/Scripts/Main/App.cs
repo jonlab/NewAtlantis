@@ -273,6 +273,8 @@ public class App : MonoBehaviour
     // Use this for initialization
     void Start () 
 	{
+
+		NAInput.InitializeControlMap ();
 		MidiMaster.GetKeyDown(60);
 		try
 		{

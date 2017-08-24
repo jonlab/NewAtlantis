@@ -24,6 +24,11 @@ public enum NAControl
 
 public class NAInput 
 {
+	static string [] MAPPING_PS4_MAC = new string[12] {"button0","button1","button2","button3",
+		"button4","button5","axis2","axis1","axis4","axis3","axis7","axis8"};
+	static string [] MAPPING_PS4_WIN = new string[12] {"button0","button1","button2","button3",
+		"button4","button5","axis3","axis1","axis7","axis4","axis8","axis9"};
+	
 	public static float PreviousPadX = 0;
 	public static float PreviousPadY = 0;
 
@@ -32,6 +37,18 @@ public class NAInput
 
 	public static bool PadVerticalPressed = false;
 	public static bool PadVerticalReleased = false;
+
+	static string[] currentMapping;
+
+	static public void InitializeControlMap()
+	{
+		if (Application.platform == RuntimePlatform.OSXEditor || Application.platform == RuntimePlatform.OSXPlayer) {
+			currentMapping = MAPPING_PS4_MAC;	
+		} 
+		else if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer) {
+			currentMapping = MAPPING_PS4_WIN;
+		}
+	}
 
 	static public void Process()
 	{
@@ -99,49 +116,9 @@ public class NAInput
 		return Input.GetAxis(axis);
 	}
 
+
 	static private string GetControlName(NAControl control)
 	{
-		//the button name has to match the Input manager
-		switch (control)
-		{
-		case NAControl.Action:
-			return "Action";
-			break;
-		case NAControl.Jump:
-			return "Jump";
-			break;
-		case NAControl.Menu:
-			return "Menu";
-			break;
-		case NAControl.Camera:
-			return "Camera";
-			break;
-		case NAControl.NextTool:
-			return "Next";
-			break;
-		case NAControl.PreviousTool:
-			return "Previous";
-			break;
-
-		case NAControl.MoveVertical:
-			return "Vertical";
-			break;
-		case NAControl.MoveHorizontal:
-			return "Horizontal";
-			break;
-		case NAControl.ViewVertical:
-			return "ViewY";
-			break;
-		case NAControl.ViewHorizontal:
-			return "ViewX";
-			break;
-		case NAControl.PadVertical:
-			return "PadY";
-			break;
-		case NAControl.PadHorizontal:
-			return "PadX";
-			break;
-		}
-		return "";
+		return MAPPING_PS4_WIN [(int)control];
 	}
 }
