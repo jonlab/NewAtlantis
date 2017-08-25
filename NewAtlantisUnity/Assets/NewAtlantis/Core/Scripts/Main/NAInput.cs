@@ -26,6 +26,7 @@ public class NAInput
 {
 	static string [] MAPPING_PS4_MAC = new string[12] {"button0","button1","button2","button3",
 		"button4","button5","axis2","axis1","axis4","axis3","axis7","axis8"};
+
 	static string [] MAPPING_PS4_WIN = new string[12] {"button0","button1","button2","button3",
 		"button4","button5","axis3","axis1","axis7","axis4","axis8","axis9"};
 	
@@ -43,9 +44,11 @@ public class NAInput
 	static public void InitializeControlMap()
 	{
 		if (Application.platform == RuntimePlatform.OSXEditor || Application.platform == RuntimePlatform.OSXPlayer) {
+			Debug.Log("Setting mapping to Mac");
 			currentMapping = MAPPING_PS4_MAC;	
 		} 
 		else if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer) {
+			Debug.Log("Setting mapping to Windows");
 			currentMapping = MAPPING_PS4_WIN;
 		}
 	}
@@ -113,12 +116,16 @@ public class NAInput
 	static public float GetAxis(NAControl control)
 	{
 		string axis = GetControlName(control);
-		return Input.GetAxis(axis);
+		float v=Input.GetAxis(axis);
+
+		if (control == NAControl.MoveVertical)
+			v *= -1;
+		return v;
 	}
 
 
 	static private string GetControlName(NAControl control)
 	{
-		return MAPPING_PS4_WIN [(int)control];
+		return currentMapping [(int)control];
 	}
 }
