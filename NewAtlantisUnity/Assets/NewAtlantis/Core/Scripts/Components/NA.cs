@@ -308,10 +308,11 @@ public static class NA
 						{
 							s = Shader.Find("Skybox/6 Sided");
 						}
-						else if (m.name.Contains("Particles"))
+						else if (m.name.Contains("Particles") || m.name.Contains("Sparks"))
 						{
 							s = Shader.Find("Particles/Additive");
 						}
+
 						else if (m.name.Contains("Default"))
 						{
 							s = Shader.Find("Standard");
@@ -319,6 +320,12 @@ public static class NA
 						if (s != null)
 						{
 							m.shader = s;
+							if (m.name.Contains("transparent") || m.name.Contains("Transparent"))
+							{
+								StandardShaderUtils.ChangeRenderMode(m,StandardShaderUtils.BlendMode.Transparent);
+							}
+
+
 							//   LogManager.LogError("Shader name : " + m.shader.name);
 						}
 						else
