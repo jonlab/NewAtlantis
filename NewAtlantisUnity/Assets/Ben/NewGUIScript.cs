@@ -44,7 +44,7 @@ public class NewGUIScript : MonoBehaviour {
 	public void ReturnToLobby () {
 		
 		NA.ShowAvatars(true);
-		if (Network.isClient())
+		if (Network.isClient)
 		{
 			GetComponent<NetworkView>().RPC("Server_ReturnToLobby",RPCMode.Server);	
 		
