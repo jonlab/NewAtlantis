@@ -54,7 +54,7 @@ public class NewGUIScript : MonoBehaviour {
 			NA.app.GoToSpace(232);
 		}
 		// hide the gui panel
-		gameObject.SetActive(false);
+		mainPanel.SetActive(false);
 	}
 
 }
