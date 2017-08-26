@@ -144,7 +144,13 @@ public static class NA
 		return avatar;
 	}
 
-
+	public static void ShowAvatars(bool visible)
+	{
+	 	foreach (GameObject a in listAvatars)
+		{
+			a.SetActive(visible);
+		}
+	}
 	public static List<GameObject> GetAvatars()
 	{
 		return listAvatars;

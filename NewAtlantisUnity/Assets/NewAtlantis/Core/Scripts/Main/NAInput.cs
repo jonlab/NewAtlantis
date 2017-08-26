@@ -16,19 +16,16 @@ public enum NAControl
 	ViewHorizontal,
 	PadHorizontal,
 	PadVertical,
-	PadUp,
-	PadDown,
-	PadLeft,
-	PadRight
+	FullMenu
 }
 
 public class NAInput 
 {
-	static string [] MAPPING_PS4_MAC = new string[12] {"button0","button1","button2","button3",
-		"button4","button5","axis2","axis1","axis4","axis3","axis7","axis8"};
+	static string [] MAPPING_PS4_MAC = new string[13] {"button0","button1","button2","button3",
+		"button4","button5","axis2","axis1","axis4","axis3","axis7","axis8","FullMenu"};
 
-	static string [] MAPPING_PS4_WIN = new string[12] {"button0","button1","button2","button3",
-		"button4","button5","axis3","axis1","axis7","axis4","axis8","axis9"};
+	static string [] MAPPING_PS4_WIN = new string[13] {"button0","button1","button2","button3",
+		"button4","button5","axis3","axis1","axis7","axis4","axis8","axis9","FullMenu"};
 	
 	public static float PreviousPadX = 0;
 	public static float PreviousPadY = 0;

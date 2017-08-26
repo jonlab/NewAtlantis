@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Xml;
 using System.Xml.XPath;
 using MidiJack;
+using UnityEngine.UI;
 
 public enum AppState
 {
@@ -80,11 +81,14 @@ public class App : MonoBehaviour
 	Camera 				selectedCamera = null;
 	public bool	 		bGUI 		= true;
 
+	public GameObject	NewGUICanvas = null;
+
 	float 				timerGC		= 0;
 	float 				timerRefresh		= 0;
 
 	public GameObject			goRootSpace = null;
 	public GameObject			goRootAvatars = null;
+
 	bool				loading		= false;
 
 	private  FileInfo[] 	info = null;
@@ -899,9 +903,11 @@ public class App : MonoBehaviour
 				SetCurrentCamera(camerascripts[current_camera]);
 			}
 
+
 			//touche menu
-			if (NAInput.GetControlDown(NAControl.Menu))
+			if (NAInput.GetControlDown(NAControl.FullMenu))
 			{
+
 				NA.PatchAllMaterials(goRootSpace); //NEW
 				bToolPanel = false;
 				bGUI = !bGUI;
@@ -911,6 +917,29 @@ public class App : MonoBehaviour
 				}
 				//Cursor.visible = bGUI;
 			}
+
+			if (NAInput.GetControlDown(NAControl.Menu))
+			{
+
+				// in installation server or client mode, bring up a minimal UI window
+				if (config == "server" || config == "client")
+				{
+					NewGUICanvas.GetComponent<NewGUIScript>().Toggle();
+
+				}
+				else  // in normal mode, Menu and FullMenu are the same 
+				{
+					NA.PatchAllMaterials(goRootSpace); //NEW
+					bToolPanel = false;
+					bGUI = !bGUI;
+					if (bGUI)
+					{
+						refreshHostList();
+					}
+				}
+				//Cursor.visible = bGUI;
+			}
+
 		}
 
 		//à déplacer dans un tool ?
@@ -1705,6 +1734,7 @@ public class App : MonoBehaviour
 			GUIIdentityMatrix();
 
 		}
+
 		else if (config == "server")
 		{
 			//mode client exhibition
