@@ -925,7 +925,6 @@ public class App : MonoBehaviour
 				if (config == "server" || config == "client")
 				{
 					NewGUICanvas.GetComponent<NewGUIScript>().Toggle();
-
 				}
 				else  // in normal mode, Menu and FullMenu are the same 
 				{
