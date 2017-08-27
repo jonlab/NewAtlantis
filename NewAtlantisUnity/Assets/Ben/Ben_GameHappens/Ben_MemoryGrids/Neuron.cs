@@ -85,13 +85,23 @@ public class Neuron : MonoBehaviour {
 		and fires the other random synapses
 
 		RPC-call the Play() function on the clients
-	
+
+
+		trigger entry: this WILL get called with two non-RB colliders both set as triggers.  but it only gets called locally. 
+
+		so it should be an RPC call to the server to the Fire function
+		and the Play function should be local 
+
 	*/
 
 	void OnTriggerEnter(Collider other) 
 	{
 		Debug.Log ("Neuron collision entry");
-		if (!NA.isClient())
+		if (NA.isClient())
+		{
+			GetComponent<NetworkView>().RPC("Server_Fire",RPCMode.Server,0.9f);
+		}
+		else
 		{
 			Fire(0.9f);
 		}
@@ -110,30 +120,33 @@ public class Neuron : MonoBehaviour {
 		{
 			audioSource.volume=signal;
 			instrument.PlayNote(midiNote);
-
 		}
+		StartCoroutine(DoScaleAnimation(signal));
 	}
 
 
+	[RPC]
+	public void Server_Fire (float signal)
+	{
+		Fire(signal);
+	}
 
 	public void Fire(float signal)
 	{
 		//only on server
-		// play sound
-		// play sound
+
 		if (NA.isServer())
 		{
+			Play(signal);
 			GetComponent<NetworkView>().RPC("Play", RPCMode.Others, signal);
-		}
 
-		Play(signal);
+			if (synapses.Count>0)
+			{
+				int r = Random.Range(0, synapses.Count);
+				StartCoroutine ("FireSynapse", signal);
+			}	
 
-		if (synapses.Count>0)
-		{
-			int r = Random.Range(0, synapses.Count);
-			StartCoroutine ("FireSynapse", signal);
 		}
-		StartCoroutine(DoScaleAnimation(signal));
 	}
 
 	IEnumerator FireSynapse(float signal)
