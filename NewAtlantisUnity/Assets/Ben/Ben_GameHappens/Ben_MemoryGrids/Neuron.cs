@@ -76,15 +76,24 @@ public class Neuron : MonoBehaviour {
 	{
 
 	}
+
+	/*
+		server authoritative 
+
+		triggering is initiated on the server
+		that calls Fire
+		and fires the other random synapses
+
+		RPC-call the Play() function on the clients
+	
+	*/
+
 	void OnTriggerEnter(Collider other) 
 	{
+		Debug.Log ("Neuron collision entry");
 		if (!NA.isClient())
 		{
-			//if (other.gameObject.tag == "Player")
-			{
-				// trigger other nearby neurons through synapses
-				Fire(0.9f);
-			}
+			Fire(0.9f);
 		}
 	}
 
@@ -116,6 +125,7 @@ public class Neuron : MonoBehaviour {
 		{
 			GetComponent<NetworkView>().RPC("Play", RPCMode.Others, signal);
 		}
+
 		Play(signal);
 
 		if (synapses.Count>0)
