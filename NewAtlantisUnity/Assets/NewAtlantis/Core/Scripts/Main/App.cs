@@ -1407,19 +1407,34 @@ public class App : MonoBehaviour
 		NAServer.GetSpaceDescription(space);
 		bStartPopup = false;
 	}
-		
+
+	[RPC]
+	public void Server_GoToSpace (int spaceid)
+	{
+		GoToSpace(spaceid);
+	}
+
 	public void GoToSpace(int spaceid)
 	{
-		foreach (Space space in listSpaces)
+		if (Network.isClient)
 		{
-			if (space.id == spaceid)
+			GetComponent<NetworkView>().RPC("Server_GoToSpace", RPCMode.Server, spaceid);
+
+		}
+		else 
+		{
+			foreach (Space space in listSpaces)
 			{
-				GoToSpace(space);
-				break;			
+				if (space.id == spaceid)
+				{
+					GoToSpace(space);
+					break;			
+				}
 			}
 		}
 	}
-		
+
+
 	public void GoToSpace(Space space)
 	{
 		//fade black screen ?
