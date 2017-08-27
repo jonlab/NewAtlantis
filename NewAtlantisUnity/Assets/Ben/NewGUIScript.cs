@@ -34,25 +34,10 @@ public class NewGUIScript : MonoBehaviour {
 
 	}
 
-
-	[RPC]
-	void Server_ReturnToLobby()
-	{
-		NA.app.GoToSpace(232);
-	}
-
 	public void ReturnToLobby () {
-		
 		NA.ShowAvatars(true);
-		if (Network.isClient)
-		{
-			GetComponent<NetworkView>().RPC("Server_ReturnToLobby",RPCMode.Server);	
+		NA.app.GoToSpace(232);
 		
-		}
-		else 
-		{
-			NA.app.GoToSpace(232);
-		}
 		// hide the gui panel
 		mainPanel.SetActive(false);
 	}
