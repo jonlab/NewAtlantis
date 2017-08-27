@@ -32,7 +32,6 @@ class Synapse {
 public class Neuron : MonoBehaviour {
 	List<Synapse> synapses;
 
-	Vector3 baseScale; 
 	NeuronCollection neuronCollection;
 	public float distanceThreshold = 7.0f;
 
@@ -48,8 +47,8 @@ public class Neuron : MonoBehaviour {
 	{
 		midiNote = note;
 	}
+
 	void Start () {
-		baseScale = transform.localScale;
 		synapses = new List<Synapse>();
 		neuronCollection = GameObject.FindObjectOfType<NeuronCollection> ();
 
