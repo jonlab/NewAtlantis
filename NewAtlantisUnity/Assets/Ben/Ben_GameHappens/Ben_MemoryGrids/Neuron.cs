@@ -96,7 +96,6 @@ public class Neuron : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other) 
 	{
-		Debug.Log ("Neuron collision entry");
 		if (NA.isClient())
 		{
 			GetComponent<NetworkView>().RPC("Server_Fire",RPCMode.Server,0.9f);
@@ -107,21 +106,15 @@ public class Neuron : MonoBehaviour {
 		}
 	}
 
-
-
-
-
-
 	[RPC]
 	public void Play(float signal)
 	{
-		LogManager.Log("neuron play");
 		if (instrument != null)
 		{
 			audioSource.volume=signal;
 			instrument.PlayNote(midiNote);
 		}
-		StartCoroutine(DoScaleAnimation(signal));
+
 	}
 
 
@@ -138,6 +131,7 @@ public class Neuron : MonoBehaviour {
 		if (NA.isServer())
 		{
 			Play(signal);
+			StartCoroutine(DoScaleAnimation(signal));
 			GetComponent<NetworkView>().RPC("Play", RPCMode.Others, signal);
 
 			if (synapses.Count>0)
@@ -167,7 +161,7 @@ public class Neuron : MonoBehaviour {
 		// play sound
 		// trigger animation or whatever
 
-		Vector3 newScale = baseScale * (1.0f+signal);
+		Vector3 newScale = baseScale * (1.0f+signal) * (1.0f+signal);
 
 		float duration = 0.3f;
 		float startTime = Time.time;
