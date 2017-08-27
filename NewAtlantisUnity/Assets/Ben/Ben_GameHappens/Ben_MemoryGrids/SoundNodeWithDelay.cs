@@ -90,10 +90,9 @@ public class SoundNodeWithDelay : MonoBehaviour {
 		{
 			GetComponent<NetworkView>().RPC("Play", RPCMode.Others);
 		}
-		else
-		{
-			Play();
-		}
+
+		Play();
+		
 	}
 
 	[RPC]
