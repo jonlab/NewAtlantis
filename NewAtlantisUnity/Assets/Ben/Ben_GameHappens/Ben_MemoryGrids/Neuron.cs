@@ -161,25 +161,4 @@ public class Neuron : MonoBehaviour {
 		}
 
 	}
-
-
-	IEnumerator DoScaleAnimation(float signal)
-	{
-		// play sound
-		// trigger animation or whatever
-
-		Vector3 newScale = baseScale * (1.0f+signal) * (1.0f+signal);
-
-		float duration = 0.3f;
-		float startTime = Time.time;
-		float endTime =startTime+duration;
-
-		while (Time.time<=endTime)
-		{
-			float t=(Time.time-startTime)/duration; 
-			transform.localScale = Vector3.Lerp(newScale, baseScale,t);
-			yield return null;
-		}
-
-	}
 }
