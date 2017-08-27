@@ -36,8 +36,12 @@ public class Neuron : MonoBehaviour {
 	NeuronCollection neuronCollection;
 	public float distanceThreshold = 7.0f;
 
-	 Instrument instrument;
-	 AudioSource audioSource;
+	Instrument instrument;
+	AudioSource audioSource;
+
+	GameObject pulsar;
+	public GameObject pulsarPrefab;
+
 	public int midiNote=30;	// note to play when triggered
 
 	public void SetMidiNote (int note)
@@ -51,6 +55,9 @@ public class Neuron : MonoBehaviour {
 
 		instrument = GetComponent<Instrument> ();
 		audioSource = GetComponent<AudioSource> ();
+
+		pulsar=Instantiate(pulsarPrefab,transform.position,Quaternion.identity);
+		pulsar.transform.parent = transform;
 
 		if (!NA.isClient())
 		{
@@ -114,7 +121,7 @@ public class Neuron : MonoBehaviour {
 			audioSource.volume=signal;
 			instrument.PlayNote(midiNote);
 		}
-
+		pulsar.GetComponent<ScalePulse>().Pulse(signal);
 	}
 
 
@@ -131,7 +138,7 @@ public class Neuron : MonoBehaviour {
 		if (NA.isServer())
 		{
 			Play(signal);
-			StartCoroutine(DoScaleAnimation(signal));
+
 			GetComponent<NetworkView>().RPC("Play", RPCMode.Others, signal);
 
 			if (synapses.Count>0)
