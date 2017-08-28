@@ -348,7 +348,6 @@ public static class NA
 				catch (System.Exception e)
 				{
 					LogManager.LogWarning("shader exception for material");
-					m.shader = Shader.Find("Standard");
 				}
 			}
 			/*foreach (Material m in r.materials)
