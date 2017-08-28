@@ -2578,25 +2578,23 @@ public class App : MonoBehaviour
 		GUILayout.Label ("This machine ip : " + Network.player.ipAddress + "(" + Network.player.externalIP + ")" + " guid=" + Network.player.guid);// + " " + Network.player.externalIP);
 
 
+		GUILayout.BeginHorizontal();
+		GUILayout.Label ("SPACES LIBRARY");
+		SpaceFilter = GUILayout.TextField (SpaceFilter, GUILayout.Width(200));
+		SpaceFilterFeatured = GUILayout.Toggle (SpaceFilterFeatured, "only featured", GUILayout.Width(200));
+		GUILayout.EndHorizontal();
+
+
 		GUISpacesHeader();
 		//scrollPosLobbySpaces = GUILayout.BeginScrollView( scrollPosLobbySpaces, GUILayout.Height( 100+500+312 ) ); //150
-		scrollPosLobbySpaces = GUILayout.BeginScrollView( scrollPosLobbySpaces, GUILayout.Height( 100+300 ) ); //150
-		GUISpaces(true);
+		scrollPosLobbySpaces = GUILayout.BeginScrollView( scrollPosLobbySpaces, GUILayout.Height( 300 ) ); //150
+		GUISpaces(false);
 		GUILayout.EndScrollView();
 			
 		// toggle auto-load
 
-		bool newAutoLoad = GUILayout.Toggle (bAutoLoad, "Autoload");
-		if (newAutoLoad != bAutoLoad) {
-			PlayerPrefs.SetInt ("autoload",newAutoLoad ?  1:0);
-			bAutoLoad=newAutoLoad;
-			if (bAutoLoad) {
-				PlayerPrefs.SetInt ("defaultspace-id", NA.CurrentSpace.id);
+		GUILayout.BeginHorizontal ();
 
-				PlayerPrefs.SetString ("defaultspace-name", NA.CurrentSpace.name);
-				Debug.Log ("setting defaultspace pref to " + strSpace);
-			}
-		}
 		//=============
 		//START SERVER
 		//=============
@@ -2634,8 +2632,22 @@ public class App : MonoBehaviour
 			state = AppState.Game;
 			bGUI = false;
 		}
+		GUILayout.EndHorizontal ();
 
+		//==================
+		//Autoload 
+		//=================
+		bool newAutoLoad = GUILayout.Toggle (bAutoLoad, "Autoload");
+		if (newAutoLoad != bAutoLoad) {
+			PlayerPrefs.SetInt ("autoload",newAutoLoad ?  1:0);
+			bAutoLoad=newAutoLoad;
+			if (bAutoLoad) {
+				PlayerPrefs.SetInt ("defaultspace-id", NA.CurrentSpace.id);
 
+				PlayerPrefs.SetString ("defaultspace-name", NA.CurrentSpace.name);
+				Debug.Log ("setting defaultspace pref to " + strSpace);
+			}
+		}
 
 		GUI.color = Color.white;
 
