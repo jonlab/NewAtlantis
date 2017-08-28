@@ -1416,7 +1416,7 @@ public class App : MonoBehaviour
 
 	public void GoToSpace(int spaceid)
 	{
-		if (Network.isClient)
+		if (NA.isClient())
 		{
 			GetComponent<NetworkView>().RPC("Server_GoToSpace", RPCMode.Server, spaceid);
 
@@ -2303,6 +2303,7 @@ public class App : MonoBehaviour
 		GUILayout.EndScrollView();
 		GUI.color = Color.white;
 
+
         //if(GUI.Button(new Rect(200, Screen.height - 100, 200 ,  50 ), "Edit my Avatar"))
 		if(GUILayout.Button("Edit my Avatar"))
         {
@@ -2574,6 +2575,9 @@ public class App : MonoBehaviour
 		GUILayout.Label ("Create a performance...");
 		GUILayout.EndHorizontal();
 
+		GUILayout.Label ("This machine ip : " + Network.player.ipAddress + "(" + Network.player.externalIP + ")" + " guid=" + Network.player.guid);// + " " + Network.player.externalIP);
+
+
 		GUISpacesHeader();
 		//scrollPosLobbySpaces = GUILayout.BeginScrollView( scrollPosLobbySpaces, GUILayout.Height( 100+500+312 ) ); //150
 		scrollPosLobbySpaces = GUILayout.BeginScrollView( scrollPosLobbySpaces, GUILayout.Height( 100+300 ) ); //150
@@ -2630,6 +2634,7 @@ public class App : MonoBehaviour
 			state = AppState.Game;
 			bGUI = false;
 		}
+
 
 
 		GUI.color = Color.white;
@@ -2894,6 +2899,23 @@ public class App : MonoBehaviour
 			tab = AppTab.None; //hide windows
 			state = AppState.Game;
 		}
+
+		//============
+		//AUTOLOAD
+		//============
+		bool newAutoLoad = GUILayout.Toggle (bAutoLoad, "Autoload");
+		if (newAutoLoad != bAutoLoad) {
+			PlayerPrefs.SetInt ("autoload",newAutoLoad ?  1:0);
+			bAutoLoad=newAutoLoad;
+			if (bAutoLoad) {
+				PlayerPrefs.SetInt ("defaultspace-id", NA.CurrentSpace.id);
+
+				PlayerPrefs.SetString ("defaultspace-name", NA.CurrentSpace.name);
+				Debug.Log ("setting defaultspace pref to " + strSpace);
+			}
+		}
+
+
 		GUILayout.EndHorizontal();
 		GUILayout.Space(20);
 		GUI.color = Color.white;

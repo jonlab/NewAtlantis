@@ -25,7 +25,7 @@ public static class NA
 
     public static float JoystickSmoothing = 0.92f;
 
-	public static int MAX_PLAYER_OBJECTS=10;
+	public static int MAX_PLAYER_OBJECTS=100;
 
 	public static Vector3 colorAvatar;
 
@@ -337,12 +337,18 @@ public static class NA
 						else
 						{
 							LogManager.LogWarning("can't find shader : " + m.shader.name + " - material : " + m.name);
+							m.shader = Shader.Find("Standard");
 						}
+					}
+					else
+					{
+						m.shader = Shader.Find("Standard");
 					}
 				}
 				catch (System.Exception e)
 				{
 					LogManager.LogWarning("shader exception for material");
+					m.shader = Shader.Find("Standard");
 				}
 			}
 			/*foreach (Material m in r.materials)
