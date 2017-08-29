@@ -63,7 +63,7 @@ public class Neuron : MonoBehaviour {
 			foreach (GameObject g in neuronCollection.Nodes())
 			{
 				float d = Vector3.Distance (g.transform.position, transform.position);
-				if (d < distanceThreshold)
+				if (d < distanceThreshold && g != this.gameObject)
 				{
 					Synapse s = new Synapse (this, g.GetComponent<Neuron>(), 0.2f);
 					synapses.Add(s);
@@ -134,7 +134,7 @@ public class Neuron : MonoBehaviour {
 	{
 		//only on server
 
-		if (NA.isServer())
+		if (!NA.isClient())
 		{
 			Play(signal);
 
@@ -151,7 +151,7 @@ public class Neuron : MonoBehaviour {
 
 	IEnumerator FireSynapse(float signal)
 	{
-		yield return new WaitForSeconds (0.5f);
+		yield return new WaitForSeconds (Random.Range(0.5f,2.0f));
 
 		if (synapses.Count>0)
 		{
