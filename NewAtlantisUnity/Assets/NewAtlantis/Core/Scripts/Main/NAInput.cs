@@ -19,6 +19,11 @@ public enum NAControl
 	FullMenu
 }
 
+// to enable both keyboard input, configured through the Input Manager, AND this remappable thing ... 
+// maybe we could only do Input.GetKeyDown, and manage the mapping ourselves, 
+// but in that case it won't nicely translate the keys to axes for movement.  
+// so I think we need to create key mappings in the Input Manager, by name, and also check those 
+
 public class NAInput 
 {
 	static string [] MAPPING_PS4_MAC = new string[13] {"button0","button1","button2","button3",
@@ -26,7 +31,11 @@ public class NAInput
 
 	static string [] MAPPING_PS4_WIN = new string[13] {"button0","button1","button2","button3",
 		"button4","button5","axis3","axis1","axis7","axis4","axis8","axis9","FullMenu"};
-	
+
+	static string [] MAPPING_BASE = new string[13] {"Action","Jump","Menu","Camera","NextTool","PreviousTool",
+		"Vertical","Horizontal","ViewVertical","ViewHorizontal","PadHorizontal","PadVertical","FullMenu"};
+
+
 	public static float PreviousPadX = 0;
 	public static float PreviousPadY = 0;
 
@@ -95,29 +104,52 @@ public class NAInput
 	static public bool GetControlDown(NAControl control)
 	{
 		string button = GetControlName(control);
-		return Input.GetButtonDown(button);
+
+		bool value1 = Input.GetButtonDown(button);
+		bool value2 = Input.GetButtonDown(MAPPING_BASE[(int)control]);
+
+		bool result = value1 || value2; 
+		return result; 
+
 	}
 
 	static public bool GetControlUp(NAControl control)
 	{
 		string button = GetControlName(control);
-		return Input.GetButtonUp(button);
+		bool value1 = Input.GetButtonUp(button);
+		bool value2 = Input.GetButtonUp(MAPPING_BASE[(int)control]);
+
+		bool result = value1 || value2; 
+
+		return result;
 	}
 
 	static public bool GetControl(NAControl control)
 	{
 		string button = GetControlName(control);
-		return Input.GetButton(button);
+		bool value1 = Input.GetButton(button);
+		bool value2 = Input.GetButton(MAPPING_BASE[(int)control]);
+
+		bool result = value1 || value2;
+
+		return result;
 	}
 
 	static public float GetAxis(NAControl control)
 	{
 		string axis = GetControlName(control);
-		float v=Input.GetAxis(axis);
+		float v1=Input.GetAxis(axis);
 
 		if (control == NAControl.MoveVertical)
-			v *= -1;
-		return v;
+			v1 *= -1;
+
+		float v2=Input.GetAxis(MAPPING_BASE[(int)control]);
+
+		// average the two inputs?  In most cases only one or the other will be used anyway.  Could just add them, 
+		// though that could create weird input in some cases. 
+
+		float result = (v1+v2)/2.0f;
+		return result;
 	}
 
 
