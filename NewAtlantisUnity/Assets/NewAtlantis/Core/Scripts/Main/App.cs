@@ -100,6 +100,11 @@ public class App : MonoBehaviour
 	private string 				strIP = "92.223.149.93"; //
 	private string 				strFile = "DummyObject.unity3d";
 
+	string 				masterServerIP = "67.225.180.24";
+	int 				masterServerPort = 23466;
+	string				facilitatorIP = "67.225.180.24";
+	int					facilitatorPort = 50005;
+
 	GameObject goMainLight = null;
 	public GameObject goReticle = null;
 	GameObject goGrab = null;
@@ -318,7 +323,23 @@ public class App : MonoBehaviour
 
 		//QualitySettings.
 
-        Debug.Log ("IP="+MasterServer.ipAddress);
+		// set up master server 
+
+		if (PlayerPrefs.GetString("masterServerIP") != "")
+			this.masterServerIP = PlayerPrefs.GetString("masterServerIP");
+		if (PlayerPrefs.GetInt ("masterServerPort") != 0)
+			this.masterServerPort = PlayerPrefs.GetInt ("masterServerPort");
+		if (PlayerPrefs.GetString("facilitatorIP") != "")
+			this.facilitatorIP = PlayerPrefs.GetString("facilitatorIP");
+		if (PlayerPrefs.GetInt ("facilitatorPort") != 0)
+			this.facilitatorPort = PlayerPrefs.GetInt ("facilitatorPort");
+
+		MasterServer.ipAddress = this.masterServerIP;
+		MasterServer.port = this.masterServerPort;
+		Network.natFacilitatorIP = this.facilitatorIP;
+		Network.natFacilitatorPort = this.facilitatorPort;
+
+
 		//AssetBundlePreviewGenerator.Test("Bundles/grass_ground.unity3d");
 		//AssetBundlePreviewGenerator.Test("Bundles/CubeRouge.unity3d");
 		//AssetBundlePreviewGenerator.Test("Bundles/Lobby.unity3d");
@@ -2466,8 +2487,8 @@ public class App : MonoBehaviour
 		}
 		else
 		{
-			//Debug.Log ("IP="+MasterServer.ipAddress);
-			//Debug.Log ("PORT="+MasterServer.port);
+			Debug.Log ("IP="+MasterServer.ipAddress);
+			Debug.Log ("PORT="+MasterServer.port);
 			GUILayout.BeginHorizontal();
 			GUILayout.Label( "name"	,GUILayout.Width(250 ));
 			GUILayout.Label( "players"	,GUILayout.Width(50 ));
@@ -3583,10 +3604,34 @@ public class App : MonoBehaviour
 		NA.syncMode = (SyncMode)GUILayout.SelectionGrid((int)NA.syncMode, strModes, 4);
 		GUILayout.EndHorizontal();
 
+		GUILayout.BeginHorizontal();
+
+		GUILayout.Label("Unity MasterServer IP:",GUILayout.Width(250));
+		this.masterServerIP  = GUILayout.TextField (this.masterServerIP,GUILayout.Width(250));
+
+		GUILayout.Label("Port:",GUILayout.Width(250));
+		this.masterServerPort = int.Parse (GUILayout.TextField (this.masterServerPort.ToString(),GUILayout.Width(250)));
+
+		GUILayout.EndHorizontal();
+
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("NAT Punchthrough Facilitator IP:",GUILayout.Width(250));
+		this.facilitatorIP = GUILayout.TextField(this.facilitatorIP,GUILayout.Width(250));
+		GUILayout.Label("Port:",GUILayout.Width(250));
+		this.facilitatorPort = int.Parse (GUILayout.TextField(this.facilitatorPort.ToString(),GUILayout.Width(250)));
+		GUILayout.EndHorizontal();
 
 
+		MasterServer.ipAddress = this.masterServerIP;
+		MasterServer.port = this.masterServerPort;
+		Network.natFacilitatorIP = this.facilitatorIP;
+		Network.natFacilitatorPort = this.facilitatorPort;
 
-
+		PlayerPrefs.SetString("masterServerIP",this.masterServerIP);
+		PlayerPrefs.SetInt("masterServerPort",this.masterServerPort);
+		PlayerPrefs.SetString("facilitatorIP",this.facilitatorIP);
+		PlayerPrefs.SetInt("facilitatorPort",this.facilitatorPort);
+	
 
 		GUI.DragWindow();
     }
