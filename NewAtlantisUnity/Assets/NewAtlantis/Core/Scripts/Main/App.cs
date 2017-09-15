@@ -880,7 +880,9 @@ public class App : MonoBehaviour
 		}
 		else if (l1)
 		{
-			
+			NAToolBase t = tools[current_tool];
+			//extended control if L1 is maintained
+			t.ExtendedControl();
 		}
 		else if (!closest)
 		{
