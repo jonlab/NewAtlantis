@@ -2394,6 +2394,7 @@ public class App : MonoBehaviour
 					space.id == 139 ||
 					space.id == 161 ||
 					space.id == 125 ||
+					space.id == 232 ||
 					space.id == 39 ))
 				{
 					featured = true;
