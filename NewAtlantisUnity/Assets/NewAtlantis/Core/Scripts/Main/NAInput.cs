@@ -27,10 +27,10 @@ public enum NAControl
 public class NAInput 
 {
 	static string [] MAPPING_PS4_MAC = new string[13] {"button0","button1","button2","button3",
-		"button4","button5","axis2","axis1","axis4","axis3","axis7","axis8","FullMenu"};
+		"button5","button4","axis2","axis1","axis4","axis3","axis11","axis12","FullMenu"};
 
 	static string [] MAPPING_PS4_WIN = new string[13] {"button0","button1","button2","button3",
-		"button4","button5","axis3","axis1","axis7","axis4","axis8","axis9","FullMenu"};
+		"button5","button4","axis3","axis1","axis7","axis4","axis8","axis9","FullMenu"};
 
 	static string [] MAPPING_BASE = new string[13] {"Action","Jump","Menu","Camera","NextTool","PreviousTool",
 		"Vertical","Horizontal","ViewVertical","ViewHorizontal","PadHorizontal","PadVertical","FullMenu"};
@@ -145,10 +145,7 @@ public class NAInput
 
 		float v2=Input.GetAxis(MAPPING_BASE[(int)control]);
 
-		// average the two inputs?  In most cases only one or the other will be used anyway.  Could just add them, 
-		// though that could create weird input in some cases. 
-
-		float result = (v1+v2)/2.0f;
+		float result = (v1+v2);
 		return result;
 	}
 
