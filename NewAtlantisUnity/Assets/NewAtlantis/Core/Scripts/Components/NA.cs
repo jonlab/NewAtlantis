@@ -286,6 +286,8 @@ public static class NA
 	{
 		Debug.Log("patch all materials");
 		Renderer[] renderers = root.GetComponentsInChildren<Renderer>();
+		Shader standardShader = Shader.Find("Standard");
+
 		foreach (Renderer r in renderers)
 		{
 			//hack to reaffect the shader
@@ -293,18 +295,19 @@ public static class NA
 			//r.material.shader = Shader.Find(r.material.shader.name);
 			foreach (Material m in r.sharedMaterials)
 			{
+				LogManager.Log("try to patch material : " + m.name);
 				try
 				{
 					if (m.shader != null)
-					{
-						Debug.Log("try to patch material : " + m.name + " -> " + m.shader.name);
 
+					{
+						 LogManager.Log("shader: " + m.shader.name);
+						 LogManager.Log("keywords: " + string.Join(",",m.shaderKeywords));
 							
 						Shader s = Shader.Find(m.shader.name);
 						if (m.shader.name == "")
 						{
-							s = Shader.Find("Standard");
-						}
+							s = standardShader;						}
 
 						if (m.name.Contains("Water"))
 						{
@@ -321,7 +324,11 @@ public static class NA
 
 						else if (m.name.Contains("Default"))
 						{
-							s = Shader.Find("Standard");
+							s = standardShader;
+						}
+						else if (m.shader.name=="Hidden/InternalErrorShader")
+						{
+							s=standardShader;
 						}
 						if (s != null)
 						{
@@ -337,12 +344,13 @@ public static class NA
 						else
 						{
 							LogManager.LogWarning("can't find shader : " + m.shader.name + " - material : " + m.name);
-							m.shader = Shader.Find("Standard");
+							m.shader = standardShader;
 						}
 					}
 					else
 					{
-						m.shader = Shader.Find("Standard");
+						LogManager.Log ("no shader, assigning the standard shader");
+						m.shader = standardShader;
 					}
 				}
 				catch (System.Exception e)
