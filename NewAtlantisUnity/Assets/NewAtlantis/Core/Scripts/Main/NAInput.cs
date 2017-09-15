@@ -26,6 +26,23 @@ public enum NAControl
 
 public class NAInput 
 {
+	static string[] MAPPING_XBOX_WIN = new string[13] {
+		"button2",
+		"button0",
+		"button1",
+		"button3",
+		"button5",
+		"button4",
+		"axis2",
+		"axis1",
+		"axis5",
+		"axis4",
+		"axis6",
+		"axis7",
+		"FullMenu"
+	};
+
+
 	static string [] MAPPING_PS4_MAC = new string[13] {"button0","button1","button2","button3",
 		"button5","button4","axis2","axis1","axis4","axis3","axis7","axis8","FullMenu"};
 
@@ -58,7 +75,7 @@ public class NAInput
 		} 
 		else if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer) {
 			Debug.Log("Setting mapping to Windows");
-			currentMapping = MAPPING_PS4_WIN;
+			currentMapping = MAPPING_XBOX_WIN;
 		}
 	}
 

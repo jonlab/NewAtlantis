@@ -3608,6 +3608,7 @@ public class App : MonoBehaviour
 		NA.syncMode = (SyncMode)GUILayout.SelectionGrid((int)NA.syncMode, strModes, 4);
 		GUILayout.EndHorizontal();
 
+		GUILayout.Label("", GUI.skin.horizontalSlider);
 		GUILayout.BeginHorizontal();
 
 		GUILayout.Label("Unity MasterServer IP:",GUILayout.Width(250));
@@ -3636,6 +3637,22 @@ public class App : MonoBehaviour
 		PlayerPrefs.SetString("facilitatorIP",this.facilitatorIP);
 		PlayerPrefs.SetInt("facilitatorPort",this.facilitatorPort);
 	
+		/*
+		GUILayout.Label("", GUI.skin.horizontalSlider);
+		GUILayout.Label ("Controller Mapping:");
+		var text = new string[] { "PS4 Mac", "PS4 Mac (alternate mapping)", "PS4 Windows", "XBox Windows" };
+		int m = GUILayout.SelectionGrid (0, text, 4);
+
+
+		if (m==0)
+			NAInput.SetMappingPS4Mac();
+		else if (m==1)
+			NAInput.SetMappingPS4Mac2();
+		else if (m==2)
+			NAInput.SetMappingPS4Win();
+		else if (m==3)
+			NAInput.SetMappingXBOXWin();
+		*/
 
 		GUI.DragWindow();
     }
