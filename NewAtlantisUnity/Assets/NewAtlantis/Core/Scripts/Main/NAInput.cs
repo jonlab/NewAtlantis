@@ -32,6 +32,9 @@ public class NAInput
 	static string [] MAPPING_PS4_WIN = new string[13] {"button0","button1","button2","button3",
 		"button5","button4","axis3","axis1","axis7","axis4","axis8","axis9","FullMenu"};
 
+	static string [] MAPPING_DEFAULT = new string[13] {"button0","button1","button2","button3","button5","button4",
+		"axis1","axis2","axis3","axis4","axis5","axis6","FullMenu"};
+
 	static string [] MAPPING_BASE = new string[13] {"Action","Jump","Menu","Camera","NextTool","PreviousTool",
 		"Vertical","Horizontal","ViewVertical","ViewHorizontal","PadHorizontal","PadVertical","FullMenu"};
 
