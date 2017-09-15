@@ -678,8 +678,7 @@ public class App : MonoBehaviour
 
 		bool l1 = NAInput.GetControl(NAControl.PreviousTool) || Input.GetKey(KeyCode.LeftShift);
 		bool r1 = NAInput.GetControl(NAControl.NextTool) || Input.GetKey(KeyCode.RightShift);
-
-			
+					
 		float padx = NAInput.GetAxis(NAControl.PadHorizontal);
 		float pady = NAInput.GetAxis(NAControl.PadVertical);
 
@@ -2463,8 +2462,9 @@ public class App : MonoBehaviour
 		if (GUILayout.Button ("JOIN this IP", GUILayout.Width(100 )) && !Network.isClient) 
 		{
 			PlayerPrefs.SetString("ip", strIP);
-			LogManager.Log("try to join "+strIP+":7890");
-			Network.Connect(strIP, 7890);
+
+			//LogManager.Log("try to join "+strIP+":7890");
+			//Network.Connect(strIP, 7890);
 			CameraBackgroundSkybox();
 			state = AppState.Game;
 		}
@@ -2803,8 +2803,9 @@ public class App : MonoBehaviour
 		GUI.color = Network.isClient ? Color.gray : Color.white;
 		if (GUILayout.Button ("Join server", GUILayout.Width(100 )) && !Network.isClient) 
 		{
-			
-			LogManager.Log("try to join " + currentHost.gameName + " at " + currentHost.ip + ":" + currentHost.port);
+			Debug.Log("currentHost.ip length:" + currentHost.ip.Length);
+			Debug.Log(currentHost.ip[0]);
+			LogManager.Log("try to join " + currentHost.gameName + " at " + currentHost.ip.ToString()+ ":" + currentHost.port);
 			Network.Connect(currentHost);
 			CameraBackgroundSkybox();
 			//Network.SetReceivingEnabled(Network.player, 0, false);
