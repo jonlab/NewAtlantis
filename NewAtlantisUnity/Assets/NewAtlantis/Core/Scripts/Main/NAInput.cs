@@ -46,6 +46,10 @@ public class NAInput
 	static string [] MAPPING_PS4_MAC = new string[13] {"button0","button1","button2","button3",
 		"button5","button4","axis2","axis1","axis4","axis3","axis7","axis8","FullMenu"};
 
+	static string [] MAPPING_PS4_MAC_ALT = new string[13] {"button0","button1","button2","button3",
+		"button5","button4","axis2","axis1","axis4","axis3","axis11","axis12","FullMenu"};
+	
+
 	static string [] MAPPING_PS4_WIN = new string[13] {"button0","button1","button2","button3",
 		"button5","button4","axis3","axis1","axis7","axis4","axis7","axis8","FullMenu"};
 
@@ -75,10 +79,29 @@ public class NAInput
 		} 
 		else if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer) {
 			Debug.Log("Setting mapping to Windows");
-			currentMapping = MAPPING_XBOX_WIN;
+			currentMapping = MAPPING_PS4_WIN;
 		}
 	}
 
+	static public void SetMappingPS4Mac ()
+	{
+		currentMapping = MAPPING_PS4_MAC;
+	}
+
+	static public void SetMappingPS4Win ()
+	{
+		currentMapping = MAPPING_PS4_WIN;
+	}
+
+	static public void SetMappingPS4Mac2 ()
+	{
+		currentMapping = MAPPING_PS4_MAC_ALT;
+	}
+
+	static public void SetMappingXBOXWin ()
+	{
+		currentMapping = MAPPING_XBOX_WIN;
+	}
 	static public void Process()
 	{
 		float CurrentPadX = NAInput.GetAxis(NAControl.PadHorizontal);
