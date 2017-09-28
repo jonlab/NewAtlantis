@@ -29,6 +29,9 @@ public class NAInput
 	static string [] MAPPING_PS4_MAC = new string[13] {"button0","button1","button2","button3",
 		"button5","button4","axis2","axis1","axis4","axis3","axis7","axis8","FullMenu"};
 
+	static string [] MAPPING_PS4_MAC_ALT = new string[13] {"button0","button1","button2","button3",
+		"button5","button4","axis2","axis1","axis4","axis3","axis11","axis12","FullMenu"};
+		
 	static string [] MAPPING_PS4_WIN = new string[13] {"button0","button1","button2","button3",
 		"button5","button4","axis3","axis1","axis7","axis4","axis7","axis8","FullMenu"};
 
