@@ -1,14 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 public class NewGUIScript : MonoBehaviour {
 
 	public GameObject mainPanel;
-	GameObject button_ReturnToLobby;
+	public GameObject defaultControl;
 	// Use this for initialization
 	void Start () {
-		button_ReturnToLobby = GameObject.Find("Button_ReturnToLobby");
 	}
 	
 	// Update is called once per frame
@@ -25,7 +26,8 @@ public class NewGUIScript : MonoBehaviour {
 		if (show)
 		{
 			NA.ShowAvatars(false);
-			if (button_ReturnToLobby) button_ReturnToLobby.GetComponent<Button>().Select();
+			Debug.Log("toggle GUI: default control=" + defaultControl);
+			EventSystem.current.SetSelectedGameObject(defaultControl,null);		
 		}
 		else
 		{
