@@ -5,22 +5,37 @@ public class NASkyBox : MonoBehaviour
 {
 	public Material skybox;
 	private Material previous;
-	// Use this for initialization
 	void Start () 
 	{
-		previous = RenderSettings.skybox; //backup previous skybox
+		previous = RenderSettings.skybox; 
+
+		Debug.Log("NASkybox: shadername=[" + skybox.shader.name + "]");
+
+		//patch
+
+		if (skybox.shader.name=="Hidden/InternalErrorShader")
+		{
+			skybox.shader = Shader.Find("Skybox/6 Sided");
+		}
+		if (skybox.shader.name==null || skybox.shader.name=="")
+		{
+			skybox.shader = Shader.Find("Skybox/6 Sided");
+		}
+		else
+		{
+			skybox.shader = Shader.Find(skybox.shader.name);
+		}
+
 		RenderSettings.skybox = skybox;
+
 	}
-	
-	// Update is called once per frame
-	void Update () 
+		void Update () 
 	{
 	
 	}
 
 	void OnDestroy()
 	{
-		//restore initial skybox
 		RenderSettings.skybox = previous;
 	}
 }
