@@ -106,7 +106,7 @@ public class LogManager : MonoBehaviour
 
 	public static void Log(string str)
 	{
-		//Debug.Log (str);
+		Debug.Log (str);
 		LogEntry e = new LogEntry();
 		e.category = 0;
 		e.str = str;

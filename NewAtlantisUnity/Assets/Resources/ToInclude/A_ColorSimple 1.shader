@@ -1,4 +1,6 @@
-﻿Shader "Custom/A-ColorSimple" {
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Custom/A-ColorSimple" {
 	Properties{
 		//NO PROPERTIES
 		_MovePos("MovePos",Vector) = (1.0,1.0,1.0,1.0)
@@ -40,7 +42,7 @@
 	vertexOutput vert(vertexInput v) {
 		vertexOutput o;
 		o.col = reflect(float4(abs(v.normal), 1.0) , _MovePos);
-		o.pos = mul(UNITY_MATRIX_MVP, fmod(v.vertex , _LerpValue) );
+		o.pos = UnityObjectToClipPos(fmod(v.vertex , _LerpValue) );
 
 		return o;
 	}
@@ -91,7 +93,7 @@
 	vertexOutput vert(vertexInput v) {
 		vertexOutput o;
 		o.col = reflect(float4(abs(v.normal), 1.0) , _MovePos);
-		o.pos = mul(UNITY_MATRIX_MVP, fmod(v.vertex , _LerpValue));
+		o.pos = UnityObjectToClipPos(fmod(v.vertex , _LerpValue));
 
 		return o;
 	}

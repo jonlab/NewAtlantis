@@ -73,7 +73,7 @@ public class NAServer
 		WWWForm form = new WWWForm();
 		form.AddField("login", strLogin);
 		form.AddField("pwd", strPassword);
-		
+		Debug.Log ("UserConnect calling login.php");
 		wwwPost = new WWW("http://tanant.info/newatlantis2/login.php", form);
 	}
 	

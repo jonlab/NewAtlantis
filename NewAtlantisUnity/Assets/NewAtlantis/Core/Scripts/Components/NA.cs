@@ -25,6 +25,8 @@ public static class NA
 
     public static float JoystickSmoothing = 0.92f;
 
+	public static int MAX_PLAYER_OBJECTS=100;
+
 	public static Vector3 colorAvatar;
 
 	public static List<NAObject>	instanciables = new List<NAObject>();
@@ -75,10 +77,6 @@ public static class NA
 
 	//public static bool bDisplayAudioSourceName = true;
 
-
-
-
-
 	public static void DecorateAudioSource(AudioSource s)
 	{
 		NAReverbEffector eff = s.gameObject.GetComponent<NAReverbEffector>();
@@ -96,8 +94,6 @@ public static class NA
 		
 		if (NA.bAugmentAudioSources)
 		{
-
-			
 			NAOcclusionFX occ = s.gameObject.GetComponent<NAOcclusionFX>();
 			if (occ == null)
 			{
@@ -106,7 +102,6 @@ public static class NA
 				NAOcclusionFX occ2 = s.gameObject.AddComponent<NAOcclusionFX>();
 				NAOcclusionFX.Destroy(occ2);
 			}
-
 		}
 
 		/*if (Network.isServer)
@@ -149,7 +144,13 @@ public static class NA
 		return avatar;
 	}
 
-
+	public static void ShowAvatars(bool visible)
+	{
+	 	foreach (GameObject a in listAvatars)
+		{
+			a.SetActive(visible);
+		}
+	}
 	public static List<GameObject> GetAvatars()
 	{
 		return listAvatars;
@@ -192,7 +193,6 @@ public static class NA
 
 	}
 
-
 	public static void DestroyPlayerObjects2()
 	{
 		foreach (GameObject go in player_objects)
@@ -204,7 +204,6 @@ public static class NA
 		GameObject.Destroy(goAvatar);
 		goAvatar = null;
 	}
-
 
 
 	public static void GC()
@@ -285,8 +284,11 @@ public static class NA
 
 	public static void PatchAllMaterials(GameObject root)
 	{
-		Debug.Log("patch all materials");
+		LogManager.Log("patch all materials");
+		LogManager.Log("Object: " + root.name);
 		Renderer[] renderers = root.GetComponentsInChildren<Renderer>();
+		Shader standardShader = Shader.Find("Standard");
+
 		foreach (Renderer r in renderers)
 		{
 			//hack to reaffect the shader
@@ -294,19 +296,37 @@ public static class NA
 			//r.material.shader = Shader.Find(r.material.shader.name);
 			foreach (Material m in r.sharedMaterials)
 			{
+				if (m !=null)
+				{
+					LogManager.Log("try to patch material : " + m.name);
+				}
 				try
 				{
 					if (m.shader != null)
-					{
-						Debug.Log("try to patch material : " + m.name + " -> " + m.shader.name);
 
+					{
+						 LogManager.Log("shader: " + m.shader.name);
+						 LogManager.Log("keywords: " + string.Join(",",m.shaderKeywords));
 							
 						Shader s = Shader.Find(m.shader.name);
+
+						// patch by shader name
+
 						if (m.shader.name == "")
 						{
-							s = Shader.Find("Standard");
+							s = standardShader;						
+						}
+						else if (m.shader.name=="Hidden/InternalErrorShader")
+						{
+							s=standardShader;
+						}
+						else if (m.shader.name=="Legacy Shaders/Diffuse")
+						{
+							s=standardShader;
 						}
 
+
+						// patch by material name 
 						if (m.name.Contains("Water"))
 						{
 							s = Shader.Find("FX/Water");
@@ -315,23 +335,58 @@ public static class NA
 						{
 							s = Shader.Find("Skybox/6 Sided");
 						}
-						else if (m.name.Contains("Particles"))
+						else if (m.name.Contains("Particles") || m.name.Contains("Sparks"))
 						{
 							s = Shader.Find("Particles/Additive");
 						}
 						else if (m.name.Contains("Default"))
 						{
-							s = Shader.Find("Standard");
+							s = standardShader;
 						}
+						else if (m.name.Contains("A_ColorSimpleBlend"))
+						{
+							s = Shader.Find("Custom/A-ColorSimpleBlend");
+						}
+						else if (m.name.Contains("A_ColorSimple_TurquoiseHexagonSun"))
+						{
+							s = Shader.Find("Custom/A-ColorSimple");
+						}
+						else if (m.name.Contains("A_Color"))
+						{
+							s = Shader.Find("Custom/A-Color");
+						}
+
+
+						// patch by root object 
+						if (root.name=="CITY4morph22144")
+						{
+							if (m.name=="New Material")
+							{
+								s=Shader.Find("Custom/A-ColorSimpleBlend");
+							}
+						}
+
 						if (s != null)
 						{
 							m.shader = s;
+							if (m.name.Contains("transparent") || m.name.Contains("Transparent"))
+							{
+								StandardShaderUtils.ChangeRenderMode(m,StandardShaderUtils.BlendMode.Transparent);
+							}
+
+
 							//   LogManager.LogError("Shader name : " + m.shader.name);
 						}
 						else
 						{
 							LogManager.LogWarning("can't find shader : " + m.shader.name + " - material : " + m.name);
+							m.shader = standardShader;
 						}
+					}
+					else
+					{
+						LogManager.Log ("no shader, assigning the standard shader");
+						m.shader = standardShader;
 					}
 				}
 				catch (System.Exception e)

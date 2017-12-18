@@ -20,9 +20,7 @@ public class NASpaceTeleportOnTrigger : MonoBehaviour
 
 	void OnTriggerEnter(Collider collider) 
 	{
-		if (NA.isClient())
-			return; //only the server and standalone is able to teleport everybody
-		//FIXME : if this is an avatar with appropriate rights to do that
+
 		Debug.Log ("NASpaceTeleportOnTrigger OnTriggerEnter");
 		if (SpaceId == -1) //means "back"
 		{

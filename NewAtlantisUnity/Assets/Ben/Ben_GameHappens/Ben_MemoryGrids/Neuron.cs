@@ -32,32 +32,38 @@ class Synapse {
 public class Neuron : MonoBehaviour {
 	List<Synapse> synapses;
 
-	Vector3 baseScale; 
 	NeuronCollection neuronCollection;
 	public float distanceThreshold = 7.0f;
 
-	 Instrument instrument;
-	 AudioSource audioSource;
+	Instrument instrument;
+	AudioSource audioSource;
+
+	GameObject pulsar;
+	public GameObject pulsarPrefab;
+
 	public int midiNote=30;	// note to play when triggered
 
 	public void SetMidiNote (int note)
 	{
 		midiNote = note;
 	}
+
 	void Start () {
-		baseScale = transform.localScale;
 		synapses = new List<Synapse>();
 		neuronCollection = GameObject.FindObjectOfType<NeuronCollection> ();
 
 		instrument = GetComponent<Instrument> ();
 		audioSource = GetComponent<AudioSource> ();
 
+		pulsar=Instantiate(pulsarPrefab,transform.position,Quaternion.identity);
+		pulsar.transform.parent = transform;
+
 		if (!NA.isClient())
 		{
 			foreach (GameObject g in neuronCollection.Nodes())
 			{
 				float d = Vector3.Distance (g.transform.position, transform.position);
-				if (d < distanceThreshold)
+				if (d < distanceThreshold && g != this.gameObject)
 				{
 					Synapse s = new Synapse (this, g.GetComponent<Neuron>(), 0.2f);
 					synapses.Add(s);
@@ -76,85 +82,81 @@ public class Neuron : MonoBehaviour {
 	{
 
 	}
+
+	/*
+		server authoritative 
+
+		triggering is initiated on the server
+		that calls Fire
+		and fires the other random synapses
+
+		RPC-call the Play() function on the clients
+
+
+		trigger entry: this WILL get called with two non-RB colliders both set as triggers.  but it only gets called locally. 
+
+		so it should be an RPC call to the server to the Fire function
+		and the Play function should be local 
+
+	*/
+
 	void OnTriggerEnter(Collider other) 
 	{
-		if (!NA.isClient())
+		if (NA.isClient())
 		{
-			//if (other.gameObject.tag == "Player")
-			{
-				// trigger other nearby neurons through synapses
-				Fire(0.9f);
-			}
+			GetComponent<NetworkView>().RPC("Server_Fire",RPCMode.Server,0.9f);
+		}
+		else
+		{
+			Fire(0.9f);
 		}
 	}
-
-
-
-
-
 
 	[RPC]
 	public void Play(float signal)
 	{
-		LogManager.Log("neuron play");
 		if (instrument != null)
 		{
 			audioSource.volume=signal;
 			instrument.PlayNote(midiNote);
-
 		}
+		pulsar.GetComponent<ScalePulse>().Pulse(signal);
 	}
 
 
+	[RPC]
+	public void Server_Fire (float signal)
+	{
+		Fire(signal);
+	}
 
 	public void Fire(float signal)
 	{
 		//only on server
-		// play sound
-		// play sound
-		if (NA.isServer())
-		{
-			GetComponent<NetworkView>().RPC("Play", RPCMode.Others, signal);
-		}
-		Play(signal);
 
-		if (synapses.Count>0)
+		if (!NA.isClient())
 		{
-			int r = Random.Range(0, synapses.Count);
-			StartCoroutine ("FireSynapse", signal);
+			Play(signal);
+
+			GetComponent<NetworkView>().RPC("Play", RPCMode.Others, signal);
+
+			if (synapses.Count>0)
+			{
+				int r = Random.Range(0, synapses.Count);
+				StartCoroutine ("FireSynapse", signal);
+			}	
+
 		}
-		StartCoroutine(DoScaleAnimation(signal));
 	}
 
 	IEnumerator FireSynapse(float signal)
 	{
-		yield return new WaitForSeconds (0.5f);
+		yield return new WaitForSeconds (Random.Range(0.5f,2.0f));
 
 		if (synapses.Count>0)
 		{
 			int r = Random.Range(0, synapses.Count);
 			synapses[r].Fire(signal);
-		}
-
-	}
-
-
-	IEnumerator DoScaleAnimation(float signal)
-	{
-		// play sound
-		// trigger animation or whatever
-
-		Vector3 newScale = baseScale * (1.0f+signal);
-
-		float duration = 0.3f;
-		float startTime = Time.time;
-		float endTime =startTime+duration;
-
-		while (Time.time<=endTime)
-		{
-			float t=(Time.time-startTime)/duration; 
-			transform.localScale = Vector3.Lerp(newScale, baseScale,t);
-			yield return null;
 		}
 
 	}

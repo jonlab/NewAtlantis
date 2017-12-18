@@ -86,18 +86,6 @@ public class NAObject
 					Debug.Log ("Asset Bundle Objects count = " + objs.Length);
 					string[] strAssets = bundle.GetAllAssetNames();
 
-					/*
-					foreach (string s in strAssets)
-					{
-						Debug.Log ("Asset = " + s);
-					}
-					*/
-					/*
-					foreach (Object o in objs)
-					{
-						Debug.Log ("Object " + o.name + " type:" + o.GetType());
-					}
-					*/
 					if (bundle.mainAsset == null) //no main Asset in the bundle
 					{
 						Debug.Log("no mainAsset in bundle, manually instantiating objects");
@@ -108,6 +96,7 @@ public class NAObject
 								goChild = GameObject.Instantiate(o) as GameObject;
 								if (goChild != null)
 								{
+									Debug.Log(o.name);
 									goChild.name = o.name;
 									goChild.transform.parent 			= go.transform;
 									goChild.transform.localPosition 	= Vector3.zero;
@@ -126,12 +115,10 @@ public class NAObject
 						goChild.transform.localPosition = Vector3.zero;
 						goChild.transform.localEulerAngles = Vector3.zero;
 						//goChild.transform.localScale = Vector3.one;
+
 	                }
-					//NA.PatchMaterials(go); //crashes on 5.3.1
-					//if (!name.Contains("elevation"))
-					//{
-					NA.PatchAllMaterials(goChild); //go
-					//}
+
+					
 
 					NAObjectLabel lbl = go.GetComponentInChildren<NAObjectLabel>();
 					if (lbl)
@@ -292,7 +279,8 @@ public class NAObject
 						nSync.AttachNetworkViews();
 					}
 
-
+					LogManager.Log("---");
+					NA.PatchAllMaterials(go); 
 
 
 					/*

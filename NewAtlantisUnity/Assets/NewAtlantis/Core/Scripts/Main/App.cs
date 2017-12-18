@@ -5,8 +5,7 @@ using System.Collections.Generic;
 using System.Xml;
 using System.Xml.XPath;
 using MidiJack;
-
-
+using UnityEngine.UI;
 
 public enum AppState
 {
@@ -24,10 +23,7 @@ public enum NavigationMode
 	Flying,
 	Walking
 };
-
-
-
-
+	
 public enum AppTab
 {
 	Performance,
@@ -72,12 +68,6 @@ public class App : MonoBehaviour
 	private Color ColorSelected = Color.white;
 
 	LogEntry lastError = null;
-	
-	/*
-	WWW www = null;
-	WWW wwwPost = null;
-	List<WWW> 			requests 	= new List<WWW>();
-	*/
 
 	XmlDocument 		xml 		= null;
 	XPathNavigator  	xpn			= null;
@@ -91,26 +81,32 @@ public class App : MonoBehaviour
 	Camera 				selectedCamera = null;
 	public bool	 		bGUI 		= true;
 
+	public GameObject	NewGUICanvas = null;
+
 	float 				timerGC		= 0;
 	float 				timerRefresh		= 0;
 
 	public GameObject			goRootSpace = null;
 	public GameObject			goRootAvatars = null;
+
 	bool				loading		= false;
 
 	private  FileInfo[] 	info = null;
 
 	List<GameObject> 	cameras 	= new List<GameObject>();
-	//List<GameObject>	player_objects = new List<GameObject>();
-	//Vector3				colorAvatar = Vector3.zero;
+
 	string				strPick = "";
 	private bool				bStartPopup = true;
 	private string 				strIP = "92.223.149.93"; //
 	private string 				strFile = "DummyObject.unity3d";
 
+	string 				masterServerIP = "67.225.180.24";
+	int 				masterServerPort = 23466;
+	string				facilitatorIP = "67.225.180.24";
+	int					facilitatorPort = 50005;
+
 	GameObject goMainLight = null;
 	public GameObject goReticle = null;
-	//GameObject goAvatar = null;
 	GameObject goGrab = null;
 	Vector3		PreviousMousePosition = Vector3.zero;
 	
@@ -190,7 +186,7 @@ public class App : MonoBehaviour
 	string			SpaceFilter = "";
 	bool			SpaceFilterFeatured = true;
 	HostData 		currentHost = null;
-
+	bool			bAutoLoad = false;
 
     GameObject goGizmo;
     TRS_Gizmo trs;
@@ -223,21 +219,12 @@ public class App : MonoBehaviour
 		//byte[] bytes = System.IO.File.ReadAllBytes("Bundles/MagicFountain.unity3d");
 		AssetBundle b = AssetBundle.LoadFromMemory(bytes);
 
-
 		string[] strAssets = b.GetAllAssetNames();
-
 
 		foreach (string s in strAssets)
 		{
 			LogManager.Log ("Asset = " + s);
 		}
-					
-
-
-
-
-
-
 
 		Object[] objs = b.LoadAllAssets();
 		foreach (Object o in objs)
@@ -292,15 +279,11 @@ public class App : MonoBehaviour
 	}
 
 
-
     // Use this for initialization
     void Start () 
 	{
 
-
-
-
-
+		NAInput.InitializeControlMap ();
 		MidiMaster.GetKeyDown(60);
 		try
 		{
@@ -317,6 +300,14 @@ public class App : MonoBehaviour
 		SpaceFilter = PlayerPrefs.GetString("spacefilter");
 		int sff = PlayerPrefs.GetInt("spacefilterfeatured");
 		SpaceFilterFeatured = (sff == 1)? true : false;
+
+		if (PlayerPrefs.GetInt ("autoload") > 0) {
+			bAutoLoad = true;
+
+		}
+		else
+			bAutoLoad = false;
+
 		float sh = Mathf.Max(Screen.height, 768);
 		float sw = Screen.width;
 		mGuiWinRectWindows 		= new Rect(sw/2-WindowSize.x/2, sh/2-WindowSize.y/2, WindowSize.x, WindowSize.y);
@@ -329,9 +320,26 @@ public class App : MonoBehaviour
 		//TestAB();
         goGizmo = GameObject.Find("TRS Gizmo");
         trs = goGizmo.GetComponent<TRS_Gizmo>();
+
 		//QualitySettings.
 
-        Debug.Log ("IP="+MasterServer.ipAddress);
+		// set up master server 
+
+		if (PlayerPrefs.GetString("masterServerIP") != "")
+			this.masterServerIP = PlayerPrefs.GetString("masterServerIP");
+		if (PlayerPrefs.GetInt ("masterServerPort") != 0)
+			this.masterServerPort = PlayerPrefs.GetInt ("masterServerPort");
+		if (PlayerPrefs.GetString("facilitatorIP") != "")
+			this.facilitatorIP = PlayerPrefs.GetString("facilitatorIP");
+		if (PlayerPrefs.GetInt ("facilitatorPort") != 0)
+			this.facilitatorPort = PlayerPrefs.GetInt ("facilitatorPort");
+
+		MasterServer.ipAddress = this.masterServerIP;
+		MasterServer.port = this.masterServerPort;
+		Network.natFacilitatorIP = this.facilitatorIP;
+		Network.natFacilitatorPort = this.facilitatorPort;
+
+
 		//AssetBundlePreviewGenerator.Test("Bundles/grass_ground.unity3d");
 		//AssetBundlePreviewGenerator.Test("Bundles/CubeRouge.unity3d");
 		//AssetBundlePreviewGenerator.Test("Bundles/Lobby.unity3d");
@@ -384,56 +392,57 @@ public class App : MonoBehaviour
 		LogManager.LogError("You are in Web Player build settings ! You will not be able to upload files from your computer. Please change your build settings to standalone in File->Build Settings.");
 #endif
 
-
 		CameraBackgroundColor();
 
-        /*
+		// if in server mode and the user pref for auto load is set
+		if (bAutoLoad) {
+			if (config == "server")
+				AutoLoad_Server ();
+			else if (config == "client")
+				AutoLoad_Client ();
+		}
 
-        // DESACTIVE CAR IMPOSSIBLE DE PARAMETRER L'INPUT MANAGER VIA DU SCRIPT
-        // Alex
-
-        string[] spl = SystemInfo.operatingSystem.Split(' ');
-        string os = spl[0];
-
-
-        //  Debug.LogError(spl[0]);
-
-        if (os == "Windows")
-        {
-
-           // Input.GetAxis("DPadX").
-        }
-
-        if (os == "Mac")
-        {
-
-          //  Debug.LogError(spl[0]);
-        }
-
-        if (os == "Linux")
-        {
-
-            //  Debug.LogError(spl[0]);
-        }
-*/
 
     }
 
+	// start client, automatically try to connect to host stored in preferences 
 
+	void AutoLoad_Client ()
+	{
+		bGUI = false;
+		string strIP = PlayerPrefs.GetString("ip");
+		LogManager.Log("try to join "+strIP+":7890");
+		Network.Connect(strIP, 7890);
+		CameraBackgroundSkybox();
+		state = AppState.Game;
+
+	}
+
+
+	// start server, load a scene,at launch
+	void AutoLoad_Server ()
+	{
+		Space s = new Space ();
+		int id = PlayerPrefs.GetInt ("defaultspace-id", -1);
+		string name = PlayerPrefs.GetString ("defaultspace-name","");
+		Debug.Log (string.Format("Auto loading space {0}:{1}",id,name));
+
+		if (id >= 0) {
+			s.id = id;
+			s.name = name;
+			strSpace = s.name;
+			NA.CurrentSpace = s;
+			CameraBackgroundSkybox();
+			StartServerWithSelectedSpace ();
+			bGUI = false;
+		}		
+	}
 
     void Init()
 	{
-		//tools = GetComponents<NAToolBase>();
 		tools = GetComponentsInChildren<NAToolBase>();
 		current_tool = 0;
 		SetCurrentTool(tools[current_tool]);
-		/*
-		foreach (NAToolBase t in tools)
-		{
-
-		}
-		*/
-		//camerascripts = GetComponents<NACamera>();
 		camerascripts = GetComponentsInChildren<NACamera>();
 		current_camera = 0;
 		SetCurrentCamera(camerascripts[current_camera]);
@@ -456,12 +465,7 @@ public class App : MonoBehaviour
 		}
 		
 	}
-
-
-
-
-
-
+		
 	[RPC]
 	void DestroyNetworkAvatar(NetworkPlayer player)
 	{
@@ -498,7 +502,6 @@ public class App : MonoBehaviour
 			//goAvatar = InstantiateObject(goPrefabAvatar, Vector3.zero, Quaternion.identity, Vector3.one, 0);
 		}
 	}
-
 
 
 	void UnactivateCameras()
@@ -539,8 +542,6 @@ public class App : MonoBehaviour
 		}
 		*/
 	}
-
-
 
 	void LateUpdate()
 	{
@@ -588,8 +589,6 @@ public class App : MonoBehaviour
 	}
 
 
-
-
 	void UpdateSpacesThumbnails()
 	{
 		foreach (RemoteTexture rt in dicImages.Values)
@@ -608,8 +607,7 @@ public class App : MonoBehaviour
 			}
 		}
 	}
-
-	// Update is called once per frame
+		
 	void Update () 
 	{
 		//test
@@ -680,8 +678,7 @@ public class App : MonoBehaviour
 
 		bool l1 = NAInput.GetControl(NAControl.PreviousTool) || Input.GetKey(KeyCode.LeftShift);
 		bool r1 = NAInput.GetControl(NAControl.NextTool) || Input.GetKey(KeyCode.RightShift);
-
-			
+					
 		float padx = NAInput.GetAxis(NAControl.PadHorizontal);
 		float pady = NAInput.GetAxis(NAControl.PadVertical);
 
@@ -726,8 +723,7 @@ public class App : MonoBehaviour
 				FlyCamera fc = GetComponent<FlyCamera>();
 				fc.JumpEnabled = true;
 			}
-
-
+				
 			//closest.
 			if (closest != null)
 			{
@@ -884,11 +880,12 @@ public class App : MonoBehaviour
 		}
 		else if (l1)
 		{
-			
+			NAToolBase t = tools[current_tool];
+			//extended control if L1 is maintained
+			t.ExtendedControl();
 		}
 		else if (!closest)
 		{
-
 			//ACTION
 			if (bToolPanel)
 			{
@@ -919,16 +916,7 @@ public class App : MonoBehaviour
 				{
 					t.Release();
 				}
-
-
-
-
-
-
-
 			}
-
-
 
 			//camera change
 			if (NAInput.GetControlDown(NAControl.Camera))
@@ -937,9 +925,11 @@ public class App : MonoBehaviour
 				SetCurrentCamera(camerascripts[current_camera]);
 			}
 
+
 			//touche menu
-			if (NAInput.GetControlDown(NAControl.Menu))
+			if (NAInput.GetControlDown(NAControl.FullMenu))
 			{
+
 				NA.PatchAllMaterials(goRootSpace); //NEW
 				bToolPanel = false;
 				bGUI = !bGUI;
@@ -949,6 +939,28 @@ public class App : MonoBehaviour
 				}
 				//Cursor.visible = bGUI;
 			}
+
+			if (NAInput.GetControlDown(NAControl.Menu))
+			{
+
+				// in installation server or client mode, bring up a minimal UI window
+				if (config == "server" || config == "client")
+				{
+					NewGUICanvas.GetComponent<NewGUIScript>().Toggle();
+				}
+				else  // in normal mode, Menu and FullMenu are the same 
+				{
+					NA.PatchAllMaterials(goRootSpace); //NEW
+					bToolPanel = false;
+					bGUI = !bGUI;
+					if (bGUI)
+					{
+						refreshHostList();
+					}
+				}
+				//Cursor.visible = bGUI;
+			}
+
 		}
 
 		//à déplacer dans un tool ?
@@ -1103,10 +1115,7 @@ public class App : MonoBehaviour
 
         }
 	}
-
-	
-
-
+		
 	public void GUI_SpaceNavigate(int n)
 	{
 		current_space = current_space+n;
@@ -1151,8 +1160,7 @@ public class App : MonoBehaviour
 		}
 		current_space = Mathf.Min(current_space, index-1);
 	}
-
-
+		
 	public void GUI_HostNavigate(int n)
 	{
 		HostData[] hosts = MasterServer.PollHostList();
@@ -1297,11 +1305,6 @@ public class App : MonoBehaviour
 			}
 		}
 
-
-
-
-		//
-
 		XPathNodeIterator xpni_spaces = xpn.Select("/spaces");
 		xpni_spaces.MoveNext();
 		if (xpni_spaces.Current != null)
@@ -1415,18 +1418,11 @@ public class App : MonoBehaviour
 		}
 	}
 
-
-
 	void NetworkLoadObject(string _name, Vector3 _pos, Vector3 _angles, Vector3 _scale, string _filename, string _id)
 	{
 		GetComponent<NetworkView>().RPC("LoadObject", RPCMode.AllBuffered, _name, Network.AllocateViewID(), _pos, _angles, _scale, _filename, _id);
 	}
-
-
-
-
-
-
+		
 	void Connect(string space)
 	{
 		Disconnect();
@@ -1434,15 +1430,28 @@ public class App : MonoBehaviour
 		bStartPopup = false;
 	}
 
+	[RPC]
+	public void Server_GoToSpace (int spaceid)
+	{
+		GoToSpace(spaceid);
+	}
 
 	public void GoToSpace(int spaceid)
 	{
-		foreach (Space space in listSpaces)
+		if (NA.isClient())
 		{
-			if (space.id == spaceid)
+			GetComponent<NetworkView>().RPC("Server_GoToSpace", RPCMode.Server, spaceid);
+
+		}
+		else 
+		{
+			foreach (Space space in listSpaces)
 			{
-				GoToSpace(space);
-				break;			
+				if (space.id == spaceid)
+				{
+					GoToSpace(space);
+					break;			
+				}
 			}
 		}
 	}
@@ -1496,8 +1505,7 @@ public class App : MonoBehaviour
 		}
 		NA.player_objects.Clear();
 	}
-
-
+		
 	void CameraBackgroundColor()
 	{
 		Camera.main.clearFlags = CameraClearFlags.Color;
@@ -1547,8 +1555,7 @@ public class App : MonoBehaviour
 		
 		GUI.matrix = Matrix4x4.identity;
 	}
-
-
+		
 
     void OnGUI()
     {
@@ -1612,9 +1619,6 @@ public class App : MonoBehaviour
 				bToolPanel = !bToolPanel;
 			}
 		
-
-
-
 			if (bToolPanel)
 			{
 				float inter = 64+10;
@@ -1663,10 +1667,8 @@ public class App : MonoBehaviour
 			}
 		}
     
-
 		//TransitionManager.DrawGUI();
         
-
 		float loading = GetLoadingProgress();
 		if (loading != -1f && loading != 1f)
 		{
@@ -1755,14 +1757,10 @@ public class App : MonoBehaviour
             }
         }
 
-
-
-
 		if (!bGUI)
 		{
 			return;
 		}
-
 		if (config == "client")
 		{
 			//mode client exhibition
@@ -1772,12 +1770,14 @@ public class App : MonoBehaviour
 			GUIIdentityMatrix();
 
 		}
+
 		else if (config == "server")
 		{
 			//mode client exhibition
 			GUI.color = Color.white;
 			GUIScaleMatrix();
 			GUI.Window(13, mGuiWinRectWindowsPerf, WindowFunctionPerformanceServer, "New Atlantis Performance");
+
 			GUIIdentityMatrix();
 
 		}
@@ -1923,21 +1923,6 @@ public class App : MonoBehaviour
 		}
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	public GameObject PickObject(Vector2 screenpos, out RaycastHit hit)
 	{
 		Vector3 v = screenpos;
@@ -1970,15 +1955,6 @@ public class App : MonoBehaviour
 	*/
 
 
-
-
-
-
-
-
-
-
-
 	void OnConnectedToServer() 
 	{
 		Debug.Log("Connected to server");
@@ -1986,7 +1962,6 @@ public class App : MonoBehaviour
 		ResetViewerPosition();
 		PlayEvent(2);
 	}
-
 
 
 	void OnPlayerConnected(NetworkPlayer player) 
@@ -2010,10 +1985,6 @@ public class App : MonoBehaviour
 		GetComponent<NetworkView>().RPC("DestroyNetworkAvatar", RPCMode.OthersBuffered, player); //destroy on clients
 		LogManager.LogWarning("A new player just leaved the server.");
 	}
-    
-	
-
-
 
     void OnDisconnectedFromServer(NetworkDisconnection info) 
 	{
@@ -2069,25 +2040,6 @@ public class App : MonoBehaviour
 		_message = _message.Replace('\n', ' ');
 		GetComponent<NetworkView>().RPC("Chat", RPCMode.AllBuffered, strName, _message/*, NA.colorAvatar*/);
 	}
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	void WindowFunctionChat (int windowID)
 	{
@@ -2373,6 +2325,7 @@ public class App : MonoBehaviour
 		GUILayout.EndScrollView();
 		GUI.color = Color.white;
 
+
         //if(GUI.Button(new Rect(200, Screen.height - 100, 200 ,  50 ), "Edit my Avatar"))
 		if(GUILayout.Button("Edit my Avatar"))
         {
@@ -2441,6 +2394,7 @@ public class App : MonoBehaviour
 					space.id == 139 ||
 					space.id == 161 ||
 					space.id == 125 ||
+					space.id == 232 ||
 					space.id == 39 ))
 				{
 					featured = true;
@@ -2505,38 +2459,24 @@ public class App : MonoBehaviour
 		GUILayout.EndHorizontal();
 
 		GUILayout.BeginHorizontal();
-		//HERE55
-		if (GUILayout.Button ("Join Game Happens (worldwide)", GUILayout.Width(250 ), GUILayout.Height(100 )) && !Network.isClient) 
-		{
-
-			LogManager.Log("try to join Game Happens at 92.223.149.93:7890");
-			Network.Connect("92.223.149.93", 7890);
-			CameraBackgroundSkybox();
-			state = AppState.Game;
-		}
-
-		if (GUILayout.Button ("Join Game Happens (local)", GUILayout.Width(250 ), GUILayout.Height(100 )) && !Network.isClient) 
-		{
-
-			LogManager.Log("try to join Game Happens at 10.11.11.254:7890");
-			Network.Connect("10.11.11.254", 7890);
-			//10.11.11.254 dans skype, 252 dans le mail
-			CameraBackgroundSkybox();
-			state = AppState.Game;
-		}
-
 
 		GUILayout.Space(100);
 		strIP = GUILayout.TextField(strIP);
 		if (GUILayout.Button ("JOIN this IP", GUILayout.Width(100 )) && !Network.isClient) 
 		{
 			PlayerPrefs.SetString("ip", strIP);
-			LogManager.Log("try to join "+strIP+":7890");
-			Network.Connect(strIP, 7890);
+
+			//LogManager.Log("try to join "+strIP+":7890");
+			//Network.Connect(strIP, 7890);
 			CameraBackgroundSkybox();
 			state = AppState.Game;
 		}
 
+		bool newAutoLoad = GUILayout.Toggle (bAutoLoad, "Autoload");
+		if (newAutoLoad != bAutoLoad) {
+			PlayerPrefs.SetInt ("autoload",newAutoLoad ?  1:0);
+			bAutoLoad=newAutoLoad;
+		}
 		GUILayout.EndHorizontal();
 
 
@@ -2550,8 +2490,8 @@ public class App : MonoBehaviour
 		}
 		else
 		{
-			//Debug.Log ("IP="+MasterServer.ipAddress);
-			//Debug.Log ("PORT="+MasterServer.port);
+			Debug.Log ("IP="+MasterServer.ipAddress);
+			Debug.Log ("PORT="+MasterServer.port);
 			GUILayout.BeginHorizontal();
 			GUILayout.Label( "name"	,GUILayout.Width(250 ));
 			GUILayout.Label( "players"	,GUILayout.Width(50 ));
@@ -2659,23 +2599,82 @@ public class App : MonoBehaviour
 		GUILayout.Label ("Create a performance...");
 		GUILayout.EndHorizontal();
 
+		GUILayout.Label ("This machine ip : " + Network.player.ipAddress + "(" + Network.player.externalIP + ")" + " guid=" + Network.player.guid);// + " " + Network.player.externalIP);
+
+
+		GUILayout.BeginHorizontal();
+		GUILayout.Label ("SPACES LIBRARY");
+		SpaceFilter = GUILayout.TextField (SpaceFilter, GUILayout.Width(200));
+		SpaceFilterFeatured = GUILayout.Toggle (SpaceFilterFeatured, "only featured", GUILayout.Width(200));
+		GUILayout.EndHorizontal();
+
+
 		GUISpacesHeader();
 		//scrollPosLobbySpaces = GUILayout.BeginScrollView( scrollPosLobbySpaces, GUILayout.Height( 100+500+312 ) ); //150
-		scrollPosLobbySpaces = GUILayout.BeginScrollView( scrollPosLobbySpaces, GUILayout.Height( 100+500 ) ); //150
-		GUISpaces(true);
+		scrollPosLobbySpaces = GUILayout.BeginScrollView( scrollPosLobbySpaces, GUILayout.Height( 300 ) ); //150
+		GUISpaces(false);
 		GUILayout.EndScrollView();
 			
-		if (validate)
+		// toggle auto-load
+
+		GUILayout.BeginHorizontal ();
+
+		//=============
+		//START SERVER
+		//=============
+		if (GUILayout.Button ("HOST server with selected space", GUILayout.Width(200 )) && !Network.isServer) 
 		{
-			validate = false;
-			if (Network.isServer)
-			{
-				StopServer();
+			if (bAutoLoad) {
+				PlayerPrefs.SetInt ("defaultspace-id", NA.CurrentSpace.id);
+
+				PlayerPrefs.SetString ("defaultspace-name", NA.CurrentSpace.name);
+				Debug.Log ("setting defaultspace pref to " + strSpace);
 			}
+
+			CameraBackgroundSkybox();
 			StartServerWithSelectedSpace();
 			bGUI = false;
 		}
+
+		//=============
+		//STOP SERVER
+		//=============
+		GUI.color = !Network.isServer ? Color.gray : Color.white;
+		if (GUILayout.Button ("stop server", GUILayout.Width(200 )) && Network.isServer) 
+		{
+			StopServer();
+		}
+
+		//=============
+		//SWITCH SPACE
+		//=============
+		GUI.color = !Network.isServer ? Color.gray : Color.white;
+		if (GUILayout.Button ("switch space", GUILayout.Width(200 )) && Network.isServer) 
+		{
+			NA.app.GoToSpace(NA.CurrentSpace.id);
+			tab = AppTab.None; //hide windows
+			state = AppState.Game;
+			bGUI = false;
+		}
+		GUILayout.EndHorizontal ();
+
+		//==================
+		//Autoload 
+		//=================
+		bool newAutoLoad = GUILayout.Toggle (bAutoLoad, "Autoload");
+		if (newAutoLoad != bAutoLoad) {
+			PlayerPrefs.SetInt ("autoload",newAutoLoad ?  1:0);
+			bAutoLoad=newAutoLoad;
+			if (bAutoLoad) {
+				PlayerPrefs.SetInt ("defaultspace-id", NA.CurrentSpace.id);
+
+				PlayerPrefs.SetString ("defaultspace-name", NA.CurrentSpace.name);
+				Debug.Log ("setting defaultspace pref to " + strSpace);
+			}
+		}
+
 		GUI.color = Color.white;
+
 	}
 
 
@@ -2807,8 +2806,9 @@ public class App : MonoBehaviour
 		GUI.color = Network.isClient ? Color.gray : Color.white;
 		if (GUILayout.Button ("Join server", GUILayout.Width(100 )) && !Network.isClient) 
 		{
-			
-			LogManager.Log("try to join " + currentHost.gameName + " at " + currentHost.ip + ":" + currentHost.port);
+			Debug.Log("currentHost.ip length:" + currentHost.ip.Length);
+			Debug.Log(currentHost.ip[0]);
+			LogManager.Log("try to join " + currentHost.gameName + " at " + currentHost.ip.ToString()+ ":" + currentHost.port);
 			Network.Connect(currentHost);
 			CameraBackgroundSkybox();
 			//Network.SetReceivingEnabled(Network.player, 0, false);
@@ -2936,6 +2936,23 @@ public class App : MonoBehaviour
 			tab = AppTab.None; //hide windows
 			state = AppState.Game;
 		}
+
+		//============
+		//AUTOLOAD
+		//============
+		bool newAutoLoad = GUILayout.Toggle (bAutoLoad, "Autoload");
+		if (newAutoLoad != bAutoLoad) {
+			PlayerPrefs.SetInt ("autoload",newAutoLoad ?  1:0);
+			bAutoLoad=newAutoLoad;
+			if (bAutoLoad) {
+				PlayerPrefs.SetInt ("defaultspace-id", NA.CurrentSpace.id);
+
+				PlayerPrefs.SetString ("defaultspace-name", NA.CurrentSpace.name);
+				Debug.Log ("setting defaultspace pref to " + strSpace);
+			}
+		}
+
+
 		GUILayout.EndHorizontal();
 		GUILayout.Space(20);
 		GUI.color = Color.white;
@@ -2968,6 +2985,7 @@ public class App : MonoBehaviour
 		tab = AppTab.None; //hide windows
 		Network.InitializeServer(32, 7890, true);
 		string strGameName = strSpace + " [" + NAServer.strLogin + "]";
+		Debug.Log ("StartServerWithSelectedSpace: " + strGameName);
 		MasterServer.RegisterHost("NewAtlantis", strGameName, "created : " + System.DateTime.Now + " on " + SystemInfo.deviceModel + " running " + SystemInfo.operatingSystem);
 		CreateNetworkAvatar();
 		NAServer.Get(); //le Get avec un selected space forcera la création des objets : à revoir...
@@ -3292,8 +3310,6 @@ public class App : MonoBehaviour
 		GUILayout.Label("Welcome to the New Atlantis. New Atlantis is a shared (multi-user) online virtual world dedicated to audio experimentation and practice. Unlike most online worlds where image is the primary concern, in New Atlantis sound comes first.");
 		GUILayout.EndHorizontal();
 
-
-
 		GUILayout.BeginHorizontal();
 		GUILayout.Label("Login", GUILayout.Width(100));
 		NAServer.strLogin = GUILayout.TextField (NAServer.strLogin);
@@ -3331,14 +3347,6 @@ public class App : MonoBehaviour
 		*/
 		//GUI.DragWindow();
 	}
-
-
-
-
-
-
-
-
 
 	void WindowFunctionSpaces (int windowID)
 	{
@@ -3600,10 +3608,51 @@ public class App : MonoBehaviour
 		NA.syncMode = (SyncMode)GUILayout.SelectionGrid((int)NA.syncMode, strModes, 4);
 		GUILayout.EndHorizontal();
 
+		GUILayout.Label("", GUI.skin.horizontalSlider);
+		GUILayout.BeginHorizontal();
+
+		GUILayout.Label("Unity MasterServer IP:",GUILayout.Width(250));
+		this.masterServerIP  = GUILayout.TextField (this.masterServerIP,GUILayout.Width(250));
+
+		GUILayout.Label("Port:",GUILayout.Width(250));
+		this.masterServerPort = int.Parse (GUILayout.TextField (this.masterServerPort.ToString(),GUILayout.Width(250)));
+
+		GUILayout.EndHorizontal();
+
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("NAT Punchthrough Facilitator IP:",GUILayout.Width(250));
+		this.facilitatorIP = GUILayout.TextField(this.facilitatorIP,GUILayout.Width(250));
+		GUILayout.Label("Port:",GUILayout.Width(250));
+		this.facilitatorPort = int.Parse (GUILayout.TextField(this.facilitatorPort.ToString(),GUILayout.Width(250)));
+		GUILayout.EndHorizontal();
 
 
+		MasterServer.ipAddress = this.masterServerIP;
+		MasterServer.port = this.masterServerPort;
+		Network.natFacilitatorIP = this.facilitatorIP;
+		Network.natFacilitatorPort = this.facilitatorPort;
+
+		PlayerPrefs.SetString("masterServerIP",this.masterServerIP);
+		PlayerPrefs.SetInt("masterServerPort",this.masterServerPort);
+		PlayerPrefs.SetString("facilitatorIP",this.facilitatorIP);
+		PlayerPrefs.SetInt("facilitatorPort",this.facilitatorPort);
+	
+		/*
+		GUILayout.Label("", GUI.skin.horizontalSlider);
+		GUILayout.Label ("Controller Mapping:");
+		var text = new string[] { "PS4 Mac", "PS4 Mac (alternate mapping)", "PS4 Windows", "XBox Windows" };
+		int m = GUILayout.SelectionGrid (0, text, 4);
 
 
+		if (m==0)
+			NAInput.SetMappingPS4Mac();
+		else if (m==1)
+			NAInput.SetMappingPS4Mac2();
+		else if (m==2)
+			NAInput.SetMappingPS4Win();
+		else if (m==3)
+			NAInput.SetMappingXBOXWin();
+		*/
 
 		GUI.DragWindow();
     }

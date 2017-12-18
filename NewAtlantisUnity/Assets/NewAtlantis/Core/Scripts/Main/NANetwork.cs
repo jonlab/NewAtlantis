@@ -164,8 +164,21 @@ public class NANetwork : MonoBehaviour {
 		{
 			return;
 		}
+
 		LogManager.Log ("ServerCloneObject");
 		GetComponent<NetworkView>().RPC("CloneObject", RPCMode.AllBuffered, name, Network.AllocateViewID(), position, forward, color);
+
+		// if number of clones has reached the limit, delete the oldest one
+
+		if (NA.player_objects.Count >= NA.MAX_PLAYER_OBJECTS) {
+			GameObject oldest = NA.player_objects [0];
+			NetworkView nv = oldest.GetComponent<NetworkView>();
+			if (nv != null)
+			{
+				GetComponent<NetworkView>().RPC("DestroyObject", RPCMode.AllBuffered, nv.viewID);
+			}
+		}
+
 	}
 
 	[RPC]
