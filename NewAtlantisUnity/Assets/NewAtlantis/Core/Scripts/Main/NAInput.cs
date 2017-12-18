@@ -19,14 +19,46 @@ public enum NAControl
 	FullMenu
 }
 
+// to enable both keyboard input, configured through the Input Manager, AND this remappable thing ... 
+// maybe we could only do Input.GetKeyDown, and manage the mapping ourselves, 
+// but in that case it won't nicely translate the keys to axes for movement.  
+// so I think we need to create key mappings in the Input Manager, by name, and also check those 
+
 public class NAInput 
 {
+	static string[] MAPPING_XBOX_WIN = new string[13] {
+		"button2",
+		"button0",
+		"button1",
+		"button3",
+		"button5",
+		"button4",
+		"axis2",
+		"axis1",
+		"axis5",
+		"axis4",
+		"axis6",
+		"axis7",
+		"FullMenu"
+	};
+
+
 	static string [] MAPPING_PS4_MAC = new string[13] {"button0","button1","button2","button3",
-		"button4","button5","axis2","axis1","axis4","axis3","axis7","axis8","FullMenu"};
+		"button5","button4","axis2","axis1","axis4","axis3","axis7","axis8","FullMenu"};
+
+	static string [] MAPPING_PS4_MAC_ALT = new string[13] {"button0","button1","button2","button3",
+		"button5","button4","axis2","axis1","axis4","axis3","axis11","axis12","FullMenu"};
 
 	static string [] MAPPING_PS4_WIN = new string[13] {"button0","button1","button2","button3",
-		"button4","button5","axis3","axis1","axis7","axis4","axis8","axis9","FullMenu"};
-	
+		"button5","button4","axis3","axis1","axis7","axis4","axis7","axis8","FullMenu"};
+
+	static string [] MAPPING_DEFAULT = new string[13] {"button0","button1","button2","button3","button5","button4",
+		"axis1","axis2","axis3","axis4","axis5","axis6","FullMenu"};
+
+	static string [] MAPPING_BASE = new string[13] {"Action","Jump","Menu","Camera","NextTool","PreviousTool",
+		"Vertical","Horizontal","ViewVertical","ViewHorizontal","PadHorizontal","PadVertical","FullMenu"};
+
+
 	public static float PreviousPadX = 0;
 	public static float PreviousPadY = 0;
 
@@ -50,6 +82,25 @@ public class NAInput
 		}
 	}
 
+	static public void SetMappingPS4Mac ()
+	{
+		currentMapping = MAPPING_PS4_MAC;
+	}
+
+	static public void SetMappingPS4Win ()
+	{
+		currentMapping = MAPPING_PS4_WIN;
+	}
+
+	static public void SetMappingPS4Mac2 ()
+	{
+		currentMapping = MAPPING_PS4_MAC_ALT;
+	}
+
+	static public void SetMappingXBOXWin ()
+	{
+		currentMapping = MAPPING_XBOX_WIN;
+	}
 	static public void Process()
 	{
 		float CurrentPadX = NAInput.GetAxis(NAControl.PadHorizontal);
@@ -95,29 +146,49 @@ public class NAInput
 	static public bool GetControlDown(NAControl control)
 	{
 		string button = GetControlName(control);
-		return Input.GetButtonDown(button);
+
+		bool value1 = Input.GetButtonDown(button);
+		bool value2 = Input.GetButtonDown(MAPPING_BASE[(int)control]);
+
+		bool result = value1 || value2; 
+		return result; 
+
 	}
 
 	static public bool GetControlUp(NAControl control)
 	{
 		string button = GetControlName(control);
-		return Input.GetButtonUp(button);
+		bool value1 = Input.GetButtonUp(button);
+		bool value2 = Input.GetButtonUp(MAPPING_BASE[(int)control]);
+
+		bool result = value1 || value2; 
+
+		return result;
 	}
 
 	static public bool GetControl(NAControl control)
 	{
 		string button = GetControlName(control);
-		return Input.GetButton(button);
+		bool value1 = Input.GetButton(button);
+		bool value2 = Input.GetButton(MAPPING_BASE[(int)control]);
+
+		bool result = value1 || value2;
+
+		return result;
 	}
 
 	static public float GetAxis(NAControl control)
 	{
 		string axis = GetControlName(control);
-		float v=Input.GetAxis(axis);
+		float v1=Input.GetAxis(axis);
 
 		if (control == NAControl.MoveVertical)
-			v *= -1;
-		return v;
+			v1 *= -1;
+
+		float v2=Input.GetAxis(MAPPING_BASE[(int)control]);
+
+		float result = (v1+v2);
+		return result;
 	}
 
 

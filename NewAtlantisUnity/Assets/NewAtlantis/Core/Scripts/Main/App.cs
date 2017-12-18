@@ -100,6 +100,11 @@ public class App : MonoBehaviour
 	private string 				strIP = "92.223.149.93"; //
 	private string 				strFile = "DummyObject.unity3d";
 
+	string 				masterServerIP = "67.225.180.24";
+	int 				masterServerPort = 23466;
+	string				facilitatorIP = "67.225.180.24";
+	int					facilitatorPort = 50005;
+
 	GameObject goMainLight = null;
 	public GameObject goReticle = null;
 	GameObject goGrab = null;
@@ -318,7 +323,23 @@ public class App : MonoBehaviour
 
 		//QualitySettings.
 
-        Debug.Log ("IP="+MasterServer.ipAddress);
+		// set up master server 
+
+		if (PlayerPrefs.GetString("masterServerIP") != "")
+			this.masterServerIP = PlayerPrefs.GetString("masterServerIP");
+		if (PlayerPrefs.GetInt ("masterServerPort") != 0)
+			this.masterServerPort = PlayerPrefs.GetInt ("masterServerPort");
+		if (PlayerPrefs.GetString("facilitatorIP") != "")
+			this.facilitatorIP = PlayerPrefs.GetString("facilitatorIP");
+		if (PlayerPrefs.GetInt ("facilitatorPort") != 0)
+			this.facilitatorPort = PlayerPrefs.GetInt ("facilitatorPort");
+
+		MasterServer.ipAddress = this.masterServerIP;
+		MasterServer.port = this.masterServerPort;
+		Network.natFacilitatorIP = this.facilitatorIP;
+		Network.natFacilitatorPort = this.facilitatorPort;
+
+
 		//AssetBundlePreviewGenerator.Test("Bundles/grass_ground.unity3d");
 		//AssetBundlePreviewGenerator.Test("Bundles/CubeRouge.unity3d");
 		//AssetBundlePreviewGenerator.Test("Bundles/Lobby.unity3d");
@@ -657,8 +678,7 @@ public class App : MonoBehaviour
 
 		bool l1 = NAInput.GetControl(NAControl.PreviousTool) || Input.GetKey(KeyCode.LeftShift);
 		bool r1 = NAInput.GetControl(NAControl.NextTool) || Input.GetKey(KeyCode.RightShift);
-
-			
+					
 		float padx = NAInput.GetAxis(NAControl.PadHorizontal);
 		float pady = NAInput.GetAxis(NAControl.PadVertical);
 
@@ -860,7 +880,9 @@ public class App : MonoBehaviour
 		}
 		else if (l1)
 		{
-			
+			NAToolBase t = tools[current_tool];
+			//extended control if L1 is maintained
+			t.ExtendedControl();
 		}
 		else if (!closest)
 		{
@@ -1416,7 +1438,7 @@ public class App : MonoBehaviour
 
 	public void GoToSpace(int spaceid)
 	{
-		if (Network.isClient)
+		if (NA.isClient())
 		{
 			GetComponent<NetworkView>().RPC("Server_GoToSpace", RPCMode.Server, spaceid);
 
@@ -2303,6 +2325,7 @@ public class App : MonoBehaviour
 		GUILayout.EndScrollView();
 		GUI.color = Color.white;
 
+
         //if(GUI.Button(new Rect(200, Screen.height - 100, 200 ,  50 ), "Edit my Avatar"))
 		if(GUILayout.Button("Edit my Avatar"))
         {
@@ -2371,6 +2394,7 @@ public class App : MonoBehaviour
 					space.id == 139 ||
 					space.id == 161 ||
 					space.id == 125 ||
+					space.id == 232 ||
 					space.id == 39 ))
 				{
 					featured = true;
@@ -2441,8 +2465,9 @@ public class App : MonoBehaviour
 		if (GUILayout.Button ("JOIN this IP", GUILayout.Width(100 )) && !Network.isClient) 
 		{
 			PlayerPrefs.SetString("ip", strIP);
-			LogManager.Log("try to join "+strIP+":7890");
-			Network.Connect(strIP, 7890);
+
+			//LogManager.Log("try to join "+strIP+":7890");
+			//Network.Connect(strIP, 7890);
 			CameraBackgroundSkybox();
 			state = AppState.Game;
 		}
@@ -2465,8 +2490,8 @@ public class App : MonoBehaviour
 		}
 		else
 		{
-			//Debug.Log ("IP="+MasterServer.ipAddress);
-			//Debug.Log ("PORT="+MasterServer.port);
+			Debug.Log ("IP="+MasterServer.ipAddress);
+			Debug.Log ("PORT="+MasterServer.port);
 			GUILayout.BeginHorizontal();
 			GUILayout.Label( "name"	,GUILayout.Width(250 ));
 			GUILayout.Label( "players"	,GUILayout.Width(50 ));
@@ -2574,25 +2599,26 @@ public class App : MonoBehaviour
 		GUILayout.Label ("Create a performance...");
 		GUILayout.EndHorizontal();
 
+		GUILayout.Label ("This machine ip : " + Network.player.ipAddress + "(" + Network.player.externalIP + ")" + " guid=" + Network.player.guid);// + " " + Network.player.externalIP);
+
+
+		GUILayout.BeginHorizontal();
+		GUILayout.Label ("SPACES LIBRARY");
+		SpaceFilter = GUILayout.TextField (SpaceFilter, GUILayout.Width(200));
+		SpaceFilterFeatured = GUILayout.Toggle (SpaceFilterFeatured, "only featured", GUILayout.Width(200));
+		GUILayout.EndHorizontal();
+
+
 		GUISpacesHeader();
 		//scrollPosLobbySpaces = GUILayout.BeginScrollView( scrollPosLobbySpaces, GUILayout.Height( 100+500+312 ) ); //150
-		scrollPosLobbySpaces = GUILayout.BeginScrollView( scrollPosLobbySpaces, GUILayout.Height( 100+300 ) ); //150
-		GUISpaces(true);
+		scrollPosLobbySpaces = GUILayout.BeginScrollView( scrollPosLobbySpaces, GUILayout.Height( 300 ) ); //150
+		GUISpaces(false);
 		GUILayout.EndScrollView();
 			
 		// toggle auto-load
 
-		bool newAutoLoad = GUILayout.Toggle (bAutoLoad, "Autoload");
-		if (newAutoLoad != bAutoLoad) {
-			PlayerPrefs.SetInt ("autoload",newAutoLoad ?  1:0);
-			bAutoLoad=newAutoLoad;
-			if (bAutoLoad) {
-				PlayerPrefs.SetInt ("defaultspace-id", NA.CurrentSpace.id);
+		GUILayout.BeginHorizontal ();
 
-				PlayerPrefs.SetString ("defaultspace-name", NA.CurrentSpace.name);
-				Debug.Log ("setting defaultspace pref to " + strSpace);
-			}
-		}
 		//=============
 		//START SERVER
 		//=============
@@ -2630,7 +2656,22 @@ public class App : MonoBehaviour
 			state = AppState.Game;
 			bGUI = false;
 		}
+		GUILayout.EndHorizontal ();
 
+		//==================
+		//Autoload 
+		//=================
+		bool newAutoLoad = GUILayout.Toggle (bAutoLoad, "Autoload");
+		if (newAutoLoad != bAutoLoad) {
+			PlayerPrefs.SetInt ("autoload",newAutoLoad ?  1:0);
+			bAutoLoad=newAutoLoad;
+			if (bAutoLoad) {
+				PlayerPrefs.SetInt ("defaultspace-id", NA.CurrentSpace.id);
+
+				PlayerPrefs.SetString ("defaultspace-name", NA.CurrentSpace.name);
+				Debug.Log ("setting defaultspace pref to " + strSpace);
+			}
+		}
 
 		GUI.color = Color.white;
 
@@ -2765,8 +2806,9 @@ public class App : MonoBehaviour
 		GUI.color = Network.isClient ? Color.gray : Color.white;
 		if (GUILayout.Button ("Join server", GUILayout.Width(100 )) && !Network.isClient) 
 		{
-			
-			LogManager.Log("try to join " + currentHost.gameName + " at " + currentHost.ip + ":" + currentHost.port);
+			Debug.Log("currentHost.ip length:" + currentHost.ip.Length);
+			Debug.Log(currentHost.ip[0]);
+			LogManager.Log("try to join " + currentHost.gameName + " at " + currentHost.ip.ToString()+ ":" + currentHost.port);
 			Network.Connect(currentHost);
 			CameraBackgroundSkybox();
 			//Network.SetReceivingEnabled(Network.player, 0, false);
@@ -2894,6 +2936,23 @@ public class App : MonoBehaviour
 			tab = AppTab.None; //hide windows
 			state = AppState.Game;
 		}
+
+		//============
+		//AUTOLOAD
+		//============
+		bool newAutoLoad = GUILayout.Toggle (bAutoLoad, "Autoload");
+		if (newAutoLoad != bAutoLoad) {
+			PlayerPrefs.SetInt ("autoload",newAutoLoad ?  1:0);
+			bAutoLoad=newAutoLoad;
+			if (bAutoLoad) {
+				PlayerPrefs.SetInt ("defaultspace-id", NA.CurrentSpace.id);
+
+				PlayerPrefs.SetString ("defaultspace-name", NA.CurrentSpace.name);
+				Debug.Log ("setting defaultspace pref to " + strSpace);
+			}
+		}
+
+
 		GUILayout.EndHorizontal();
 		GUILayout.Space(20);
 		GUI.color = Color.white;
@@ -3549,10 +3608,51 @@ public class App : MonoBehaviour
 		NA.syncMode = (SyncMode)GUILayout.SelectionGrid((int)NA.syncMode, strModes, 4);
 		GUILayout.EndHorizontal();
 
+		GUILayout.Label("", GUI.skin.horizontalSlider);
+		GUILayout.BeginHorizontal();
+
+		GUILayout.Label("Unity MasterServer IP:",GUILayout.Width(250));
+		this.masterServerIP  = GUILayout.TextField (this.masterServerIP,GUILayout.Width(250));
+
+		GUILayout.Label("Port:",GUILayout.Width(250));
+		this.masterServerPort = int.Parse (GUILayout.TextField (this.masterServerPort.ToString(),GUILayout.Width(250)));
+
+		GUILayout.EndHorizontal();
+
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("NAT Punchthrough Facilitator IP:",GUILayout.Width(250));
+		this.facilitatorIP = GUILayout.TextField(this.facilitatorIP,GUILayout.Width(250));
+		GUILayout.Label("Port:",GUILayout.Width(250));
+		this.facilitatorPort = int.Parse (GUILayout.TextField(this.facilitatorPort.ToString(),GUILayout.Width(250)));
+		GUILayout.EndHorizontal();
 
 
+		MasterServer.ipAddress = this.masterServerIP;
+		MasterServer.port = this.masterServerPort;
+		Network.natFacilitatorIP = this.facilitatorIP;
+		Network.natFacilitatorPort = this.facilitatorPort;
+
+		PlayerPrefs.SetString("masterServerIP",this.masterServerIP);
+		PlayerPrefs.SetInt("masterServerPort",this.masterServerPort);
+		PlayerPrefs.SetString("facilitatorIP",this.facilitatorIP);
+		PlayerPrefs.SetInt("facilitatorPort",this.facilitatorPort);
+	
+		/*
+		GUILayout.Label("", GUI.skin.horizontalSlider);
+		GUILayout.Label ("Controller Mapping:");
+		var text = new string[] { "PS4 Mac", "PS4 Mac (alternate mapping)", "PS4 Windows", "XBox Windows" };
+		int m = GUILayout.SelectionGrid (0, text, 4);
 
 
+		if (m==0)
+			NAInput.SetMappingPS4Mac();
+		else if (m==1)
+			NAInput.SetMappingPS4Mac2();
+		else if (m==2)
+			NAInput.SetMappingPS4Win();
+		else if (m==3)
+			NAInput.SetMappingXBOXWin();
+		*/
 
 		GUI.DragWindow();
     }

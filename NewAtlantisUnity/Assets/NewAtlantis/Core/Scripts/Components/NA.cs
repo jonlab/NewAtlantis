@@ -25,7 +25,7 @@ public static class NA
 
     public static float JoystickSmoothing = 0.92f;
 
-	public static int MAX_PLAYER_OBJECTS=10;
+	public static int MAX_PLAYER_OBJECTS=100;
 
 	public static Vector3 colorAvatar;
 
@@ -284,8 +284,11 @@ public static class NA
 
 	public static void PatchAllMaterials(GameObject root)
 	{
-		Debug.Log("patch all materials");
+		LogManager.Log("patch all materials");
+		LogManager.Log("Object: " + root.name);
 		Renderer[] renderers = root.GetComponentsInChildren<Renderer>();
+		Shader standardShader = Shader.Find("Standard");
+
 		foreach (Renderer r in renderers)
 		{
 			//hack to reaffect the shader
@@ -293,19 +296,37 @@ public static class NA
 			//r.material.shader = Shader.Find(r.material.shader.name);
 			foreach (Material m in r.sharedMaterials)
 			{
+				if (m !=null)
+				{
+					LogManager.Log("try to patch material : " + m.name);
+				}
 				try
 				{
 					if (m.shader != null)
-					{
-						Debug.Log("try to patch material : " + m.name + " -> " + m.shader.name);
 
+					{
+						 LogManager.Log("shader: " + m.shader.name);
+						 LogManager.Log("keywords: " + string.Join(",",m.shaderKeywords));
 							
 						Shader s = Shader.Find(m.shader.name);
+
+						// patch by shader name
+
 						if (m.shader.name == "")
 						{
-							s = Shader.Find("Standard");
+							s = standardShader;						
+						}
+						else if (m.shader.name=="Hidden/InternalErrorShader")
+						{
+							s=standardShader;
+						}
+						else if (m.shader.name=="Legacy Shaders/Diffuse")
+						{
+							s=standardShader;
 						}
 
+
+						// patch by material name 
 						if (m.name.Contains("Water"))
 						{
 							s = Shader.Find("FX/Water");
@@ -318,11 +339,33 @@ public static class NA
 						{
 							s = Shader.Find("Particles/Additive");
 						}
-
 						else if (m.name.Contains("Default"))
 						{
-							s = Shader.Find("Standard");
+							s = standardShader;
 						}
+						else if (m.name.Contains("A_ColorSimpleBlend"))
+						{
+							s = Shader.Find("Custom/A-ColorSimpleBlend");
+						}
+						else if (m.name.Contains("A_ColorSimple_TurquoiseHexagonSun"))
+						{
+							s = Shader.Find("Custom/A-ColorSimple");
+						}
+						else if (m.name.Contains("A_Color"))
+						{
+							s = Shader.Find("Custom/A-Color");
+						}
+
+
+						// patch by root object 
+						if (root.name=="CITY4morph22144")
+						{
+							if (m.name=="New Material")
+							{
+								s=Shader.Find("Custom/A-ColorSimpleBlend");
+							}
+						}
+
 						if (s != null)
 						{
 							m.shader = s;
@@ -337,7 +380,13 @@ public static class NA
 						else
 						{
 							LogManager.LogWarning("can't find shader : " + m.shader.name + " - material : " + m.name);
+							m.shader = standardShader;
 						}
+					}
+					else
+					{
+						LogManager.Log ("no shader, assigning the standard shader");
+						m.shader = standardShader;
 					}
 				}
 				catch (System.Exception e)

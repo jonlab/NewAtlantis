@@ -22,53 +22,58 @@ public class SteeringVehicle : MonoBehaviour {
 	public float steeringWeightHoming = 5.0f;
 
 	Arrival steerPerch;
-	List<SteeringVehicle> neighborhood;
 
+	List<SteeringVehicle> neighborhood;
 	List<SteeringBehavior> behaviors;
 
 	public float fieldOfView=180.0f;
-
+	public float initialDelayTimeRange = 10.0f;
 	WallAvoid wallAvoid;
+	bool vehicleActive = false;
 
 	// Use this for initialization
 	void Start () {
-
-		//if (!NA.isClient())
-		//local mode
-		{
-			velocity = new Vector3();
-			//velocity = UnityEngine.Random.onUnitSphere * 2.0f;
-			//transform.forward = velocity;
-
-
-			acceleration = new Vector3();
-
-
-			neighborhood = new List<SteeringVehicle>();
-
-			behaviors = new List<SteeringBehavior>();
-
-			behaviors.Add (new Separation (this,steeringWeightSeparation));
-			behaviors.Add (new Cohesion (this,steeringWeightCohesion));
-			behaviors.Add (new Alignment (this,steeringWeightAlignment));
-
-			steerPerch = new Arrival(this,steeringWeightHoming,target,2.0f);
-			PickNewPerch();
-
-			behaviors.Add (steerPerch);
-			if (flockManager != null)
-			{
-				flockManager.AddVehicle(this);
-			}
-		}
+		Invoke ("Activate",Random.Range(0,initialDelayTimeRange));
+		GetComponent<AudioSource>().enabled = false;
+		
 	}
+
+	void Activate () {
+
+		velocity = new Vector3();
+		//velocity = UnityEngine.Random.onUnitSphere * 2.0f;
+		//transform.forward = velocity;
+
+
+		acceleration = new Vector3();
+
+
+		neighborhood = new List<SteeringVehicle>();
+
+		behaviors = new List<SteeringBehavior>();
+
+		behaviors.Add (new Separation (this,steeringWeightSeparation));
+		behaviors.Add (new Cohesion (this,steeringWeightCohesion));
+		behaviors.Add (new Alignment (this,steeringWeightAlignment));
+
+		steerPerch = new Arrival(this,steeringWeightHoming,target,2.0f);
+		PickNewPerch();
+
+		behaviors.Add (steerPerch);
+		if (flockManager != null)
+		{
+			flockManager.AddVehicle(this);
+		}
+
+		GetComponent<AudioSource>().enabled = true;
+		vehicleActive = true;
+	}
+
 	
 	void Update () {
 
-		//local mode
-		//if (!NA.isClient())
+		if (vehicleActive)
 		{
-
 			if (MyUtils.RandomFrequency (newTargetFrequency))
 			{
 				PickNewPerch();
@@ -93,8 +98,8 @@ public class SteeringVehicle : MonoBehaviour {
 
 			if (velocity != Vector3.zero)
 				transform.forward = velocity.normalized;
+		
 		}
-
 	}
 
 	void CalculateNeighborhood()

@@ -9,9 +9,12 @@ public class SoundNodeWithDelay : MonoBehaviour {
 	float eventTime = -1;
 	Vector3 baseScale; 
 
-	 Instrument instrument;
-	 AudioSource audioSource;
+	Instrument instrument;
+	AudioSource audioSource;
 	public int midiNote=30;	// note to play when triggered
+
+	GameObject pulsar;
+	public GameObject pulsarPrefab;
 
 	public void SetMidiNote (int note)
 	{
@@ -21,14 +24,16 @@ public class SoundNodeWithDelay : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
-		Debug.Log("start");
+
+
+		pulsar=Instantiate(pulsarPrefab,transform.position,Quaternion.identity);
+		pulsar.transform.parent = transform;
+
 		instrument = GetComponent<Instrument> ();
+
 		if (!NA.isClient())
 		{
-			baseScale = transform.localScale;
 			timeCounter=Time.time;
-
-			Debug.Log("instrument =" + instrument);
 			restartLoop();
 		}
 	}
@@ -60,60 +65,45 @@ public class SoundNodeWithDelay : MonoBehaviour {
 	void OnTriggerEnter(Collider other) 
 	{
 		Debug.Log("OnTriggerEnter");
-		if (!NA.isClient())
+		if (NA.isClient())
 		{
-			//if (other.gameObject.tag == "Player")
-			{
-				// play sound
-				// remember the timing delay, and schedule it to play again
-				Bang();
-				eventTime = timeCounter;
-			}
-
+			GetComponent<NetworkView>().RPC("Server_Bang",RPCMode.Server);
+		}
+		else
+		{
+			// play sound
+			// remember the timing delay, and schedule it to play again
+			Bang();
 		}
 	}
 
+	[RPC]
+	public void Server_Bang()
+	{
+		Bang();
+	}
 
 	public void Bang()
 	{
-		//Debug.Log("NA.isServer() = " + NA.isServer());
+		eventTime = timeCounter;
 		if (NA.isServer())
 		{
-			StartCoroutine(DoScaleAnimation()); //only on server, animation will be synced with standard Transform sync
 			GetComponent<NetworkView>().RPC("Play", RPCMode.Others);
 		}
-		Play(); //server and standalone
+
+		Play();
+		
 	}
 
 	[RPC]
 	public void Play()
 	{
-		Debug.Log("instrument=" + instrument);
 		if (instrument != null)
 		{
 			LogManager.Log("play " + midiNote);
 			instrument.PlayNote(midiNote);
 		}
-
+		pulsar.GetComponent<ScalePulse>().Pulse(1.0f);
 	}
 
-	IEnumerator DoScaleAnimation()
-	{
-		// play sound
-		// trigger animation or whatever
-
-		Vector3 newScale = baseScale * 1.5f;
-
-		float duration = 0.3f;
-		float startTime = Time.time;
-		float endTime =startTime+duration;
-
-		while (Time.time<=endTime)
-		{
-			float t=(Time.time-startTime)/duration; 
-			transform.localScale = Vector3.Lerp(newScale, baseScale,t);
-			yield return null;
-		}
-
-	}
 }
