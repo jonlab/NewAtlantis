@@ -183,6 +183,26 @@ public class NAToolSpawner : NAToolBase {
 		{
 			clone = GameObject.CreatePrimitive(PrimitiveType.Capsule);
 		}
+		else if (name == "monster")
+		{
+			clone = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+			clone.transform.localScale = Vector3.one * 0.1f;
+			clone.AddComponent<NAAnimalBehavior> ();
+			clone.AddComponent<Light> ();
+
+
+			GameObject goAudioSource1 = new GameObject ();
+			goAudioSource1.AddComponent<AudioSource> ();
+
+			GameObject goAudioSource2 = new GameObject ();
+			goAudioSource2.AddComponent<AudioSource> ();
+
+			goAudioSource1.transform.parent = clone.transform;
+			goAudioSource2.transform.parent = clone.transform;
+			goAudioSource1.transform.localPosition = Vector3.zero;
+			goAudioSource2.transform.localPosition = Vector3.zero;
+
+		}	
 		else
 		{
 			//cas général
@@ -199,12 +219,14 @@ public class NAToolSpawner : NAToolBase {
 		{
 			renderer.material.color = new Color(color.x, color.y, color.z);
 		}
+
 		clone.transform.forward = transform.rotation * Vector3.Normalize(forward) ;
 		//Rigidbody rb = clone.AddComponent<Rigidbody>();
 		if (NA.isServer() || NA.isStandalone())
 		{
-			if (name.Contains("nog"))
+			if (name.Contains("nog") || name.Contains("monster"))
 			{
+				//no g
 				
 			}
 			else

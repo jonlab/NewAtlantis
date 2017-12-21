@@ -25,7 +25,7 @@ public class NAToolPhysicsInteraction : NAToolBase {
 	// Update is called once per frame
 	void Update () 
 	{
-		Debug.Log("current="+current);
+		//Debug.Log("current="+current);
 		if (current != null)
 		{
 			//Vector3 newposition = transform.position+dir;

@@ -1256,8 +1256,8 @@ public class App : MonoBehaviour
 	{
 #if UNITY_WEBPLAYER
 #else
-		System.DateTime now = System.DateTime.Now;
-		File.WriteAllText("server_" + now.Year+"_"+now.Month+"_"+now.Day+"_"+now.Hour+"_"+now.Minute+"_"+now.Second+".xml", str);
+		//System.DateTime now = System.DateTime.Now;
+		//File.WriteAllText("server_" + now.Year+"_"+now.Month+"_"+now.Day+"_"+now.Hour+"_"+now.Minute+"_"+now.Second+".xml", str);
 #endif
 
 		LogManager.Log("parsing XML from server.");
@@ -1788,7 +1788,7 @@ public class App : MonoBehaviour
 			//GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
 			GUI.color = Color.white;
 			//GUI.Label(new Rect(0,0,400,30), "NewAtlantisNew Client - SAIC workshop");
-			GUI.Label(new Rect(0,0,100,30), "New Atlantis v1.11");
+			GUI.Label(new Rect(0,0,100,30), "New Atlantis v1.20");
 			GUI.Label(new Rect(Screen.width-200, 0, 200, 30), strPick);
 
 			DrawChronometer();
