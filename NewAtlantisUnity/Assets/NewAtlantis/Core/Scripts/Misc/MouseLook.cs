@@ -107,7 +107,13 @@ public class MouseLook : MonoBehaviour {
 
 
 	}
-	
+
+	public void SetPitch(float _pitch)
+	{
+		rotationY = -_pitch;
+		transform.localEulerAngles = new Vector3(-rotationY, transform.localEulerAngles.y, 0);
+	}
+
 	void Start ()
 	{
 		// Make the rigid body not change rotation

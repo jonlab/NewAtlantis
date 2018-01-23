@@ -43,12 +43,18 @@ public class NAAnimalBehavior : MonoBehaviour {
 	{
 
 		NARandomizeAudioSource ras;
-		ras = audioSourceMove.GetComponent<NARandomizeAudioSource>();
-		if (ras == null)
-			audioSourceMove.gameObject.AddComponent<NARandomizeAudioSource>();
-		ras = audioSourceStand.GetComponent<NARandomizeAudioSource>();
-		if (ras == null)
-			audioSourceStand.gameObject.AddComponent<NARandomizeAudioSource>();
+		if (audioSourceMove != null)
+		{
+			ras = audioSourceMove.GetComponent<NARandomizeAudioSource> ();
+			if (ras == null)
+				audioSourceMove.gameObject.AddComponent<NARandomizeAudioSource> ();
+		}
+		if (audioSourceStand != null)
+		{
+			ras = audioSourceStand.GetComponent<NARandomizeAudioSource> ();
+			if (ras == null)
+				audioSourceStand.gameObject.AddComponent<NARandomizeAudioSource> ();
+		}
 			
 		attractor = transform.position;
 		currentInterval = interval;
@@ -116,20 +122,24 @@ public class NAAnimalBehavior : MonoBehaviour {
 				{
 					moving = true;
 					PickNextGoal();
-
+					if (audioSourceMove) {
 					ras = audioSourceMove.GetComponent<NARandomizeAudioSource>();
 					if (ras != null)
 						ras.Randomize();
 					//audioSourceMove.Play();
+					}
 
 				}
 				else
 				{
 					moving = false;
-					ras = audioSourceStand.GetComponent<NARandomizeAudioSource>();
-					if (ras != null)
-						ras.Randomize();
-					//audioSourceStand.Play();
+					if (audioSourceStand) {
+						ras = audioSourceStand.GetComponent<NARandomizeAudioSource> ();
+						if (ras != null)
+							ras.Randomize ();
+						//audioSourceStand.Play();
+					}
+
 				}
 				NetworkView nv = null;
 				nv = GetComponent<NetworkView>();
@@ -142,7 +152,10 @@ public class NAAnimalBehavior : MonoBehaviour {
 				}
 				else
 				{
-					Apply(!moving, moving, ras.GetCurrentVolume(), ras.GetCurrentPitch(), ras.GetCurrentIndex());
+					if (ras) 
+					{
+						Apply (!moving, moving, ras.GetCurrentVolume (), ras.GetCurrentPitch (), ras.GetCurrentIndex ());
+					}
 				}
 			}
 

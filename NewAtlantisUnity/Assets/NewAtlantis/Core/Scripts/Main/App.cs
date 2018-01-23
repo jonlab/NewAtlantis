@@ -441,15 +441,30 @@ public class App : MonoBehaviour
     void Init()
 	{
 		tools = GetComponentsInChildren<NAToolBase>();
-		current_tool = 0;
-		SetCurrentTool(tools[current_tool]);
-		camerascripts = GetComponentsInChildren<NACamera>();
-		current_camera = 0;
-		SetCurrentCamera(camerascripts[current_camera]);
+		if (config.Contains("betonsalon"))
+		{
+			//disable all tools
+			foreach (NAToolBase t in tools)
+			{
+				t.enabled = false;
+			}
+			tools = null;
+			
+		} 
+		else
+		{
+			current_tool = 0;
+			SetCurrentTool (tools [current_tool]);
+			camerascripts = GetComponentsInChildren<NACamera> ();
+			current_camera = 0;
+			SetCurrentCamera (camerascripts [current_camera]);
+		}
+				
 	}
 
 	void SetCurrentTool(NAToolBase t)
 	{
+		Debug.Log ("SetCurrentTool " + t.name);
 		foreach (NAToolBase tb in tools)
 		{
 			tb.enabled = (tb == t) ? true : false;
@@ -767,7 +782,7 @@ public class App : MonoBehaviour
 					bToolPanel = true;
 				}
 			}
-			else
+			else if (tools != null)
 			{
 				int ny = current_tool/6;
 				int nx = current_tool-ny*6;
@@ -896,7 +911,7 @@ public class App : MonoBehaviour
 				}
 
 			}
-			else
+			else if (tools != null)
 			{
 				NAToolBase t = tools[current_tool];
 				if (NAInput.GetControlDown(NAControl.Action))
@@ -1510,14 +1525,20 @@ public class App : MonoBehaviour
 	{
 		Camera.main.clearFlags = CameraClearFlags.Color;
 		Camera.main.backgroundColor = Color.black;
-		NAToolBase ToolSelected = tools[current_tool];
-		ToolSelected.enabled = false;
+		if (tools != null)
+		{
+			NAToolBase ToolSelected = tools [current_tool];
+			ToolSelected.enabled = false;
+		}
 	}
 	void CameraBackgroundSkybox()
 	{
 		Camera.main.clearFlags = CameraClearFlags.Skybox;
-		NAToolBase ToolSelected = tools[current_tool];
-		ToolSelected.enabled = true;
+		if (tools != null)
+		{
+			NAToolBase ToolSelected = tools [current_tool];
+			ToolSelected.enabled = true;
+		}
 	}
 
 	void Disconnect()
@@ -1761,6 +1782,7 @@ public class App : MonoBehaviour
 		{
 			return;
 		}
+		//draw the right GUI depending on the config
 		if (config == "client")
 		{
 			//mode client exhibition
@@ -1781,14 +1803,14 @@ public class App : MonoBehaviour
 			GUIIdentityMatrix();
 
 		}
-		else if (config == "")
+		else// if (config == "")
 		{
 
 			GUI.color = new Color (0, 0, 0, 0.5f);
 			//GUI.DrawTexture (new Rect (0, 0, Screen.width, 30), texWhite);
 			GUI.color = Color.white;
 			//GUI.Label(new Rect(0,0,400,30), "NewAtlantisNew Client - SAIC workshop");
-			GUI.Label(new Rect(0,0,100,30), "New Atlantis v1.20");
+			GUI.Label(new Rect(0,0,100,60), "New Atlantis v1.21 - BS edition");
 			GUI.Label(new Rect(Screen.width-200, 0, 200, 30), strPick);
 
 			DrawChronometer();
@@ -2981,6 +3003,17 @@ public class App : MonoBehaviour
 	void StartServerWithSelectedSpace()
 	{
 		ResetViewerPosition();
+		//HERE6
+		if (config.Contains ("betonsalon"))
+		{
+			Debug.Log ("reset viewer config betonsalon");
+			transform.position = new Vector3 (0,1.5f,0);
+			MouseLook ml = GetComponent<MouseLook> ();
+			ml.SetPitch (-45);
+			//
+			bGUI = false;
+		}
+
 		TransitionManager.Start(TransitionManager.FadeIn,3f,Color.white, null);
 		tab = AppTab.None; //hide windows
 		Network.InitializeServer(32, 7890, true);
@@ -3740,8 +3773,7 @@ public class App : MonoBehaviour
 	[RPC]
 	void ResetViewerPosition()
 	{
-		
-		transform.position = new Vector3(Random.value*10f-5f,10,Random.value*10f-5f);
+		transform.position = new Vector3 (Random.value * 10f - 5f, 10, Random.value * 10f - 5f);
 	}
     
 	void DrawChronometer()
