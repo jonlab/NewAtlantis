@@ -10,7 +10,11 @@ public class NAPostProcessing : MonoBehaviour {
 	{
 		PostProcessingBehaviour b = GetComponent<PostProcessingBehaviour> ();
 
-		b.profile.chromaticAberration.enabled = false;
+		b.profile.chromaticAberration.enabled = true;
+
+		//ChromaticAberrationModel.Settings chromaticSettings = b.profile.chromaticAberration.settings;
+		//chromaticSettings.intensity = 10;
+		//b.profile.chromaticAberration.settings = chromaticSettings;
 	}
 	
 	// Update is called once per frame
