@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 //plays an audio source sometimes
-public class NAAiPlaySource : MonoBehaviour 
+public class NAAiPlaySource : NAAiBase 
 {
 
 	//public parameters

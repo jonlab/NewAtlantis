@@ -18,6 +18,9 @@ public class WebcamProcess : MonoBehaviour
 			LogManager.Log ("Webcam available: " + cam_devices [i].name);
 		}
 		webcamTexture = new WebCamTexture(160,120); //fixme
+
+		if (webcamTexture == null)
+			return;
 		//rawimage.texture = webcamTexture;
 		//rawimage.material.mainTexture = webcamTexture;
 		webcamTexture.Play();
@@ -32,6 +35,9 @@ public class WebcamProcess : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+		if (webcamTexture == null)
+			return;
+		
 		//Debug.Log ("WebcamTexture : " + webcamTexture.width + "x" + webcamTexture.height);
 		Color[] colors = webcamTexture.GetPixels ();
 
