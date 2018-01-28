@@ -15,6 +15,7 @@ public class NAUnderwater : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
+		return;
 		timer += Time.deltaTime;
 		RenderSettings.fog = true;
 

@@ -1,4 +1,4 @@
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+// Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
 
 Shader "Hidden/Nature/Tree Creator Leaves Fast Optimized" {
 Properties {
@@ -53,11 +53,14 @@ SubShader {
 			float4 screenPos : TEXCOORD1;
 		#endif
 			UNITY_FOG_COORDS(2)
+			UNITY_VERTEX_OUTPUT_STEREO
 		};
 
 		v2f_leaf VertexLeaf (appdata_full v)
 		{
 			v2f_leaf o;
+			UNITY_SETUP_INSTANCE_ID(v);
+			UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 			TreeVertLeaf(v);
 			o.pos = UnityObjectToClipPos(v.vertex);
 
@@ -132,12 +135,15 @@ SubShader {
 		struct v2f_surf {
 			V2F_SHADOW_CASTER;
 			float2 hip_pack0 : TEXCOORD1;
+			UNITY_VERTEX_OUTPUT_STEREO
 		};
 		
 		float4 _MainTex_ST;
 		
 		v2f_surf vert_surf (appdata_full v) {
 			v2f_surf o;
+			UNITY_SETUP_INSTANCE_ID(v);
+			UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 			TreeVertLeaf (v);
 			o.hip_pack0.xy = TRANSFORM_TEX(v.texcoord, _MainTex);
 			TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)

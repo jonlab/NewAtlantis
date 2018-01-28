@@ -25,7 +25,7 @@ public class NATutorial : MonoBehaviour
 	{
 		if (Input.GetKeyDown(KeyCode.T))
 		{
-			bActive = true;
+			bActive = !bActive;
 		}
 		if (bActive)
 		{
@@ -52,10 +52,7 @@ public class NATutorial : MonoBehaviour
 			DrawGUI();
 		}
 	}
-
-	
-
-
+		
 	void DrawGUI()
 	{
 		Font bak = GUI.skin.font;

@@ -339,7 +339,6 @@ public class App : MonoBehaviour
 		Network.natFacilitatorIP = this.facilitatorIP;
 		Network.natFacilitatorPort = this.facilitatorPort;
 
-
 		//AssetBundlePreviewGenerator.Test("Bundles/grass_ground.unity3d");
 		//AssetBundlePreviewGenerator.Test("Bundles/CubeRouge.unity3d");
 		//AssetBundlePreviewGenerator.Test("Bundles/Lobby.unity3d");
@@ -592,8 +591,11 @@ public class App : MonoBehaviour
 
 	float GetLoadingProgress()
 	{
+		
 		if (listObjects.Count == 0)
+		{
 			return -1f;
+		}
 		float loaded = 0f;
 		foreach (NAObject o in listObjects) 
 		{
@@ -1591,10 +1593,15 @@ public class App : MonoBehaviour
 
 		GUI.skin.label.alignment = TextAnchor.MiddleLeft;
 		float scale = 1f;
-
+		//avatar color square
 		GUI.color = new Color(NA.colorAvatar.x, NA.colorAvatar.y, NA.colorAvatar.z, 0.3f);
 		GUI.DrawTexture (new Rect (Screen.width-32, 0, 30, 30), texWhite);
 		GUI.color = Color.white;
+
+
+
+		GUI.Label(new Rect (Screen.width-100, 0, 100, 30), ""+state);
+
 		/*
 		if (Screen.height < 768)
 		{
@@ -1689,9 +1696,9 @@ public class App : MonoBehaviour
 		}
     
 		//TransitionManager.DrawGUI();
-        
+        //Progression bar
 		float loading = GetLoadingProgress();
-		if (loading != -1f && loading != 1f)
+		if ((loading != -1f || state == AppState.Game) && loading != 1f)
 		{
 
 			GUI.color = new Color(0,0,0,0.5f);
@@ -1700,36 +1707,42 @@ public class App : MonoBehaviour
 			GUI.color = Color.red;
 			GUI.DrawTexture (new Rect (Screen.width/2-300, Screen.height/2-50, 600, 20), texWhite);
 
-			GUI.color = Color.white;
-			GUI.DrawTexture (new Rect (Screen.width/2-300, Screen.height/2-50, 600f*loading, 20), texWhite);
-
-
-			GUI.color = Color.white;
-			if (NADownloader.current != null)
+			if (loading != -1)
 			{
-				GUI.skin.label.alignment = TextAnchor.MiddleCenter;
-				GUI.skin.font = NA.GetFont(3);
-				string strProgressCaption = "";
-				if (NA.CurrentSpace != null)
-				{
-					strProgressCaption = NA.CurrentSpace.name;
-				}
-				else
-				{
-					strProgressCaption = "Teleporting to a new Space...";
-				}
-				GUI.Label(new Rect(Screen.width/2-300, Screen.height/2-100, 600, 50), strProgressCaption);
-				GUI.skin.font = NA.GetFont(1);
-				string str = "loading " + NADownloader.current.name + " ... " + (int)(loading*1000f)/10f + "%";
-				GUI.Label(new Rect(Screen.width/2-300, Screen.height/2-15, 600, 30), str);
 				GUI.color = Color.white;
-				GUI.skin.label.alignment = TextAnchor.UpperLeft;
-				GUI.skin.font = NA.GetFont(0);
+				GUI.DrawTexture (new Rect (Screen.width / 2 - 300, Screen.height / 2 - 50, 600f * loading, 20), texWhite);
 			}
 
+
+			GUI.color = Color.white;
+			string strProgressCaption = "";
+			string str = "contacting New Atlantis, please wait...";
+			if (NADownloader.current != null)
+			{
+				str = "loading " + NADownloader.current.name + " ... " + (int)(loading*1000f)/10f + "%";
+			}
+			if (NA.CurrentSpace != null)
+			{
+				strProgressCaption = NA.CurrentSpace.name;
+			}
+			else
+			{
+				strProgressCaption = "Teleporting to a new Space...";
+			}
+			GUI.skin.label.alignment = TextAnchor.MiddleCenter;
+			GUI.skin.font = NA.GetFont(3);
+
+			GUI.Label(new Rect(Screen.width/2-300, Screen.height/2-100, 600, 50), strProgressCaption);
+			GUI.skin.font = NA.GetFont(1);
+			GUI.Label(new Rect(Screen.width/2-300, Screen.height/2-15, 600, 30), str);
+			GUI.color = Color.white;
+			GUI.skin.label.alignment = TextAnchor.UpperLeft;
+			GUI.skin.font = NA.GetFont(0);
 		}
 
-
+		//=============
+		//avatar names
+		//=============
         if (bDisplayAvatarNames)
         {
             List<GameObject> avatars = NA.GetAvatars();
@@ -1903,10 +1916,7 @@ public class App : MonoBehaviour
 			{
 				NA.PatchAllMaterials(goRootSpace);
 			}
-
-
-
-	        
+				
 	        //to do : list of objects ?
 	        
 	        GUI.color = Color.white;
@@ -1939,11 +1949,12 @@ public class App : MonoBehaviour
 				GUI.Window(10, mGuiWinRectWindows, WindowFunctionUser, "MyNA");
 				break;
 			}
-			GUIIdentityMatrix();
-
-	        
+			GUIIdentityMatrix();        
 		}
 	}
+
+
+
 
 	public GameObject PickObject(Vector2 screenpos, out RaycastHit hit)
 	{

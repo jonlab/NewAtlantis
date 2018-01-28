@@ -1,3 +1,5 @@
+// Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
+
 Shader "UI/Lit/Bumped"
 {
 	Properties
@@ -5,7 +7,7 @@ Shader "UI/Lit/Bumped"
 		_Color ("Main Color", Color) = (1,1,1,1)
 		_Specular ("Specular Color", Color) = (0,0,0,0)
 		_MainTex ("Diffuse (RGB), Alpha (A)", 2D) = "white" {}
-		_MainBump ("Diffuse Bump Map", 2D) = "bump" {}
+		[NoScaleOffset] _MainBump ("Diffuse Bump Map", 2D) = "bump" {}
 		_Shininess ("Shininess", Range(0.01, 1.0)) = 0.2
 		
 		_StencilComp ("Stencil Comparison", Float) = 8
@@ -63,11 +65,12 @@ Shader "UI/Lit/Bumped"
 				fixed4 color : COLOR;
 				float3 normal : NORMAL;
 				float4 tangent : TANGENT;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
 			struct Input
 			{
-				half2 uv_MainTex;
+				float2 uv_MainTex;
 				fixed4 color : COLOR;
 				float4 worldPosition;
 			};

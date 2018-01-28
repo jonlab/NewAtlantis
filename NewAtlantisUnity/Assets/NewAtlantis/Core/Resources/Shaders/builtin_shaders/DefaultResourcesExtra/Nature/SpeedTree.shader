@@ -1,13 +1,11 @@
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+// Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
 
 Shader "Nature/SpeedTree"
 {
 	Properties
 	{
 		_Color ("Main Color", Color) = (1,1,1,1)
-		_SpecColor ("Specular Color", Color) = (0,0,0,0)
 		_HueVariation ("Hue Variation", Color) = (1.0,0.5,0.0,0.1)
-		_Shininess ("Shininess", Range (0.01, 1)) = 0.1
 		_MainTex ("Base (RGB) Trans (A)", 2D) = "white" {}
 		_DetailTex ("Detail", 2D) = "black" {}
 		_BumpMap ("Normal Map", 2D) = "bump" {}
@@ -30,9 +28,10 @@ Shader "Nature/SpeedTree"
 		Cull [_Cull]
 
 		CGPROGRAM
-			#pragma surface surf Lambert vertex:SpeedTreeVert nolightmap
+			#pragma surface surf Lambert vertex:SpeedTreeVert nodirlightmap nodynlightmap noshadowmask
 			#pragma target 3.0
 			#pragma multi_compile __ LOD_FADE_PERCENTAGE LOD_FADE_CROSSFADE
+			#pragma instancing_options assumeuniformscaling lodfade maxcount:50
 			#pragma shader_feature GEOM_TYPE_BRANCH GEOM_TYPE_BRANCH_DETAIL GEOM_TYPE_FROND GEOM_TYPE_LEAF GEOM_TYPE_MESH
 			#pragma shader_feature EFFECT_BUMP
 			#pragma shader_feature EFFECT_HUE_VARIATION
@@ -56,6 +55,8 @@ Shader "Nature/SpeedTree"
 				#pragma fragment frag
 				#pragma target 3.0
 				#pragma multi_compile __ LOD_FADE_PERCENTAGE LOD_FADE_CROSSFADE
+				#pragma multi_compile_instancing
+				#pragma instancing_options assumeuniformscaling lodfade maxcount:50
 				#pragma shader_feature GEOM_TYPE_BRANCH GEOM_TYPE_BRANCH_DETAIL GEOM_TYPE_FROND GEOM_TYPE_LEAF GEOM_TYPE_MESH
 				#pragma multi_compile_shadowcaster
 				#define ENABLE_WIND
@@ -65,14 +66,19 @@ Shader "Nature/SpeedTree"
 				{
 					V2F_SHADOW_CASTER;
 					#ifdef SPEEDTREE_ALPHATEST
-						half2 uv : TEXCOORD1;
+						float2 uv : TEXCOORD1;
 					#endif
 					UNITY_DITHER_CROSSFADE_COORDS_IDX(2)
+					UNITY_VERTEX_INPUT_INSTANCE_ID
+					UNITY_VERTEX_OUTPUT_STEREO
 				};
 
 				v2f vert(SpeedTreeVB v)
 				{
 					v2f o;
+					UNITY_SETUP_INSTANCE_ID(v);
+					UNITY_TRANSFER_INSTANCE_ID(v, o);
+					UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 					#ifdef SPEEDTREE_ALPHATEST
 						o.uv = v.texcoord.xy;
 					#endif
@@ -85,6 +91,7 @@ Shader "Nature/SpeedTree"
 
 				float4 frag(v2f i) : SV_Target
 				{
+					UNITY_SETUP_INSTANCE_ID(i);
 					#ifdef SPEEDTREE_ALPHATEST
 						clip(tex2D(_MainTex, i.uv).a * _Color.a - _Cutoff);
 					#endif
@@ -104,6 +111,8 @@ Shader "Nature/SpeedTree"
 				#pragma target 3.0
 				#pragma multi_compile_fog
 				#pragma multi_compile __ LOD_FADE_PERCENTAGE LOD_FADE_CROSSFADE
+				#pragma multi_compile_instancing
+				#pragma instancing_options assumeuniformscaling lodfade maxcount:50
 				#pragma shader_feature GEOM_TYPE_BRANCH GEOM_TYPE_BRANCH_DETAIL GEOM_TYPE_FROND GEOM_TYPE_LEAF GEOM_TYPE_MESH
 				#pragma shader_feature EFFECT_HUE_VARIATION
 				#define ENABLE_WIND
@@ -114,11 +123,16 @@ Shader "Nature/SpeedTree"
 					float4 vertex	: SV_POSITION;
 					UNITY_FOG_COORDS(0)
 					Input data		: TEXCOORD1;
+					UNITY_VERTEX_INPUT_INSTANCE_ID
+					UNITY_VERTEX_OUTPUT_STEREO
 				};
 
 				v2f vert(SpeedTreeVB v)
 				{
 					v2f o;
+					UNITY_SETUP_INSTANCE_ID(v);
+					UNITY_TRANSFER_INSTANCE_ID(v, o);
+					UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 					SpeedTreeVert(v, o.data);
 					o.data.color.rgb *= ShadeVertexLightsFull(v.vertex, v.normal, 4, true);
 					o.vertex = UnityObjectToClipPos(v.vertex);
@@ -128,6 +142,7 @@ Shader "Nature/SpeedTree"
 
 				fixed4 frag(v2f i) : SV_Target
 				{
+					UNITY_SETUP_INSTANCE_ID(i);
 					SpeedTreeFragOut o;
 					SpeedTreeFrag(i.data, o);
 					fixed4 c = fixed4(o.Albedo, o.Alpha);
@@ -152,7 +167,7 @@ Shader "Nature/SpeedTree"
 		Cull [_Cull]
 
 		CGPROGRAM
-			#pragma surface surf Lambert vertex:SpeedTreeVert nolightmap
+			#pragma surface surf Lambert vertex:SpeedTreeVert nodirlightmap nodynlightmap noshadowmask
 			#pragma multi_compile __ LOD_FADE_PERCENTAGE
 			#pragma shader_feature GEOM_TYPE_BRANCH GEOM_TYPE_BRANCH_DETAIL GEOM_TYPE_FROND GEOM_TYPE_LEAF GEOM_TYPE_MESH
 			#include "SpeedTreeCommon.cginc"
@@ -181,7 +196,7 @@ Shader "Nature/SpeedTree"
 				{
 					V2F_SHADOW_CASTER;
 					#ifdef SPEEDTREE_ALPHATEST
-						half2 uv : TEXCOORD1;
+						float2 uv : TEXCOORD1;
 					#endif
 				};
 
@@ -223,11 +238,14 @@ Shader "Nature/SpeedTree"
 					float4 vertex	: SV_POSITION;
 					UNITY_FOG_COORDS(0)
 					Input data		: TEXCOORD1;
+					UNITY_VERTEX_OUTPUT_STEREO
 				};
 
 				v2f vert(SpeedTreeVB v)
 				{
 					v2f o;
+					UNITY_SETUP_INSTANCE_ID(v);
+					UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 					SpeedTreeVert(v, o.data);
 					o.data.color.rgb *= ShadeVertexLightsFull(v.vertex, v.normal, 2, false);
 					o.vertex = UnityObjectToClipPos(v.vertex);

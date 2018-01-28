@@ -1,4 +1,4 @@
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+// Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
 
 Shader "Hidden/Internal-DeferredShading" {
 Properties {
@@ -30,6 +30,7 @@ CGPROGRAM
 #include "UnityDeferredLibrary.cginc"
 #include "UnityPBSLighting.cginc"
 #include "UnityStandardUtils.cginc"
+#include "UnityGBuffer.cginc"
 #include "UnityStandardBRDF.cginc"
 
 sampler2D _CameraGBufferTexture0;
@@ -45,26 +46,23 @@ half4 CalculateLight (unity_v2f_deferred i)
 	UNITY_INITIALIZE_OUTPUT(UnityLight, light);
 	UnityDeferredCalculateLightParams (i, wpos, uv, light.dir, atten, fadeDist);
 
+	light.color = _LightColor.rgb * atten;
+
+	// unpack Gbuffer
 	half4 gbuffer0 = tex2D (_CameraGBufferTexture0, uv);
 	half4 gbuffer1 = tex2D (_CameraGBufferTexture1, uv);
 	half4 gbuffer2 = tex2D (_CameraGBufferTexture2, uv);
+	UnityStandardData data = UnityStandardDataFromGbuffer(gbuffer0, gbuffer1, gbuffer2);
 
-	light.color = _LightColor.rgb * atten;
-	half3 baseColor = gbuffer0.rgb;
-	half3 specColor = gbuffer1.rgb;
-	half oneMinusRoughness = gbuffer1.a;
-	half3 normalWorld = gbuffer2.rgb * 2 - 1;
-	normalWorld = normalize(normalWorld);
 	float3 eyeVec = normalize(wpos-_WorldSpaceCameraPos);
-	half oneMinusReflectivity = 1 - SpecularStrength(specColor.rgb);
-	light.ndotl = LambertTerm (normalWorld, light.dir);
+	half oneMinusReflectivity = 1 - SpecularStrength(data.specularColor.rgb);
 
 	UnityIndirect ind;
 	UNITY_INITIALIZE_OUTPUT(UnityIndirect, ind);
 	ind.diffuse = 0;
 	ind.specular = 0;
 
-    half4 res = UNITY_BRDF_PBS (baseColor, specColor, oneMinusReflectivity, oneMinusRoughness, normalWorld, -eyeVec, light, ind);
+    half4 res = UNITY_BRDF_PBS (data.diffuseColor, data.specularColor, oneMinusReflectivity, data.smoothness, data.normalWorld, -eyeVec, light, ind);
 
 	return res;
 }
@@ -106,6 +104,8 @@ CGPROGRAM
 #pragma fragment frag
 #pragma exclude_renderers nomrt
 
+#include "UnityCG.cginc"
+
 sampler2D _LightBuffer;
 struct v2f {
 	float4 vertex : SV_POSITION;
@@ -117,6 +117,9 @@ v2f vert (float4 vertex : POSITION, float2 texcoord : TEXCOORD0)
 	v2f o;
 	o.vertex = UnityObjectToClipPos(vertex);
 	o.texcoord = texcoord.xy;
+#ifdef UNITY_SINGLE_PASS_STEREO
+	o.texcoord = TransformStereoScreenSpaceTex(o.texcoord, 1.0f);
+#endif
 	return o;
 }
 

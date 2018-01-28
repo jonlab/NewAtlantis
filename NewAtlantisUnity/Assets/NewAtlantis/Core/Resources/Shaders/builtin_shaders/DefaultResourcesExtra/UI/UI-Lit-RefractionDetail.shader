@@ -1,3 +1,5 @@
+// Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
+
 Shader "UI/Lit/Refraction Detail"
 {
 	Properties
@@ -76,6 +78,7 @@ Shader "UI/Lit/Refraction Detail"
 				fixed4 color : COLOR;
 				float3 normal : NORMAL;
 				float4 tangent : TANGENT;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 	
 			struct Input

@@ -1,13 +1,11 @@
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
-// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+// Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
 
 Shader "Skybox/Procedural" {
 Properties {
 	[KeywordEnum(None, Simple, High Quality)] _SunDisk ("Sun", Int) = 2
 	_SunSize ("Sun Size", Range(0,1)) = 0.04
 	
-	_AtmosphereThickness ("Atmoshpere Thickness", Range(0,5)) = 1.0
+	_AtmosphereThickness ("Atmosphere Thickness", Range(0,5)) = 1.0
 	_SkyTint ("Sky Tint", Color) = (.5, .5, .5, 1)
 	_GroundColor ("Ground", Color) = (.369, .349, .341, 1)
 
@@ -27,7 +25,6 @@ SubShader {
 		#include "UnityCG.cginc"
 		#include "Lighting.cginc"
 
-		#pragma multi_compile __ UNITY_COLORSPACE_GAMMA
 		#pragma multi_compile _SUNDISK_NONE _SUNDISK_SIMPLE _SUNDISK_HIGH_QUALITY
 
 		uniform half _Exposure;		// HDR exposure
@@ -62,7 +59,7 @@ SubShader {
 
 		static const float kCameraHeight = 0.0001;
 
-		#define kRAYLEIGH (lerp(0, 0.0025, pow(_AtmosphereThickness,2.5)))		// Rayleigh constant
+		#define kRAYLEIGH (lerp(0.0, 0.0025, pow(_AtmosphereThickness,2.5)))		// Rayleigh constant
 		#define kMIE 0.0010      		// Mie constant
 		#define kSUN_BRIGHTNESS 20.0 	// Sun brightness
 
@@ -132,6 +129,7 @@ SubShader {
 		struct appdata_t
 		{
 			float4 vertex : POSITION;
+			UNITY_VERTEX_INPUT_INSTANCE_ID
 		};
 
 		struct v2f
@@ -155,6 +153,8 @@ SubShader {
 		#if SKYBOX_SUNDISK != SKYBOX_SUNDISK_NONE
 			half3	sunColor		: TEXCOORD3;
 		#endif
+
+			UNITY_VERTEX_OUTPUT_STEREO
 		};
 
 
@@ -173,6 +173,8 @@ SubShader {
 		v2f vert (appdata_t v)
 		{
 			v2f OUT;
+			UNITY_SETUP_INSTANCE_ID(v);
+			UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(OUT);
 			OUT.pos = UnityObjectToClipPos(v.vertex);
 
 			float3 kSkyTintInGammaSpace = COLOR_2_GAMMA(_SkyTint); // convert tint from Linear back to Gamma

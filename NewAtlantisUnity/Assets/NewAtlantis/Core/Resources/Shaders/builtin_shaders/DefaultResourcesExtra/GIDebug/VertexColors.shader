@@ -1,6 +1,6 @@
-﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+// Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
 
-Shader "Hidden/GIDebug/VertexColors" {
+﻿Shader "Hidden/GIDebug/VertexColors" {
 	Properties {
 		_MainTex ("Base (RGB)", 2D) = "white" {}
 	}
@@ -23,7 +23,7 @@ Shader "Hidden/GIDebug/VertexColors" {
 			v2f_surf vert_surf (appdata_full v)
 			{
 				v2f_surf o;
-				o.pos = UnityObjectToClipPos (v.vertex);
+				o.pos = UnityObjectToClipPos(v.vertex);
 				o.color = v.color;
 				return o;
 			}

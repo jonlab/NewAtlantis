@@ -105,6 +105,7 @@ public class NAToolSpawner : NAToolBase {
 	[RPC]
 	void SpawnObject(string name, NetworkViewID viewID, Vector3 location, Vector3 forward, Vector3 color) 
 	{
+		//on each client (including server)
 		LogManager.Log("client : SpawnObject");
 		GameObject clone = null;
 		if (name == "sphere")
@@ -187,20 +188,32 @@ public class NAToolSpawner : NAToolBase {
 		{
 			clone = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 			clone.transform.localScale = Vector3.one * 0.1f;
-			clone.AddComponent<NAAnimalBehavior> ();
+			//NAAnimalBehavior ab  =clone.AddComponent<NAAnimalBehavior> ();
 			clone.AddComponent<Light> ();
 
 
-			GameObject goAudioSource1 = new GameObject ();
-			goAudioSource1.AddComponent<AudioSource> ();
+			//GameObject goAudioSource1 = new GameObject ();
+			//AudioSource as1 = goAudioSource1.AddComponent<AudioSource> ();
 
-			GameObject goAudioSource2 = new GameObject ();
-			goAudioSource2.AddComponent<AudioSource> ();
-
+			//GameObject goAudioSource2 = new GameObject ();
+			//AudioSource as2 = goAudioSource2.AddComponent<AudioSource> ();
+			/*
 			goAudioSource1.transform.parent = clone.transform;
 			goAudioSource2.transform.parent = clone.transform;
 			goAudioSource1.transform.localPosition = Vector3.zero;
 			goAudioSource2.transform.localPosition = Vector3.zero;
+
+			ab.audioSourceMove = as1;
+			ab.audioSourceStand = as2;
+			*/
+			AudioSource src = clone.AddComponent<AudioSource>();
+			src.playOnAwake = true;
+			src.spatialBlend = 1f;
+
+			NAAudioRecorder trunk = clone.AddComponent<NAAudioRecorder>(); 
+			trunk.AutoLoad = true;
+			trunk.AutoPlay = true;
+
 
 		}	
 		else

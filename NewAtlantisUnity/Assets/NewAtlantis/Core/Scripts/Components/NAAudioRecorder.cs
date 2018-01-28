@@ -12,6 +12,7 @@ public class NAAudioRecorder : NAObjectBase
 	private  FileInfo[] 		info = null;
 	private static int 			index = 0;
 	public bool 				AutoLoad = false;
+	public bool 				AutoPlay = false;
 	// Use this for initialization
 	void Start () 
 	{
@@ -26,6 +27,11 @@ public class NAAudioRecorder : NAObjectBase
 			LoadSoundFileAtIndex(index);
 			GetComponent<AudioSource>().loop = true;
 			index++;
+		}
+
+		if (AutoPlay)
+		{
+			GetComponent<AudioSource> ().Play ();
 		}
 	}
 	

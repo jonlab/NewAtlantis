@@ -1,3 +1,5 @@
+// Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
+
 // Simplified VertexLit shader. Differences from regular VertexLit one:
 // - no per-material color
 // - no specular
@@ -80,16 +82,20 @@ SubShader {
 		CGPROGRAM
 		#pragma vertex vert
 		#pragma fragment frag
+		#pragma target 2.0
 		#pragma multi_compile_shadowcaster
 		#include "UnityCG.cginc"
 
 		struct v2f { 
 			V2F_SHADOW_CASTER;
+			UNITY_VERTEX_OUTPUT_STEREO
 		};
 
 		v2f vert( appdata_base v )
 		{
 			v2f o;
+			UNITY_SETUP_INSTANCE_ID(v);
+			UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 			TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
 			return o;
 		}

@@ -1,4 +1,4 @@
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+// Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
 
 Shader "Legacy Shaders/Reflective/VertexLit" {
 Properties {
@@ -20,6 +20,7 @@ Category {
 CGPROGRAM
 #pragma vertex vert
 #pragma fragment frag
+#pragma target 2.0
 #pragma multi_compile_fog
 #include "UnityCG.cginc"
 
@@ -28,6 +29,8 @@ struct v2f {
 	float2 uv : TEXCOORD0;
 	float3 I : TEXCOORD1;
 	UNITY_FOG_COORDS(2)
+
+	UNITY_VERTEX_OUTPUT_STEREO
 };
 
 uniform float4 _MainTex_ST;
@@ -35,7 +38,9 @@ uniform float4 _MainTex_ST;
 v2f vert(appdata_tan v)
 {
 	v2f o;
-	o.pos = UnityObjectToClipPos (v.vertex);
+	UNITY_SETUP_INSTANCE_ID(v);
+	UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+	o.pos = UnityObjectToClipPos(v.vertex);
 	o.uv = TRANSFORM_TEX(v.texcoord,_MainTex);
 
 	// calculate world space reflection vector	
@@ -72,6 +77,7 @@ ENDCG
 CGPROGRAM
 #pragma vertex vert
 #pragma fragment frag
+#pragma target 2.0
 #pragma multi_compile_fog
 
 #include "UnityCG.cginc"
@@ -81,6 +87,7 @@ struct v2f {
 	UNITY_FOG_COORDS(1)
 	fixed4 diff : COLOR0;
 	float4 pos : SV_POSITION;
+	UNITY_VERTEX_OUTPUT_STEREO
 };
 
 uniform float4 _MainTex_ST;
@@ -90,6 +97,8 @@ uniform fixed4 _ReflectColor;
 v2f vert (appdata_base v)
 {
 	v2f o;
+	UNITY_SETUP_INSTANCE_ID(v);
+	UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 	o.pos = UnityObjectToClipPos(v.vertex);
 	o.uv = TRANSFORM_TEX(v.texcoord,_MainTex);
 	float4 lighting = float4(ShadeVertexLightsFull(v.vertex, v.normal, 4, true),_ReflectColor.w);
@@ -122,26 +131,37 @@ ENDCG
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
+			#pragma target 2.0
 			#pragma multi_compile_fog
 
 			#include "UnityCG.cginc"
 
+			struct a2v {
+				float4 vertex : POSITION;
+				float2 uv : TEXCOORD0;
+				float2 uv2 : TEXCOORD1;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
+			};
+
 			struct v2f {
-				half2 uv : TEXCOORD0;
-				half2 uv2 : TEXCOORD1;
+				float2 uv : TEXCOORD0;
+				float2 uv2 : TEXCOORD1;
 				UNITY_FOG_COORDS(2)
 				float4 pos : SV_POSITION;
+				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
 			uniform float4 _MainTex_ST;
 			uniform float4x4 unity_LightmapMatrix;
 
-			v2f vert (float4 vertex : POSITION, float2 uv : TEXCOORD0, float2 uv2: TEXCOORD1)
+			v2f vert (a2v v)
 			{
 				v2f o;
-				o.pos = UnityObjectToClipPos(vertex);
-				o.uv = TRANSFORM_TEX(uv,_MainTex);
-				o.uv2 = mul(unity_LightmapMatrix, float4(uv2,0,1)).xy;
+				UNITY_SETUP_INSTANCE_ID(v);
+				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+				o.pos = UnityObjectToClipPos(v.vertex);
+				o.uv = TRANSFORM_TEX(v.uv,_MainTex);
+				o.uv2 = mul(unity_LightmapMatrix, float4(v.uv2,0,1)).xy;
 				UNITY_TRANSFER_FOG(o,o.pos);
 				return o;
 			}
@@ -170,26 +190,37 @@ ENDCG
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
+			#pragma target 2.0
 			#pragma multi_compile_fog
 
 			#include "UnityCG.cginc"
 
+			struct a2v {
+				float4 vertex : POSITION;
+				float2 uv : TEXCOORD0;
+				float2 uv2 : TEXCOORD1;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
+			};
+			
 			struct v2f {
-				half2 uv : TEXCOORD0;
-				half2 uv2 : TEXCOORD1;
+				float2 uv : TEXCOORD0;
+				float2 uv2 : TEXCOORD1;
 				UNITY_FOG_COORDS(2)
 				float4 pos : SV_POSITION;
+				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
 			uniform float4 _MainTex_ST;
 			uniform float4x4 unity_LightmapMatrix;
 
-			v2f vert (float4 vertex : POSITION, float2 uv : TEXCOORD0, float2 uv2: TEXCOORD1)
+			v2f vert (a2v v)
 			{
 				v2f o;
-				o.pos = UnityObjectToClipPos(vertex);
-				o.uv = TRANSFORM_TEX(uv,_MainTex);
-				o.uv2 = mul(unity_LightmapMatrix, float4(uv2,0,1)).xy;
+				UNITY_SETUP_INSTANCE_ID(v);
+				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+				o.pos = UnityObjectToClipPos(v.vertex);
+				o.uv = TRANSFORM_TEX(v.uv,_MainTex);
+				o.uv2 = mul(unity_LightmapMatrix, float4(v.uv2,0,1)).xy;
 				UNITY_TRANSFER_FOG(o,o.pos);
 				return o;
 			}

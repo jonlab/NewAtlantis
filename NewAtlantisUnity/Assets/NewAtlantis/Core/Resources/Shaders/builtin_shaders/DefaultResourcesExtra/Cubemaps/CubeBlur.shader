@@ -1,6 +1,6 @@
-﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+// Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
 
-Shader "Hidden/CubeBlur" {
+﻿Shader "Hidden/CubeBlur" {
 	Properties {
 		_MainTex ("Main", CUBE) = "" {}
 		_Texel ("Texel", Float) = 0.0078125

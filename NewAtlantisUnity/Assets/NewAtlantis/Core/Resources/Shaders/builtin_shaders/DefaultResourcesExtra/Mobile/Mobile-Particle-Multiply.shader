@@ -1,3 +1,5 @@
+// Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
+
 // Simplified Multiply Particle shader. Differences from regular Multiply Particle one:
 // - no Smooth particle support
 // - no AlphaTest
@@ -9,7 +11,7 @@ Properties {
 }
 
 Category {
-	Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
+	Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" "PreviewType"="Plane" }
 	Blend Zero SrcColor
 	Cull Off Lighting Off ZWrite Off Fog { Color (1,1,1,1) }
 	

@@ -1,4 +1,4 @@
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+// Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
 
 Shader "Legacy Shaders/Reflective/Bumped VertexLit" {
 Properties {
@@ -34,6 +34,7 @@ struct v2f {
 	UNITY_FOG_COORDS(1)
 	fixed4 diff : COLOR0;
 	float4 pos : SV_POSITION;
+	UNITY_VERTEX_OUTPUT_STEREO
 };
 
 uniform float4 _MainTex_ST;
@@ -42,6 +43,8 @@ uniform float4 _Color;
 v2f vert (appdata_base v)
 {
 	v2f o;
+	UNITY_SETUP_INSTANCE_ID(v);
+	UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 	o.pos = UnityObjectToClipPos(v.vertex);
 	o.uv = TRANSFORM_TEX(v.texcoord,_MainTex);
 	float4 lighting = float4(ShadeVertexLightsFull(v.vertex, v.normal, 4, true),_Color.w);

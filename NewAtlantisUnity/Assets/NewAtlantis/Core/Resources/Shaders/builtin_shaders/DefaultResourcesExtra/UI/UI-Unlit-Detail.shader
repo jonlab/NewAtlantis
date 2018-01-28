@@ -1,6 +1,6 @@
-﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+// Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
 
-Shader "UI/Unlit/Detail"
+﻿Shader "UI/Unlit/Detail"
 {
 	Properties
 	{
@@ -66,6 +66,7 @@ Shader "UI/Unlit/Detail"
 				float2 texcoord : TEXCOORD0;
 				float2 texcoord2 : TEXCOORD1;
 				fixed4 color : COLOR;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
 			struct v2f
@@ -75,6 +76,7 @@ Shader "UI/Unlit/Detail"
 				float2 texcoord2 : TEXCOORD1;
 				float4 worldPosition : TEXCOORD2;
 				fixed4 color : COLOR;
+				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
 			sampler2D _MainTex;
@@ -95,17 +97,15 @@ Shader "UI/Unlit/Detail"
 			v2f vert (appdata_t v)
 			{
 				v2f o;
-				o.worldPosition = v.vertex;			
+				UNITY_SETUP_INSTANCE_ID(v);
+				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+				o.worldPosition = v.vertex;
 				o.vertex = UnityObjectToClipPos(o.worldPosition);
 
 				o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 				o.texcoord2 = TRANSFORM_TEX(v.texcoord2 * _DetailTex_TexelSize.xy, _DetailTex);
 				o.color = v.color * _Color;
 				
-				#ifdef UNITY_HALF_TEXEL_OFFSET
-				o.vertex.xy += (_ScreenParams.zw-1.0)*float2(-1,1);
-				#endif
-
 				return o;
 			}
 			

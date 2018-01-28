@@ -1,4 +1,4 @@
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+// Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
 
 Shader "Hidden/Nature/Tree Creator Bark Rendertex" {
 Properties {
@@ -24,6 +24,7 @@ struct v2f {
 	float2 params1: TEXCOORD2;
 	float2 params2: TEXCOORD3;
 	float2 params3: TEXCOORD4;
+	UNITY_VERTEX_OUTPUT_STEREO
 };
 
 CBUFFER_START(UnityTerrainImposter)
@@ -45,7 +46,9 @@ float2 CalcTreeLightingParams(float3 normal, float3 lightDir, float3 viewDir)
 
 v2f vert (appdata_full v) {
 	v2f o;
-	o.pos = UnityObjectToClipPos (v.vertex);
+	UNITY_SETUP_INSTANCE_ID(v);
+	UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+	o.pos = UnityObjectToClipPos(v.vertex);
 	o.uv = v.texcoord.xy;
 	float3 viewDir = normalize(ObjSpaceViewDir(v.vertex));
 	

@@ -1,6 +1,6 @@
-﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+// Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
 
-Shader "Hidden/GIDebug/TextureUV" {
+﻿Shader "Hidden/GIDebug/TextureUV" {
 	Properties {
 		_MainTex ("Base (RGB)", 2D) = "white" {}
 	}
@@ -22,14 +22,14 @@ Shader "Hidden/GIDebug/TextureUV" {
 			};
 
 			sampler2D _MainTex;
-			float4 _Decode_HDR;
+			half4 _Decode_HDR;
 			float _ConvertToLinearSpace;
 			float _StaticUV1;
 
 			v2f_surf vert_surf (appdata_full v)
 			{
 				v2f_surf o;
-				o.pos = UnityObjectToClipPos (v.vertex);
+				o.pos = UnityObjectToClipPos(v.vertex);
 
 				if (_StaticUV1)
 					o.uv.xy = v.texcoord1.xy * unity_LightmapST.xy + unity_LightmapST.zw;
