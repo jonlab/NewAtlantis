@@ -11,10 +11,10 @@ public class NAAiBoid : NAAiBase
 {
 	//parameters
 	[Range(0.1f, 10.0f)]
-	public float NeighborDistance = 2f;
+	public float NeighborDistance = 1f;
 
 	[Range(0f, 20.0f)]
-	public float Velocity = 6;
+	public float Velocity = 4;
 
 	[Range(0.0f, 0.9f)]
 	public float VelocityVariation = 0.9f;
@@ -23,7 +23,7 @@ public class NAAiBoid : NAAiBase
 	//[Range(0.01f, 0.99f)]
 	public float RotationCoeff = 4f; //4f
 
-	public GameObject controller;
+	public GameObject attractor;
 
 	public LayerMask SearchLayer;
 
@@ -62,60 +62,62 @@ public class NAAiBoid : NAAiBase
 
 	void Update()
 	{
-		Vector3 currentPosition = transform.position;
-		Quaternion currentRotation = transform.rotation;
-
-		// Current velocity randomized with noise.
-		float noise = Mathf.PerlinNoise(Time.time, noiseOffset) * 2.0f - 1.0f;
-		float velocity = Velocity * (1.0f + noise * VelocityVariation);
-
-		// Initializes the vectors.
-		Vector3 separation = Vector3.zero;
-		Vector3 alignment;
-		Vector3 cohesion;
-		if (controller != null)
+		if (!NA.isClient ())
 		{
-			alignment = controller.transform.forward;
-			cohesion = controller.transform.position;
-		} 
-		else
-		{
-			alignment = transform.forward;
-			cohesion = transform.position;
+			Vector3 currentPosition = transform.position;
+			Quaternion currentRotation = transform.rotation;
+
+			// Current velocity randomized with noise.
+			float noise = Mathf.PerlinNoise (Time.time, noiseOffset) * 2.0f - 1.0f;
+			float velocity = Velocity * (1.0f + noise * VelocityVariation);
+
+			// Initializes the vectors.
+			Vector3 separation = Vector3.zero;
+			Vector3 alignment;
+			Vector3 cohesion;
+			if (attractor != null)
+			{
+				alignment = attractor.transform.forward;
+				cohesion = attractor.transform.position;
+			} else
+			{
+				alignment = transform.forward;
+				cohesion = transform.position;
+			}
+
+			// Looks up nearby boids.
+			Collider[] nearbyBoids = Physics.OverlapSphere (currentPosition, NeighborDistance, SearchLayer);
+
+			// Accumulates the vectors.
+			foreach (Collider boid in nearbyBoids)
+			{
+				if (boid.gameObject == gameObject)
+					continue; //no self test
+				Transform t = boid.transform;
+				separation += GetSeparationVector (t);
+				alignment += t.forward;
+				cohesion += t.position;
+			}
+
+			float avg = 1.0f / nearbyBoids.Length;
+			alignment *= avg;
+			cohesion *= avg;
+			cohesion = (cohesion - currentPosition).normalized;
+
+			// Calculates a rotation from the vectors.
+			Vector3 direction = separation * SeparationFactor + alignment * AlignmentFactor + cohesion * CohesionFactor;
+			Quaternion rotation = Quaternion.FromToRotation (Vector3.forward, direction.normalized);
+
+			// Applys the rotation with interpolation.
+			if (rotation != currentRotation)
+			{
+				float ip = Mathf.Exp (-RotationCoeff * Time.deltaTime);
+				//float ip = RotationCoeff*RotationCoeff;
+				transform.rotation = Quaternion.Slerp (rotation, currentRotation, ip);
+			}
+
+			// Moves forward.
+			transform.position = currentPosition + transform.forward * (velocity * Time.deltaTime);
 		}
-
-		// Looks up nearby boids.
-		Collider[] nearbyBoids = Physics.OverlapSphere(currentPosition, NeighborDistance, SearchLayer);
-
-		// Accumulates the vectors.
-		foreach (Collider boid in nearbyBoids)
-		{
-			if (boid.gameObject == gameObject) 
-				continue; //no self test
-			Transform t = boid.transform;
-			separation += GetSeparationVector(t);
-			alignment += t.forward;
-			cohesion += t.position;
-		}
-
-		float avg = 1.0f / nearbyBoids.Length;
-		alignment *= avg;
-		cohesion *= avg;
-		cohesion = (cohesion - currentPosition).normalized;
-
-		// Calculates a rotation from the vectors.
-		Vector3 direction = separation*SeparationFactor + alignment*AlignmentFactor + cohesion*CohesionFactor;
-		Quaternion rotation = Quaternion.FromToRotation(Vector3.forward, direction.normalized);
-
-		// Applys the rotation with interpolation.
-		if (rotation != currentRotation)
-		{
-			float ip = Mathf.Exp(-RotationCoeff * Time.deltaTime);
-			//float ip = RotationCoeff*RotationCoeff;
-			transform.rotation = Quaternion.Slerp(rotation, currentRotation, ip);
-		}
-
-		// Moves forward.
-		transform.position = currentPosition + transform.forward * (velocity * Time.deltaTime);
 	}
 }
