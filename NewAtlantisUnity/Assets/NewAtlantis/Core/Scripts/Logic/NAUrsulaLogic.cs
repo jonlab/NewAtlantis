@@ -18,6 +18,10 @@ public class NAUrsulaLogic : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+		//send the webcam control
+
+
+
 		
 	}
 }
