@@ -7,7 +7,7 @@ public class NAAiAutoSpawner : MonoBehaviour
 
 	float timer = 0;
 	float duration = 3;
-
+	public string ObjectName = "Voices";
 	// Use this for initialization
 	void Start () 
 	{
@@ -26,7 +26,7 @@ public class NAAiAutoSpawner : MonoBehaviour
 				timer -= duration;
 				duration = Random.value * 10f;
 				//"autotrunk nog"
-				Spawn ("monster"); 
+				Spawn (ObjectName); 
 			}
 
 		}
@@ -42,5 +42,6 @@ public class NAAiAutoSpawner : MonoBehaviour
 		Vector3 forward = new Vector3 (0, 1, 0);
 		Vector3 color = new Vector3(0,1,0); // color as Vector3
 		NA.app.gameObject.GetComponent<NetworkView> ().RPC ("SpawnObject", RPCMode.AllBuffered, name, Network.AllocateViewID (), position, forward, color);
+
 	}
 }

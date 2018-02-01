@@ -13,6 +13,7 @@ public class NAAudioRecorder : NAObjectBase
 	private static int 			index = 0;
 	public bool 				AutoLoad = false;
 	public bool 				AutoPlay = false;
+	public string 				directory = "SoundFiles";
 	// Use this for initialization
 	void Start () 
 	{
@@ -236,7 +237,7 @@ public class NAAudioRecorder : NAObjectBase
 		{
 			string strFile = "boulez_end.wav";
 			//string strFile = "synths/beats_at_110_bpm_matching/(110) Declare War.wav";
-			byte[] data = System.IO.File.ReadAllBytes("SoundFiles/"+strFile);
+			byte[] data = System.IO.File.ReadAllBytes(directory+"/"+strFile);
 			AudioSource audio = GetComponent<AudioSource>();
 			audio.clip = WavUtility.ToAudioClip(data, 0, "wav");
 			UpdateWaveform();
@@ -251,7 +252,7 @@ public class NAAudioRecorder : NAObjectBase
 				if (GUILayout.Button(f.Name, GUILayout.Width(200)))
 				{
 					string strFile = f.Name;
-					byte[] data = System.IO.File.ReadAllBytes("SoundFiles/"+strFile);
+					byte[] data = System.IO.File.ReadAllBytes(directory+"/"+strFile);
 					AudioSource audio = GetComponent<AudioSource>();
 					audio.clip = WavUtility.ToAudioClip(data, 0, "wav");
 					UpdateWaveform();
@@ -275,7 +276,7 @@ public class NAAudioRecorder : NAObjectBase
 		i = i%info.Length;
 		FileInfo f = info[i];
 		string strFile = f.Name;
-		byte[] data = System.IO.File.ReadAllBytes("SoundFiles/"+strFile);
+		byte[] data = System.IO.File.ReadAllBytes(directory+"/"+strFile);
 		AudioSource audio = GetComponent<AudioSource>();
 		audio.clip = WavUtility.ToAudioClip(data, 0, "wav");
 		UpdateWaveform();
@@ -305,8 +306,9 @@ public class NAAudioRecorder : NAObjectBase
 		{
 			#if UNITY_WEBPLAYER
 			#else
-			DirectoryInfo dir = new DirectoryInfo("SoundFiles");
+			DirectoryInfo dir = new DirectoryInfo(directory);
 			info = dir.GetFiles("*.*");
+			Debug.Log("info = " + info.Length);
 			#endif
 		}
 		catch (System.Exception e)
