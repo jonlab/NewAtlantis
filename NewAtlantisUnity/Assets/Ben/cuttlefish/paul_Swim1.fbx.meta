@@ -1,0 +1,339 @@
+fileFormatVersion: 2
+guid: 6aeda45f41765604e84489462fd5ccee
+timeCreated: 1517517836
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: joint1
+    100004: joint10
+    100006: joint11
+    100008: joint12
+    100010: joint13
+    100012: joint14
+    100014: joint15
+    100016: joint16
+    100018: joint17
+    100020: joint18
+    100022: joint19
+    100024: joint2
+    100026: joint20
+    100028: joint21
+    100030: joint22
+    100032: joint23
+    100034: joint24
+    100036: joint25
+    100038: joint26
+    100040: joint27
+    100042: joint28
+    100044: joint29
+    100046: joint3
+    100048: joint30
+    100050: joint31
+    100052: joint32
+    100054: joint33
+    100056: joint34
+    100058: joint4
+    100060: joint5
+    100062: joint6
+    100064: joint7
+    100066: joint7 1
+    100068: joint7 2
+    100070: joint7 3
+    100072: joint7 4
+    100074: joint7 5
+    100076: joint7 6
+    100078: joint7 7
+    100080: joint8
+    100082: joint8 1
+    100084: joint8 2
+    100086: joint8 3
+    100088: joint8 4
+    100090: joint8 5
+    100092: joint8 6
+    100094: joint8 7
+    100096: joint9
+    100098: joint9 1
+    100100: joint9 2
+    100102: joint9 3
+    100104: joint9 4
+    100106: joint9 5
+    100108: joint9 6
+    100110: joint9 7
+    100112: polySurface10
+    400000: //RootNode
+    400002: joint1
+    400004: joint10
+    400006: joint11
+    400008: joint12
+    400010: joint13
+    400012: joint14
+    400014: joint15
+    400016: joint16
+    400018: joint17
+    400020: joint18
+    400022: joint19
+    400024: joint2
+    400026: joint20
+    400028: joint21
+    400030: joint22
+    400032: joint23
+    400034: joint24
+    400036: joint25
+    400038: joint26
+    400040: joint27
+    400042: joint28
+    400044: joint29
+    400046: joint3
+    400048: joint30
+    400050: joint31
+    400052: joint32
+    400054: joint33
+    400056: joint34
+    400058: joint4
+    400060: joint5
+    400062: joint6
+    400064: joint7
+    400066: joint7 1
+    400068: joint7 2
+    400070: joint7 3
+    400072: joint7 4
+    400074: joint7 5
+    400076: joint7 6
+    400078: joint7 7
+    400080: joint8
+    400082: joint8 1
+    400084: joint8 2
+    400086: joint8 3
+    400088: joint8 4
+    400090: joint8 5
+    400092: joint8 6
+    400094: joint8 7
+    400096: joint9
+    400098: joint9 1
+    400100: joint9 2
+    400102: joint9 3
+    400104: joint9 4
+    400106: joint9 5
+    400108: joint9 6
+    400110: joint9 7
+    400112: polySurface10
+    2300000: //RootNode
+    3300000: //RootNode
+    4300000: polySurface10
+    7400000: Swim1
+    9500000: //RootNode
+    13700000: polySurface10
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Swim1
+      takeName: Swim1
+      firstFrame: 1
+      lastFrame: 100
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: joint1
+        weight: 1
+      - path: joint1/joint2
+        weight: 1
+      - path: joint1/joint2/joint3
+        weight: 1
+      - path: joint1/joint2/joint3/joint4
+        weight: 1
+      - path: joint1/joint2/joint3/joint4/joint21
+        weight: 1
+      - path: joint1/joint2/joint3/joint4/joint21/joint22
+        weight: 1
+      - path: joint1/joint2/joint3/joint4/joint23
+        weight: 1
+      - path: joint1/joint2/joint3/joint4/joint23/joint24
+        weight: 1
+      - path: joint1/joint2/joint3/joint4/joint25
+        weight: 1
+      - path: joint1/joint2/joint3/joint4/joint25/joint26
+        weight: 1
+      - path: joint1/joint2/joint3/joint19
+        weight: 1
+      - path: joint1/joint2/joint3/joint19/joint20
+        weight: 1
+      - path: joint1/joint2/joint3/joint27
+        weight: 1
+      - path: joint1/joint2/joint3/joint27/joint28
+        weight: 1
+      - path: joint1/joint2/joint17
+        weight: 1
+      - path: joint1/joint2/joint17/joint18
+        weight: 1
+      - path: joint1/joint2/joint29
+        weight: 1
+      - path: joint1/joint2/joint29/joint30
+        weight: 1
+      - path: joint1/joint5
+        weight: 1
+      - path: joint1/joint5/joint6
+        weight: 1
+      - path: joint1/joint5/joint6/joint7 7
+        weight: 1
+      - path: joint1/joint5/joint6/joint7 7/joint8 7
+        weight: 1
+      - path: joint1/joint5/joint6/joint7 7/joint8 7/joint9 7
+        weight: 1
+      - path: joint1/joint5/joint10
+        weight: 1
+      - path: joint1/joint5/joint10/joint7
+        weight: 1
+      - path: joint1/joint5/joint10/joint7/joint8
+        weight: 1
+      - path: joint1/joint5/joint10/joint7/joint8/joint9
+        weight: 1
+      - path: joint1/joint5/joint11
+        weight: 1
+      - path: joint1/joint5/joint11/joint7 1
+        weight: 1
+      - path: joint1/joint5/joint11/joint7 1/joint8 1
+        weight: 1
+      - path: joint1/joint5/joint11/joint7 1/joint8 1/joint9 1
+        weight: 1
+      - path: joint1/joint5/joint12
+        weight: 1
+      - path: joint1/joint5/joint12/joint7 2
+        weight: 1
+      - path: joint1/joint5/joint12/joint7 2/joint8 2
+        weight: 1
+      - path: joint1/joint5/joint12/joint7 2/joint8 2/joint9 2
+        weight: 1
+      - path: joint1/joint5/joint13
+        weight: 1
+      - path: joint1/joint5/joint13/joint7 3
+        weight: 1
+      - path: joint1/joint5/joint13/joint7 3/joint8 3
+        weight: 1
+      - path: joint1/joint5/joint13/joint7 3/joint8 3/joint9 3
+        weight: 1
+      - path: joint1/joint5/joint14
+        weight: 1
+      - path: joint1/joint5/joint14/joint7 4
+        weight: 1
+      - path: joint1/joint5/joint14/joint7 4/joint8 4
+        weight: 1
+      - path: joint1/joint5/joint14/joint7 4/joint8 4/joint9 4
+        weight: 1
+      - path: joint1/joint5/joint15
+        weight: 1
+      - path: joint1/joint5/joint15/joint7 5
+        weight: 1
+      - path: joint1/joint5/joint15/joint7 5/joint8 5
+        weight: 1
+      - path: joint1/joint5/joint15/joint7 5/joint8 5/joint9 5
+        weight: 1
+      - path: joint1/joint5/joint16
+        weight: 1
+      - path: joint1/joint5/joint16/joint7 6
+        weight: 1
+      - path: joint1/joint5/joint16/joint7 6/joint8 6
+        weight: 1
+      - path: joint1/joint5/joint16/joint7 6/joint8 6/joint9 6
+        weight: 1
+      - path: joint1/joint31
+        weight: 1
+      - path: joint1/joint31/joint32
+        weight: 1
+      - path: joint1/joint33
+        weight: 1
+      - path: joint1/joint33/joint34
+        weight: 1
+      - path: polySurface10
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
