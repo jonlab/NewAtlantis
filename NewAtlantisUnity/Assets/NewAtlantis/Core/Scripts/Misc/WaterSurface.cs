@@ -34,6 +34,7 @@ public class WaterSurface : MonoBehaviour {
 		float depth = pos.y - cam.y;
 		if (cam.y < pos.y) 
 		{
+			AudioListener.volume = 0.75f;
 			//underwater
 			transform.eulerAngles = new Vector3 (180, 0, 0);
 			//RenderSettings.ambientLight = new Color(0,0,0);
@@ -73,7 +74,9 @@ public class WaterSurface : MonoBehaviour {
 			transform.eulerAngles = new Vector3 (0, 0, 0);
 			//RenderSettings.ambientLight = new Color(0.2f,0.2f,0.2f);
 			RenderSettings.fog = false;
-			Camera.main.clearFlags = CameraClearFlags.Skybox;
+			//Camera.main.clearFlags = CameraClearFlags.Skybox;
+			AudioListener.volume = 0f;
+			Camera.main.backgroundColor = Color.white;
 		}
 	
 	}

@@ -14,6 +14,7 @@ public class NAAudioRecorder : NAObjectBase
 	public bool 				AutoLoad = false;
 	public bool 				AutoPlay = false;
 	public string 				directory = "SoundFiles";
+	public bool					GUIEnabled = true;
 	// Use this for initialization
 	void Start () 
 	{
@@ -175,6 +176,8 @@ public class NAAudioRecorder : NAObjectBase
 
 	public override void DrawSimpleGUI(Vector3 pos2d)
 	{
+		if (!GUIEnabled)
+			return;
 		GUI.color = Color.white;
 		string strDisplay = name;
 		int x = (int)(pos2d.x*Screen.width);
@@ -184,6 +187,8 @@ public class NAAudioRecorder : NAObjectBase
 	}
 	public override void DrawExtendedGUI(Vector3 pos2d)
 	{
+		if (!GUIEnabled)
+			return;
 		GUI.color = Color.white;
 		string strDisplay = name;
 		int x = (int)(pos2d.x*Screen.width);
@@ -276,6 +281,7 @@ public class NAAudioRecorder : NAObjectBase
 		i = i%info.Length;
 		FileInfo f = info[i];
 		string strFile = f.Name;
+		Debug.Log ("try to load sound file : " + strFile);
 		byte[] data = System.IO.File.ReadAllBytes(directory+"/"+strFile);
 		AudioSource audio = GetComponent<AudioSource>();
 		audio.clip = WavUtility.ToAudioClip(data, 0, "wav");
@@ -307,7 +313,7 @@ public class NAAudioRecorder : NAObjectBase
 			#if UNITY_WEBPLAYER
 			#else
 			DirectoryInfo dir = new DirectoryInfo(directory);
-			info = dir.GetFiles("*.*");
+			info = dir.GetFiles("*.wav");
 			Debug.Log("info = " + info.Length);
 			#endif
 		}

@@ -11,7 +11,8 @@ public class NAElevator : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
-		speed *= 10;
+		speed *= 2;
+		//speed = 0;
 		if (!NA.isClient ()) 
 		{
 			GameObject goRootAvatars = GameObject.Find ("Main Viewer");
@@ -27,7 +28,10 @@ public class NAElevator : MonoBehaviour {
 			Vector3 pos = transform.position;
 			pos += Vector3.up * Time.deltaTime * speed;
 			if (pos.y > maximumHeight)
+			{
 				pos.y = minimumHeight;
+				//RissetManager.hasRestarted = true; //crash
+			}
 			transform.position = pos;
 		}
 	}

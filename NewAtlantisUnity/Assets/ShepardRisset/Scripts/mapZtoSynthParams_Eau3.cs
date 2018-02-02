@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class mapZtoSynthParams_Eau3 : MonoBehaviour {
 
+	public float dist;
 	float z;
 	float t;
 	float noiseAmp;
@@ -48,7 +49,7 @@ public class mapZtoSynthParams_Eau3 : MonoBehaviour {
 		// Update Bandwidth if distqnceToListener >= distLim
 
 		//float dist = Vector3.Distance(this.transform.position, GameObject.Find("Listener").transform.position);
-		float dist = RissetManager.dist2Listener;
+		//float dist = RissetManager.dist2Listener;
 
 		//Debug.Log ("dist1 = " + dist + " - distLim = " + distLim);
 

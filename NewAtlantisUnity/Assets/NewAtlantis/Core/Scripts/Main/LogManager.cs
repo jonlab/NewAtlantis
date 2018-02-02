@@ -40,6 +40,7 @@ public class LogManager : MonoBehaviour
 
 	void OnGUI()
 	{
+		return;
 		if (bGUI)
 		{
 			
