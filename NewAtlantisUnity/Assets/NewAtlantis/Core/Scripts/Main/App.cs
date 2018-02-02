@@ -295,7 +295,7 @@ public class App : MonoBehaviour
 		}
 		Debug.Log("config = " + config);
 
-		AudioListener.volume = 0.50f;
+		AudioListener.volume = 1f;
 		strIP = PlayerPrefs.GetString("ip");
 		SpaceFilter = PlayerPrefs.GetString("spacefilter");
 		int sff = PlayerPrefs.GetInt("spacefilterfeatured");
