@@ -13,7 +13,8 @@ public class NAOSC : MonoBehaviour {
 	{
 		OSCHandler.Instance.Init();
 		OSCHandler.Instance.CreateClient("NewAtlantis", IPAddress.Parse(Ip), Port);
-		OSCHandler.Instance.CreateClient("OpenDMX", IPAddress.Parse(Ip), 7700);
+		OSCHandler.Instance.CreateClient("OpenDMX", IPAddress.Parse("255.255.255.255"), 7700);
+		OSCHandler.Instance.CreateClient("OpenDMX2", IPAddress.Parse("192.168.0.155"), 7700);
 
 		Ready = true;
 	
@@ -47,9 +48,13 @@ public class NAOSC : MonoBehaviour {
 				float red = Camera.main.backgroundColor.r;
 				float green = Camera.main.backgroundColor.g;
 				float blue = Camera.main.backgroundColor.b;
-				OSCHandler.Instance.SendMessageToClient ("OpenDMX", "/rouge", red);
-				OSCHandler.Instance.SendMessageToClient ("OpenDMX", "/vert", green);
-				OSCHandler.Instance.SendMessageToClient ("OpenDMX", "/bleu", blue);
+				OSCHandler.Instance.SendMessageToClient ("OpenDMX", "/rouge", red*red*red);
+				OSCHandler.Instance.SendMessageToClient ("OpenDMX", "/vert", green*green*green);
+				OSCHandler.Instance.SendMessageToClient ("OpenDMX", "/bleu", blue*blue*blue);
+
+				OSCHandler.Instance.SendMessageToClient ("OpenDMX2", "/rouge", red*red*red);
+				OSCHandler.Instance.SendMessageToClient ("OpenDMX2", "/vert", green*green*green);
+				OSCHandler.Instance.SendMessageToClient ("OpenDMX2", "/bleu", blue*blue*blue);
 			}
 			catch (System.Exception e)
 			{

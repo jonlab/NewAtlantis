@@ -210,6 +210,34 @@ public class NAObject
 						}
 					}
 
+					//Usula special cases
+
+					if (
+						go.name.Contains ("monster") ||
+						go.name.Contains ("Créature") ||
+						go.name.Contains ("Poisson") ||
+						go.name.Contains ("creature") 
+					)
+					{
+						//HERE
+
+						NAAiBoid boid = go.GetComponentInChildren<NAAiBoid>(); 
+						if (boid == null)
+						{
+							boid = go.AddComponent<NAAiBoid> ();
+							boid.NeighborDistance = 100f;
+							boid.attractor = NA.app.gameObject;
+							boid.SeparationFactor = Random.value;
+							boid.AlignmentFactor = Random.value;
+							boid.CohesionFactor = Random.value;
+							boid.RotationCoeff = Random.value * 4f;
+							boid.Velocity = Random.value * 10f;
+							boid.VelocityVariation = Random.value;
+						}
+
+
+					}
+
 
 					//jonathan : removed on 1/9/2016
 

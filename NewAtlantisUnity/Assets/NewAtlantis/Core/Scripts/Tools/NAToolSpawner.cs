@@ -227,7 +227,10 @@ public class NAToolSpawner : NAToolBase {
 			trunk.directory = "SoundFiles/Voices";
 			trunk.AutoLoad = true;
 			trunk.AutoPlay = true;
-			clone.AddComponent<NAAiBoid>(); 
+			NAAiBoid boid = clone.AddComponent<NAAiBoid>(); 
+			boid.attractor = NA.app.gameObject;
+			trunk.GUIEnabled = false;
+			boid.NeighborDistance = 100;
 			//TO DO
 			//NAAudioSynthGranularSynthesis granular = clone.AddComponent<NAAudioSynthGranularSynthesis> ();
 			//granular.SourceClip = 
@@ -244,8 +247,10 @@ public class NAToolSpawner : NAToolBase {
 			trunk.directory = "SoundFiles/Hydrophone";
 			trunk.AutoLoad = true;
 			trunk.AutoPlay = true;
-			clone.AddComponent<NAAiBoid>(); 
-
+			NAAiBoid boid = clone.AddComponent<NAAiBoid>(); 
+			boid.attractor = NA.app.gameObject;
+			trunk.GUIEnabled = false;
+			boid.NeighborDistance = 100;
 			//add RISSET Plugin
 
 			//TO DO
@@ -274,7 +279,7 @@ public class NAToolSpawner : NAToolBase {
 		//Rigidbody rb = clone.AddComponent<Rigidbody>();
 		if (NA.isServer() || NA.isStandalone())
 		{
-			if (name.Contains("nog") || name.Contains("monster"))
+			if (name.Contains("nog") || name.Contains("monster") || name.Contains("Hydrophone") || name.Contains("Voices"))
 			{
 				//no g
 				

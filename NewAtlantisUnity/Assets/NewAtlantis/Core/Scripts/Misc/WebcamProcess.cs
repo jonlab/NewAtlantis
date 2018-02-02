@@ -10,7 +10,7 @@ public class WebcamProcess : MonoBehaviour
 	public static float average_red = 0;
 	public static float average_green = 0;
 	public static float average_blue = 0;
-	public bool bGUI = true;
+	public bool bGUI = false;
 	// Use this for initialization
 	void Start () 
 	{

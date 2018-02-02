@@ -86,7 +86,7 @@ public class NAAiBoid : NAAiBase
 			}
 
 			// Looks up nearby boids.
-			Collider[] nearbyBoids = Physics.OverlapSphere (currentPosition, NeighborDistance, SearchLayer);
+			Collider[] nearbyBoids = Physics.OverlapSphere (currentPosition, NeighborDistance);
 
 			// Accumulates the vectors.
 			foreach (Collider boid in nearbyBoids)
