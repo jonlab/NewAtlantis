@@ -216,6 +216,43 @@ public class NAToolSpawner : NAToolBase {
 
 
 		}	
+		else if (name == "Voices")
+		{
+			clone = new GameObject ("Voice");
+			AudioSource src = clone.AddComponent<AudioSource>();
+			src.playOnAwake = true;
+			src.loop = true;
+			src.spatialBlend = 1f;
+			NAAudioRecorder trunk = clone.AddComponent<NAAudioRecorder>(); 
+			trunk.directory = "SoundFiles/Voices";
+			trunk.AutoLoad = true;
+			trunk.AutoPlay = true;
+			clone.AddComponent<NAAiBoid>(); 
+			//TO DO
+			//NAAudioSynthGranularSynthesis granular = clone.AddComponent<NAAudioSynthGranularSynthesis> ();
+			//granular.SourceClip = 
+
+		}
+		else if (name == "Hydrophone")
+		{
+			clone = new GameObject ("Hydrophone");
+			AudioSource src = clone.AddComponent<AudioSource>();
+			src.playOnAwake = true;
+			src.loop = true;
+			src.spatialBlend = 1f;
+			NAAudioRecorder trunk = clone.AddComponent<NAAudioRecorder>(); 
+			trunk.directory = "SoundFiles/Hydrophone";
+			trunk.AutoLoad = true;
+			trunk.AutoPlay = true;
+			clone.AddComponent<NAAiBoid>(); 
+
+			//add RISSET Plugin
+
+			//TO DO
+			//NAAudioSynthGranularSynthesis granular = clone.AddComponent<NAAudioSynthGranularSynthesis> ();
+			//granular.SourceClip = 
+
+		}
 		else
 		{
 			//cas général
