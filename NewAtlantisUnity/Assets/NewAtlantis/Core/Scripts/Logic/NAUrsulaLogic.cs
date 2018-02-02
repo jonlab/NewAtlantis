@@ -42,14 +42,7 @@ public class NAUrsulaLogic : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		if (particles == null)
-		{
-			particles = GameObject.Find("OceanParticles");
-			if (particles != null)
-			{
-				particles.SetActive (false);
-			}
-		}
+
 		//send the webcam control
 		Vector3 pos = NA.app.transform.position;
 		RissetManager.depth = pos.y;

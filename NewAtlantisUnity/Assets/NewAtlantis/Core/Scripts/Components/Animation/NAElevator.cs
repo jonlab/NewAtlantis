@@ -11,7 +11,7 @@ public class NAElevator : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
-		speed *= 2;
+		speed *= 1;
 		//speed = 0;
 		if (!NA.isClient ()) 
 		{
