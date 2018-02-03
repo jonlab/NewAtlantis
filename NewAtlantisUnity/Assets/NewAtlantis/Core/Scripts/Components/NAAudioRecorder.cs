@@ -26,9 +26,11 @@ public class NAAudioRecorder : NAObjectBase
 
 		if (AutoLoad)
 		{
+			//randomization of index
+			index = (int) (Random.value*1000f);
 			LoadSoundFileAtIndex(index);
 			GetComponent<AudioSource>().loop = true;
-			index++;
+			//index++;
 		}
 
 		if (AutoPlay)
