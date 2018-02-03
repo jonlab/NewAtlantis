@@ -10,7 +10,7 @@ using UnityEngine;
 public class NAAiBoid : NAAiBase 
 {
 	//parameters
-	[Range(0.1f, 10.0f)]
+	[Range(0.1f, 100.0f)]
 	public float NeighborDistance = 1f;
 
 	[Range(0f, 20.0f)]
