@@ -110,7 +110,7 @@ public class NAAudioSynthGranularSynthesis : MonoBehaviour
 	{
 		float[] grain = new float[size];
 		int sliderPos = (int)(position * (float)buffer.Length);
-		sliderPos += (Random.value - 0.5f) * 2f * PositionVariance; 
+		sliderPos += (int)(((Random.value - 0.5f) * 2f * PositionVariance) * (float)buffer.Length); 
 		sliderPos += buffer.Length;
 		for (int i=0;i<size;++i)
 		{
