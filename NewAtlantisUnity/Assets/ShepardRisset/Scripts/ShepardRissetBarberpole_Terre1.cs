@@ -59,7 +59,7 @@ public class ShepardRissetBarberpole_Terre1 : MonoBehaviour
         Earthquake = 6
     }
 
-	public InputWaveFiles inputWaveFile = InputWaveFiles.SPAD;
+	public InputWaveFiles inputWaveFile = InputWaveFiles.Marbles;
 
     [Range(1, 9)]
     public int bandwidth = 2;
@@ -229,33 +229,33 @@ public class ShepardRissetBarberpole_Terre1 : MonoBehaviour
 
         String fileName;
 
-        switch (_inputWaveFile)
-        {
-            case InputWaveFiles.Water:
-                fileName = "WaterNoise_OKforLoop.bin";
-                break;
-            case InputWaveFiles.Fountain:
-                fileName = "WaterFountain_OKforLoop.bin";
-                break;
-            case InputWaveFiles.HydroWon:
-                fileName = "hydrophone_Won_OKforLoop.bin";
-                break;
-            case InputWaveFiles.SPAD:
-                fileName = "noiseFromSpad_OKforLoop.bin";
-                break;
-            case InputWaveFiles.Marbles:
-                fileName = "marbles_OKforLoop.bin";
-                break;
-            case InputWaveFiles.HailStorm:
-                fileName = "HailStorm_OKforLoop.bin";
-                break;
-            case InputWaveFiles.Earthquake:
-                fileName = "Earthquake_OKforLoop.bin";
-                break;
-            default:
-                fileName = "marbles_OKforLoop.bin";
-                break;
-        }
+		switch (_inputWaveFile)
+		{
+		case InputWaveFiles.Water:
+			fileName = "WaterNoise_OKforLoop.bin";
+			break;
+		case InputWaveFiles.Fountain:
+			fileName = "WaterFountain_OKforLoop.bin";
+			break;
+		case InputWaveFiles.HydroWon:
+			fileName = "hydrophone_Won_OKforLoop.bin";
+			break;
+		case InputWaveFiles.SPAD:
+			fileName = "noiseFromSpad_OKforLoop.bin";
+			break;
+		case InputWaveFiles.Marbles:
+			fileName = "marbles_OKforLoop.bin";
+			break;
+		case InputWaveFiles.HailStorm:
+			fileName = "HailStorm_OKforLoop.bin";
+			break;
+		case InputWaveFiles.Earthquake:
+			fileName = "Earthquake_OKforLoop.bin";
+			break;
+		default:
+			fileName = "marbles_OKforLoop.bin";
+			break;
+		}
 
         String filePath = resourcesPath + fileName;
 

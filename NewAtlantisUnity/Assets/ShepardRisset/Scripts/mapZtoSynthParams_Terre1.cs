@@ -32,8 +32,8 @@ public class mapZtoSynthParams_Terre1 : MonoBehaviour {
 
 		seuil1 = RissetManager.depthMAX + 1 * (RissetManager.depthMIN - RissetManager.depthMAX);
 		seuil2 = RissetManager.depthMAX + 2 * (RissetManager.depthMIN - RissetManager.depthMAX);
-		seuil3 = RissetManager.depthMAX + 2 * (RissetManager.depthMIN - RissetManager.depthMAX);
-		seuil4 = RissetManager.depthMAX + 2 * (RissetManager.depthMIN - RissetManager.depthMAX);
+		seuil3 = RissetManager.depthMAX + 3 * (RissetManager.depthMIN - RissetManager.depthMAX);
+		seuil4 = RissetManager.depthMAX + 4 * (RissetManager.depthMIN - RissetManager.depthMAX);
 
 		NmaxOctaves = 2;
 

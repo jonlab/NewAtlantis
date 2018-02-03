@@ -227,33 +227,33 @@ public class ShepardRissetBarberpole_Eau1 : MonoBehaviour
 
         String fileName;
 
-        switch (_inputWaveFile)
-        {
-            case InputWaveFiles.Water:
-                fileName = "hydrophone_1_OKforLoop.bin";
-                break;
-            case InputWaveFiles.Fountain:
-				fileName = "hydrophone_2_OKforLoop.bin";
-                break;
-            case InputWaveFiles.HydroWon:
-				fileName = "hydrophone_3_OKforLoop.bin";
-                break;
-            case InputWaveFiles.SPAD:
-				fileName = "marbles_OKforLoop.bin";
-                break;
-            case InputWaveFiles.Marbles:
-				fileName = "HailStorm_OKforLoop.bin";
-                break;
-            case InputWaveFiles.HailStorm:
-                fileName = "HailStorm_OKforLoop.bin";
-                break;
-            case InputWaveFiles.Earthquake:
-                fileName = "marbles_OKforLoop.bin";
-                break;
-            default:
-                fileName = "marbles_OKforLoop.bin";
-                break;
-        }
+		switch (_inputWaveFile)
+		{
+		case InputWaveFiles.Water:
+			fileName = "WaterNoise_OKforLoop.bin";
+			break;
+		case InputWaveFiles.Fountain:
+			fileName = "WaterFountain_OKforLoop.bin";
+			break;
+		case InputWaveFiles.HydroWon:
+			fileName = "hydrophone_Won_OKforLoop.bin";
+			break;
+		case InputWaveFiles.SPAD:
+			fileName = "noiseFromSpad_OKforLoop.bin";
+			break;
+		case InputWaveFiles.Marbles:
+			fileName = "marbles_OKforLoop.bin";
+			break;
+		case InputWaveFiles.HailStorm:
+			fileName = "HailStorm_OKforLoop.bin";
+			break;
+		case InputWaveFiles.Earthquake:
+			fileName = "Earthquake_OKforLoop.bin";
+			break;
+		default:
+			fileName = "marbles_OKforLoop.bin";
+			break;
+		}
 
         String filePath = resourcesPath + fileName;
 

@@ -59,7 +59,7 @@ public class ShepardRissetBarberpole_Terre2 : MonoBehaviour
 		Earthquake = 6
 	}
 
-	public InputWaveFiles inputWaveFile = InputWaveFiles.Marbles;
+	public InputWaveFiles inputWaveFile = InputWaveFiles.HailStorm;
 
 	[Range(1, 9)]
 	public int bandwidth = 2;
@@ -226,7 +226,7 @@ public class ShepardRissetBarberpole_Terre2 : MonoBehaviour
 		
 		String fileName;
 
-		switch (_inputWaveFile) 
+		switch (_inputWaveFile)
 		{
 		case InputWaveFiles.Water:
 			fileName = "WaterNoise_OKforLoop.bin";
