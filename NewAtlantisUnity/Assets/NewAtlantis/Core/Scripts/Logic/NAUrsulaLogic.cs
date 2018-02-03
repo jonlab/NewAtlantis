@@ -20,6 +20,10 @@ public class NAUrsulaLogic : MonoBehaviour
 
 	GameObject MainLight;
 
+	//private DP.DMX dmx;
+
+
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -36,6 +40,7 @@ public class NAUrsulaLogic : MonoBehaviour
 		autospawn_voices = GameObject.Find("autospawnerVoices");
 
 		MainLight = GameObject.Find("MainLightViewer");
+		//dmx = new DP.DMX ();
 
 	}
 	
@@ -102,6 +107,43 @@ public class NAUrsulaLogic : MonoBehaviour
 		{
 			webcam.bGUI = !webcam.bGUI;
 		}
+
+
+		//DMX control of the ambient space lighting
+		float red = Camera.main.backgroundColor.r;
+		float green = Camera.main.backgroundColor.g;
+		float blue = Camera.main.backgroundColor.b;
+
+		DP.DMX dmx = GetComponent<DP.DMX>();
+		int nred = (int)((red * red) * 255f);
+		int ngreen = (int)((green * green) * 255f);
+		int nblue = (int)((blue * blue) * 255f);
+		dmx [0] = nred;
+		dmx [1] = green;
+		dmx [2] = blue;
+		/*
+		// Use this for initialization
+		void Start () 
+		{
+			dmxObject = GameObject.Find("DMXObject");
+			dmx = dmxObject.GetComponent<DP.DMX>();
+		}
+
+		// Update is called once per frame
+		void Update () 
+		{
+			//Set Value
+			dmx[1] = (int)Mathf.PingPong(Time.time*100, 255);
+
+			//Get Value
+			dmx[3] = dmx[1];
+
+			for (int i = 0; i < 512; ++i)
+			{
+				dmx [i] = 255;
+			}
+		}
+		*/
 
 	}
 }

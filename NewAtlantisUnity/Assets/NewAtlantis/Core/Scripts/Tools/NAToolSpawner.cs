@@ -221,16 +221,22 @@ public class NAToolSpawner : NAToolBase {
 			clone = new GameObject ("Voice");
 			AudioSource src = clone.AddComponent<AudioSource>();
 			src.playOnAwake = true;
-			src.loop = true;
+			src.loop = false;
 			src.spatialBlend = 1f;
 			NAAudioRecorder trunk = clone.AddComponent<NAAudioRecorder>(); 
 			trunk.directory = "SoundFiles/Voices";
 			trunk.AutoLoad = true;
 			trunk.AutoPlay = true;
 			NAAiBoid boid = clone.AddComponent<NAAiBoid>(); 
-			boid.attractor = NA.app.gameObject;
+			GameObject attractor = new GameObject ("attractor");
+			attractor.transform.position = location;
+			boid.attractor = attractor;
 			trunk.GUIEnabled = false;
 			boid.NeighborDistance = 100;
+			NAAiPlaySource ps = clone.AddComponent<NAAiPlaySource> ();
+			ps.interval = 10;
+			ps.intervalVariance = 0.8f;
+
 			//TO DO
 			//NAAudioSynthGranularSynthesis granular = clone.AddComponent<NAAudioSynthGranularSynthesis> ();
 			//granular.SourceClip = 
@@ -247,10 +253,17 @@ public class NAToolSpawner : NAToolBase {
 			trunk.directory = "SoundFiles/Hydrophone";
 			trunk.AutoLoad = true;
 			trunk.AutoPlay = true;
-			NAAiBoid boid = clone.AddComponent<NAAiBoid>(); 
-			boid.attractor = NA.app.gameObject;
+			NAAiBoid boid = clone.AddComponent<NAAiBoid>();
+			GameObject attractor = new GameObject ("attractor");
+			attractor.transform.position = location;
+			boid.attractor = attractor;
+
+			//boid.attractor = NA.app.gameObject;
 			trunk.GUIEnabled = false;
 			boid.NeighborDistance = 100;
+			NAAiPlaySource ps = clone.AddComponent<NAAiPlaySource> ();
+			ps.interval = 10;
+			ps.intervalVariance = 0.8f;
 			//add RISSET Plugin
 
 			//TO DO

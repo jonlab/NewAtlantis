@@ -13,6 +13,9 @@ public class NAAiBoid : NAAiBase
 	[Range(0.1f, 100.0f)]
 	public float NeighborDistance = 1f;
 
+	[Range(0.1f, 200.0f)]
+	public float AttractorDistanceThreshold = 50f;
+
 	[Range(0f, 20.0f)]
 	public float Velocity = 4;
 
@@ -35,6 +38,11 @@ public class NAAiBoid : NAAiBase
 
 	[Range(0f, 1.0f)]
 	public float SeparationFactor = 0.5f;
+
+	[Range(0f, 1.0f)]
+	public float AttractorFactor = 0.5f;
+
+
 
 	// Options for animation playback.
 	public float animationSpeedVariation = 0.2f;
@@ -104,8 +112,25 @@ public class NAAiBoid : NAAiBase
 			cohesion *= avg;
 			cohesion = (cohesion - currentPosition).normalized;
 
+			Vector3 returnhome = Vector3.zero;
+			if (attractor != null)
+			{
+				//return to home logic
+				returnhome = attractor.transform.position-transform.position;
+				float distance = returnhome.magnitude;
+				returnhome.Normalize ();
+				if (distance > AttractorDistanceThreshold)
+				{
+					returnhome *= 10f; //return home
+				} 
+				else
+				{
+					returnhome = Vector3.zero;
+				}
+			}
+
 			// Calculates a rotation from the vectors.
-			Vector3 direction = separation * SeparationFactor + alignment * AlignmentFactor + cohesion * CohesionFactor;
+			Vector3 direction = separation * SeparationFactor + alignment * AlignmentFactor + cohesion * CohesionFactor+ returnhome*AttractorFactor;
 			Quaternion rotation = Quaternion.FromToRotation (Vector3.forward, direction.normalized);
 
 			// Applys the rotation with interpolation.
