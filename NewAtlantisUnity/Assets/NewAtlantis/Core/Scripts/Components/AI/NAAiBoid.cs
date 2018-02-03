@@ -42,6 +42,10 @@ public class NAAiBoid : NAAiBase
 	// Random seed.
 	float noiseOffset;
 
+	// parameters to stay within a certain radius of the attractor
+	public bool limitDistanceFromAttractor=true;
+	public float distanceFromAttractorLimit = 10.0f;
+
 	// Caluculates the separation vector with a target.
 	Vector3 GetSeparationVector(Transform target)
 	{
@@ -104,6 +108,7 @@ public class NAAiBoid : NAAiBase
 			cohesion *= avg;
 			cohesion = (cohesion - currentPosition).normalized;
 
+
 			// Calculates a rotation from the vectors.
 			Vector3 direction = separation * SeparationFactor + alignment * AlignmentFactor + cohesion * CohesionFactor;
 			Quaternion rotation = Quaternion.FromToRotation (Vector3.forward, direction.normalized);
@@ -117,7 +122,18 @@ public class NAAiBoid : NAAiBase
 			}
 
 			// Moves forward.
-			transform.position = currentPosition + transform.forward * (velocity * Time.deltaTime);
+
+			Vector3 newPosition = currentPosition + transform.forward * (velocity * Time.deltaTime);
+
+			if (attractor != null && limitDistanceFromAttractor) {
+				if (Vector3.Distance (newPosition, attractor.transform.position) < distanceFromAttractorLimit) {
+					transform.position = newPosition;
+				}
+				else {
+					transform.LookAt(attractor.transform);	
+				}
+			
+			}
 		}
 	}
 }
