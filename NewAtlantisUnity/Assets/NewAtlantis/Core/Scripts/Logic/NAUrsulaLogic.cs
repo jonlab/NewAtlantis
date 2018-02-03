@@ -118,9 +118,17 @@ public class NAUrsulaLogic : MonoBehaviour
 		int nred = (int)((red * red) * 255f);
 		int ngreen = (int)((green * green) * 255f);
 		int nblue = (int)((blue * blue) * 255f);
+
+
 		dmx [0] = nred;
-		dmx [1] = green;
-		dmx [2] = blue;
+		dmx [1] = ngreen;
+		dmx [2] = nblue;
+		dmx [3] = nred;
+		dmx [4] = ngreen;
+		dmx [5] = nblue;
+		dmx [6] = nred;
+		dmx [7] = ngreen;
+		dmx [8] = nblue;
 		/*
 		// Use this for initialization
 		void Start () 

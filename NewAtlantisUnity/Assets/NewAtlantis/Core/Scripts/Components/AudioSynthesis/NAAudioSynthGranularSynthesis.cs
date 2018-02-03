@@ -22,6 +22,8 @@ public class NAAudioSynthGranularSynthesis : MonoBehaviour
 	//private float[] samples1 = new float[50]; // container for grains
 	[Range(0f, 1.0f)]
 	public float position = 0.5f;
+	[Range(0f, 1.0f)]
+	public float PositionVariance = 0.1f;
 
 	private float prevhSlider = 0.0f;
 
@@ -108,7 +110,8 @@ public class NAAudioSynthGranularSynthesis : MonoBehaviour
 	{
 		float[] grain = new float[size];
 		int sliderPos = (int)(position * (float)buffer.Length);
-
+		sliderPos += (Random.value - 0.5f) * 2f * PositionVariance; 
+		sliderPos += buffer.Length;
 		for (int i=0;i<size;++i)
 		{
 			int index = (sliderPos +i)%buffer.Length;
